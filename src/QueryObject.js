@@ -71,10 +71,12 @@ export default class QueryObject {
   }
 
   toModels() {
+    if (!this.currentResources) return [];
     return this._reduceCurrentResources("models");
   }
 
   toObjects() {
+    if (!this.currentResources) return [];
     return this._reduceCurrentResources("objects");
   }
 

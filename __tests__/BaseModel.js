@@ -12,6 +12,12 @@ describe("BaseModel", () => {
 
   test("handle undefined resources", () => {
     expect(Checklist.query().all().toModels()).toEqual([]);
+    expect(Checklist.query(null).all().toModels()).toEqual([]);
+    expect(Checklist.query().all().toObjects()).toEqual([]);
+    expect(Checklist.query(null).all().toObjects()).toEqual([]);
+    expect(Checklist.query({}).all().toObjects()).toEqual([]);
+    const a = {};
+    expect(Checklist.query(a.b).all().toObjects()).toEqual([]);
   });
 
   describe("models", () => {

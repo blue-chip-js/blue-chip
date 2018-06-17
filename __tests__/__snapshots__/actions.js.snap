@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`actions normalizeAndMergePayload GraphQl dispatches MERGE_RESOURCES for each  1`] = `
+exports[`actions updateResources GraphQl dispatches MERGE_RESOURCES for each  1`] = `
 [MockFunction] {
   "calls": Array [
     Array [
@@ -174,7 +174,7 @@ exports[`actions normalizeAndMergePayload GraphQl dispatches MERGE_RESOURCES for
 }
 `;
 
-exports[`actions normalizeAndMergePayload JsonApi dispatches MERGE_RESOURCES for each  1`] = `
+exports[`actions updateResources JsonApi dispatches MERGE_RESOURCES for each  1`] = `
 [MockFunction] {
   "calls": Array [
     Array [

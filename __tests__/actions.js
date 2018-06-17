@@ -1,4 +1,4 @@
-import { normalizeAndMergePayload } from "../src/actions";
+import { updateResources } from "../src/actions";
 import jsonApiPayload
   from "../__testHelpers__/fixtrues/checklistsJsonApiResponse";
 import graphQlPayload
@@ -13,7 +13,7 @@ import normalizedGraphQlChecklistPayload
   from "../__testHelpers__/fixtrues/normalizedGraphQlChecklistsPayload";
 
 describe("actions", () => {
-  describe("normalizeAndMergePayload", () => {
+  describe("updateResources", () => {
     describe("JsonApi", () => {
       test("dispatches MERGE_RESOURCES for each ", () => {
         const dispatch = jest.fn();
@@ -30,7 +30,7 @@ describe("actions", () => {
           type: "MERGE_RESOURCES"
         };
 
-        normalizeAndMergePayload(dispatch, { jsonApiPayload });
+        updateResources(dispatch, { jsonApiPayload });
         expect(dispatch).toBeCalledWith(tasksMergeResourcesAction);
         expect(dispatch).toBeCalledWith(checklistsMergeResourcesAction);
         expect(dispatch).toMatchSnapshot();
@@ -53,7 +53,7 @@ describe("actions", () => {
           type: "MERGE_RESOURCES"
         };
 
-        normalizeAndMergePayload(dispatch, { graphQlPayload });
+        updateResources(dispatch, { graphQlPayload });
         expect(dispatch).toBeCalledWith(tasksMergeResourcesAction);
         expect(dispatch).toBeCalledWith(checklistsMergeResourcesAction);
         expect(dispatch).toMatchSnapshot();
