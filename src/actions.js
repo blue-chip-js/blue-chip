@@ -4,10 +4,7 @@ import { GraphQLNormalizr } from "graphql-normalizr";
 const graphQLNormalizr = new GraphQLNormalizr();
 const graphQlNormalize = graphQLNormalizr.normalize;
 
-const normalizeAndMergePayload = (
-  dispatch,
-  { jsonApiPayload, graphQlPayload }
-) => {
+const updateResources = (dispatch, { jsonApiPayload, graphQlPayload }) => {
   if (jsonApiPayload) {
     Object.entries(
       jsonApiNormalize(jsonApiPayload)
@@ -32,10 +29,7 @@ const normalizeAndMergePayload = (
   }
 };
 
-const dispatchUpdateResourcesByID = (
-  dispatch,
-  { jsonApiPayload, graphQlPayload }
-) => {
+const updateResourceById = (dispatch, { jsonApiPayload, graphQlPayload }) => {
   if (jsonApiPayload) {
     _dispatchAddOrReplaceAllJsonApiResources(
       dispatch,
@@ -123,4 +117,4 @@ const _convertToJsonApiSpec = (resourceType, resourcesById) => {
   }, {});
 };
 
-export { normalizeAndMergePayload, dispatchUpdateResourcesByID };
+export { updateResources, updateResourceById };
