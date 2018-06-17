@@ -1,0 +1,32 @@
+{
+  "name": "blue-chip",
+  "version": "0.1.0",
+  "description": "Manages data in a consistent way when working with client-side JavaScript state management systems.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "build": "node_modules/babel-cli/bin/babel.js src --out-dir lib"
+  },
+  "keywords": [
+    "redux",
+    "mobx",
+    "react",
+    "vue"
+  ],
+  "author": "mfpiccolo",
+  "license": "MIT",
+  "dependencies": {
+    "deepmerge": "^2.1.1",
+    "graphql-normalizr": "github:mfpiccolo/graphql-normalizr#3a931075370692b0b75fd29c33c019b91c576c65",
+    "jest": "^23.1.0",
+    "json-api-normalizer": "^0.4.10",
+    "pluralize": "^7.0.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1"
+  }
+}

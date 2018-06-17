@@ -1,0 +1,213 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BaseModel models all() Returns a list of models 1`] = `
+Array [
+  Checklist {
+    "id": 1,
+    "name": "Onboarding Rest",
+    "tasks": [Function],
+  },
+  Checklist {
+    "id": 2,
+    "name": "Project Audit Rest",
+    "tasks": [Function],
+  },
+  Checklist {
+    "id": 3,
+    "name": "QA Checklist Rest",
+    "tasks": [Function],
+  },
+]
+`;
+
+exports[`BaseModel models find() returns a single model 1`] = `
+Checklist {
+  "id": 1,
+  "name": "Onboarding Rest",
+  "tasks": [Function],
+}
+`;
+
+exports[`BaseModel models first() returns the first record in the store 1`] = `
+Object {
+  "attributes": Object {
+    "name": "Onboarding Rest",
+  },
+  "id": 1,
+  "links": Object {
+    "self": "http://example.com/checklists/1",
+  },
+  "relationships": Object {
+    "tasks": Object {
+      "data": Array [
+        Object {
+          "id": 1,
+          "type": "tasks",
+        },
+        Object {
+          "id": 2,
+          "type": "tasks",
+        },
+      ],
+    },
+  },
+  "type": "checklists",
+}
+`;
+
+exports[`BaseModel models hasMany() hasMany 1`] = `
+Array [
+  Task {
+    "checklist": [Function],
+    "description": "Onboarding REST 1",
+    "id": 1,
+  },
+  Task {
+    "checklist": [Function],
+    "description": "Onboarding REST 2",
+    "id": 2,
+  },
+]
+`;
+
+exports[`BaseModel models includes()  1`] = `
+Array [
+  Checklist {
+    "id": 1,
+    "name": "Onboarding Rest",
+    "tasks": Array [
+      Task {
+        "description": "Onboarding REST 1",
+        "id": 1,
+      },
+      Task {
+        "description": "Onboarding REST 2",
+        "id": 2,
+      },
+    ],
+  },
+  Checklist {
+    "id": 2,
+    "name": "Project Audit Rest",
+    "tasks": Array [
+      Task {
+        "description": "Project Audit Rest 3",
+        "id": 3,
+      },
+      Task {
+        "description": "Project Audit Rest 4",
+        "id": 4,
+      },
+    ],
+  },
+  Checklist {
+    "id": 3,
+    "name": "QA Checklist Rest",
+    "tasks": Array [
+      Task {
+        "description": "QA Checklist Rest 5",
+        "id": 5,
+      },
+      Task {
+        "description": "QA Checklist Rest 6",
+        "id": 6,
+      },
+    ],
+  },
+]
+`;
+
+exports[`BaseModel models where() filter by id 1`] = `
+Checklist {
+  "id": 3,
+  "name": "QA Checklist Rest",
+  "tasks": [Function],
+}
+`;
+
+exports[`BaseModel models where() filters by name 1`] = `
+Checklist {
+  "id": 2,
+  "name": "Project Audit Rest",
+  "tasks": [Function],
+}
+`;
+
+exports[`BaseModel objects all()  1`] = `
+Array [
+  Object {
+    "id": 1,
+    "name": "Onboarding Rest",
+  },
+  Object {
+    "id": 2,
+    "name": "Project Audit Rest",
+  },
+  Object {
+    "id": 3,
+    "name": "QA Checklist Rest",
+  },
+]
+`;
+
+exports[`BaseModel objects find()  1`] = `
+Checklist {
+  "id": 2,
+  "name": "Project Audit Rest",
+  "tasks": [Function],
+}
+`;
+
+exports[`BaseModel objects includes()  1`] = `
+Array [
+  Object {
+    "id": 1,
+    "name": "Onboarding Rest",
+    "tasks": Array [
+      Object {
+        "description": "Onboarding REST 1",
+        "id": 1,
+      },
+      Object {
+        "description": "Onboarding REST 2",
+        "id": 2,
+      },
+    ],
+  },
+  Object {
+    "id": 2,
+    "name": "Project Audit Rest",
+    "tasks": Array [
+      Object {
+        "description": "Project Audit Rest 3",
+        "id": 3,
+      },
+      Object {
+        "description": "Project Audit Rest 4",
+        "id": 4,
+      },
+    ],
+  },
+  Object {
+    "id": 3,
+    "name": "QA Checklist Rest",
+    "tasks": Array [
+      Object {
+        "description": "QA Checklist Rest 5",
+        "id": 5,
+      },
+      Object {
+        "description": "QA Checklist Rest 6",
+        "id": 6,
+      },
+    ],
+  },
+]
+`;
+
+exports[`BaseModel objects where()  1`] = `
+Object {
+  "id": 2,
+  "name": "Project Audit Rest",
+}
+`;
