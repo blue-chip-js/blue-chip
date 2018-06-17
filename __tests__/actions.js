@@ -1,11 +1,11 @@
-import { updateResources } from "../src/actions";
+import { updateResources } from "../lib/actions";
 import jsonApiPayload
   from "../__testHelpers__/fixtrues/checklistsJsonApiResponse";
 import graphQlPayload
   from "../__testHelpers__/fixtrues/checklistsGraphQlResponse";
-import normalizedJsonApiTaskPayload
+import normalizedJsonApiTasksPayload
   from "../__testHelpers__/fixtrues/normalizedJsonApiTasksPayload";
-import normalizedJsonApiChecklistPayload
+import normalizedJsonApiChecklistsPayload
   from "../__testHelpers__/fixtrues/normalizedJsonApiChecklistsPayload";
 import normalizedGraphQlTaskPayload
   from "../__testHelpers__/fixtrues/normalizedGraphQlTasksPayload";
@@ -20,13 +20,13 @@ describe("actions", () => {
 
         const tasksMergeResourcesAction = {
           resourceType: "tasks",
-          resourcesById: normalizedJsonApiTaskPayload,
+          resourcesById: normalizedJsonApiTasksPayload,
           type: "MERGE_RESOURCES"
         };
 
         const checklistsMergeResourcesAction = {
           resourceType: "checklists",
-          resourcesById: normalizedJsonApiChecklistPayload,
+          resourcesById: normalizedJsonApiChecklistsPayload,
           type: "MERGE_RESOURCES"
         };
 

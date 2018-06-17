@@ -1,8 +1,9 @@
 import merge from "deepmerge";
+const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray;
 
 const initialState = {};
 
-export default function resources(state = initialState, action) {
+export default function resourcesReducer(state = initialState, action) {
   const { resourceType } = action;
   switch (action.type) {
     case "ADD_OR_REPLACE_RESOURCE_BY_ID":
@@ -22,14 +23,16 @@ export default function resources(state = initialState, action) {
       return newState;
     case "MERGE_RESOURCES":
       const { resourcesById } = action;
-      resources = { ...state };
+      const resources = { ...state };
       if (!resources[resourceType]) {
         resources[resourceType] = {};
       }
 
       return {
         ...state,
-        [resourceType]: merge(resources[resourceType], resourcesById)
+        [resourceType]: merge(resources[resourceType], resourcesById, {
+          arrayMerge: overwriteMerge
+        })
       };
     default:
       return state;

@@ -1,5 +1,5 @@
-import BaseModel from "../src/BaseModel";
-import QueryObject from "../src/QueryObject";
+import BaseModel from "../lib/BaseModel";
+import QueryObject from "../lib/QueryObject";
 
 import resources
   from "../__testHelpers__/fixtrues/checklistsAndTasksNormalized";

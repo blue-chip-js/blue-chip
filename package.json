@@ -4,6 +4,7 @@
   "description": "Manages data in a consistent way when working with client-side JavaScript state management systems.",
   "main": "index.js",
   "scripts": {
+    "prepublish": "yarn run build",
     "test": "jest",
     "build": "node_modules/babel-cli/bin/babel.js src --out-dir lib"
   },
@@ -26,7 +27,6 @@
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
-    "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1"
   }
 }
