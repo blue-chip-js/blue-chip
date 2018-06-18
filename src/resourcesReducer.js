@@ -3,24 +3,21 @@ import produce from "immer";
 const initialState = {};
 
 export default function resourcesReducer(state = initialState, action) {
-  const { resourceType } = action;
+  const { type, resourceType } = action;
   return produce(state, draft => {
-    switch (action.type) {
+    switch (type) {
       case "ADD_OR_REPLACE_RESOURCE_BY_ID":
-        const newState = { ...state };
-        const { type, spec, id, attributes, links, relationships } = action;
+        const { id, attributes, links, relationships } = action;
+        _initializeResource(draft, resourceType);
 
-        _initializeResource(newState, resourceType);
-
-        newState[resourceType][id] = {
+        draft[resourceType][id] = {
           type: resourceType,
           id,
           attributes,
           links,
           relationships
         };
-
-        return newState;
+        break;
       case "MERGE_RESOURCES":
         const { resourcesById } = action;
         if (!state[resourceType]) {
@@ -30,11 +27,12 @@ export default function resourcesReducer(state = initialState, action) {
         Object.entries(resourcesById).forEach(
           ([id, resource]) => (draft[resourceType][id] = resource)
         );
+        break;
     }
   });
 }
 
-const _initializeResource = (newState, resourceType) => {
-  if (resourceType in newState) return;
-  newState[resourceType] = {};
+const _initializeResource = (draft, resourceType) => {
+  if (resourceType in draft) return;
+  draft[resourceType] = {};
 };

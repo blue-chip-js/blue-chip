@@ -62,8 +62,8 @@ describe("actions", () => {
     });
   });
 
-  describe("updateResources", () => {
-    test("dispatches MERGE_RESOURCES for each ", () => {
+  describe("updateResourceById", () => {
+    test("dispatches update action for a single resource", () => {
       const dispatch = jest.fn();
 
       const checklist = {

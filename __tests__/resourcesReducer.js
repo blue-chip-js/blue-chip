@@ -11,65 +11,54 @@ describe("post reducer", () => {
     it("should return the initial state", () => {
       expect(reducer(undefined, {})).toEqual({});
     });
-
     it("should update the store given a MERGE_RESOURCES action", () => {
       const checklistsMergeResourcesAction = {
         resourceType: "tasks",
         resourcesById: normalizedJsonApiChecklistsPayload,
         type: "MERGE_RESOURCES"
       };
-
       expect(reducer({}, checklistsMergeResourcesAction)).toEqual({
         tasks: normalizedJsonApiChecklistsPayload
       });
     });
-
     it("should handle multiple resources given multiple MERGE_RESOURCES", () => {
       const checklistsMergeResourcesAction = {
         resourceType: "checklists",
         resourcesById: normalizedJsonApiChecklistsPayload,
         type: "MERGE_RESOURCES"
       };
-
       const tasksMergeResourcesAction = {
         resourceType: "tasks",
         resourcesById: normalizedJsonApiTasksPayload,
         type: "MERGE_RESOURCES"
       };
-
       const firstUpdatedState = reducer({}, checklistsMergeResourcesAction);
-
       expect(reducer(firstUpdatedState, tasksMergeResourcesAction)).toEqual({
         checklists: normalizedJsonApiChecklistsPayload,
         tasks: normalizedJsonApiTasksPayload
       });
     });
-
     it("should handle multiple updates with the same resources", () => {
       const checklistsMergeResourcesAction = {
         resourceType: "checklists",
         resourcesById: normalizedJsonApiChecklistsPayload,
         type: "MERGE_RESOURCES"
       };
-
       const firstUpdatedState = reducer({}, checklistsMergeResourcesAction);
-
       expect(
         reducer(firstUpdatedState, checklistsMergeResourcesAction)
       ).toEqual({ checklists: normalizedJsonApiChecklistsPayload });
     });
-
     it("benchmark small payload 100,000 times", () => {
       smallPayloadReducerCall();
     });
-
     it("benchmark huge payload 1000 times", () => {
       hugePayloadReducerCall();
     });
   });
 
-  describe("MERGE_RESOURCES", () => {
-    it("should update the store given a MERGE_RESOURCES action", () => {
+  describe("ADD_OR_REPLACE_RESOURCE_BY_ID", () => {
+    it("should update the store given a ADD_OR_REPLACE_RESOURCE_BY_ID action", () => {
       const checklist = {
         id: 1,
         type: "checklists",
@@ -92,7 +81,6 @@ describe("post reducer", () => {
       expect(reducer({}, updateAction)).toEqual({
         checklists: { [checklist.id]: checklist }
       });
-
       expect(
         reducer({}, { ...updateAction, attributes: { name: "changed" } })
       ).toEqual({
