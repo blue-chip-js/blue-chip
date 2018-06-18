@@ -3,6 +3,8 @@ import normalizedJsonApiChecklistsPayload
   from "../__testHelpers__/fixtrues/normalizedJsonApiChecklistsPayload";
 import normalizedJsonApiTasksPayload
   from "../__testHelpers__/fixtrues/normalizedJsonApiTasksPayload";
+import hugeNormalizedJsonApiChecklistsPayload
+  from "../__testHelpers__/fixtrues/hugeNormalizedJsonApiChecklistsPayload";
 
 describe("post reducer", () => {
   describe("MERGE_RESOURCES", () => {
@@ -56,5 +58,45 @@ describe("post reducer", () => {
         reducer(firstUpdatedState, checklistsMergeResourcesAction)
       ).toEqual({ checklists: normalizedJsonApiChecklistsPayload });
     });
+
+    it("benchmark small payload 100,000 times", () => {
+      smallPayloadReducerCall();
+    });
+
+    it("benchmark huge payload 1000 times", () => {
+      hugePayloadReducerCall();
+    });
   });
 });
+
+function smallPayloadReducerCall() {
+  return new Promise((resolve, reject) => {
+    const array = Array(1000).fill();
+    array.forEach(() => {
+      const checklistsMergeResourcesAction = {
+        resourceType: "checklists",
+        resourcesById: normalizedJsonApiChecklistsPayload,
+        type: "MERGE_RESOURCES"
+      };
+
+      const firstUpdatedState = reducer({}, checklistsMergeResourcesAction);
+      if (index === array.length - 1) resolve();
+    });
+  });
+}
+
+function hugePayloadReducerCall() {
+  return new Promise((resolve, reject) => {
+    const array = Array(1000).fill();
+    array.forEach((n, index) => {
+      const checklistsMergeResourcesAction = {
+        resourceType: "checklists",
+        resourcesById: hugeNormalizedJsonApiChecklistsPayload,
+        type: "MERGE_RESOURCES"
+      };
+
+      const firstUpdatedState = reducer({}, checklistsMergeResourcesAction);
+      if (index === array.length - 1) resolve();
+    });
+  });
+}
