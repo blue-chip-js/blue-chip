@@ -1,4 +1,4 @@
-import { updateResources } from "../lib/actions";
+import { updateResources, updateResourceById } from "../lib/actions";
 import jsonApiPayload
   from "../__testHelpers__/fixtrues/checklistsJsonApiResponse";
 import graphQlPayload
@@ -11,6 +11,7 @@ import normalizedGraphQlTaskPayload
   from "../__testHelpers__/fixtrues/normalizedGraphQlTasksPayload";
 import normalizedGraphQlChecklistPayload
   from "../__testHelpers__/fixtrues/normalizedGraphQlChecklistsPayload";
+import resourcesReducer from "../src/resourcesReducer";
 
 describe("actions", () => {
   describe("updateResources", () => {
@@ -58,6 +59,35 @@ describe("actions", () => {
         expect(dispatch).toBeCalledWith(checklistsMergeResourcesAction);
         expect(dispatch).toMatchSnapshot();
       });
+    });
+  });
+
+  describe("updateResources", () => {
+    test("dispatches MERGE_RESOURCES for each ", () => {
+      const dispatch = jest.fn();
+
+      const checklist = {
+        id: 1,
+        type: "checklists",
+        attributes: { name: "Onboarding Rest" },
+        links: { self: "http://example.com/checklists/1" },
+        relationships: {
+          tasks: { data: [{ id: 1, type: "tasks" }, { id: 2, type: "tasks" }] }
+        }
+      };
+
+      const updateAction = {
+        type: "ADD_OR_REPLACE_RESOURCE_BY_ID",
+        resourceType: checklist.type,
+        id: checklist.id,
+        attributes: checklist.attributes,
+        links: checklist.links,
+        relationships: checklist.relationships
+      };
+
+      updateResourceById(dispatch, checklist);
+      expect(dispatch).toBeCalledWith(updateAction);
+      expect(dispatch).toMatchSnapshot();
     });
   });
 });

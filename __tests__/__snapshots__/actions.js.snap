@@ -350,3 +350,43 @@ exports[`actions updateResources JsonApi dispatches MERGE_RESOURCES for each  1`
   ],
 }
 `;
+
+exports[`actions updateResources dispatches MERGE_RESOURCES for each  1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "attributes": Object {
+          "name": "Onboarding Rest",
+        },
+        "id": 1,
+        "links": Object {
+          "self": "http://example.com/checklists/1",
+        },
+        "relationships": Object {
+          "tasks": Object {
+            "data": Array [
+              Object {
+                "id": 1,
+                "type": "tasks",
+              },
+              Object {
+                "id": 2,
+                "type": "tasks",
+              },
+            ],
+          },
+        },
+        "resourceType": "checklists",
+        "type": "ADD_OR_REPLACE_RESOURCE_BY_ID",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "isThrow": false,
+      "value": undefined,
+    },
+  ],
+}
+`;

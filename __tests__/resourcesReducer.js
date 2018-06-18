@@ -67,6 +67,41 @@ describe("post reducer", () => {
       hugePayloadReducerCall();
     });
   });
+
+  describe("MERGE_RESOURCES", () => {
+    it("should update the store given a MERGE_RESOURCES action", () => {
+      const checklist = {
+        id: 1,
+        type: "checklists",
+        attributes: { name: "Onboarding Rest" },
+        links: { self: "http://example.com/checklists/1" },
+        relationships: {
+          tasks: { data: [{ id: 1, type: "tasks" }, { id: 2, type: "tasks" }] }
+        }
+      };
+
+      const updateAction = {
+        type: "ADD_OR_REPLACE_RESOURCE_BY_ID",
+        resourceType: checklist.type,
+        id: checklist.id,
+        attributes: checklist.attributes,
+        links: checklist.links,
+        relationships: checklist.relationships
+      };
+
+      expect(reducer({}, updateAction)).toEqual({
+        checklists: { [checklist.id]: checklist }
+      });
+
+      expect(
+        reducer({}, { ...updateAction, attributes: { name: "changed" } })
+      ).toEqual({
+        checklists: {
+          [checklist.id]: { ...checklist, attributes: { name: "changed" } }
+        }
+      });
+    });
+  });
 });
 
 function smallPayloadReducerCall() {

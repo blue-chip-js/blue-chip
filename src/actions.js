@@ -29,58 +29,17 @@ const updateResources = (dispatch, { jsonApiPayload, graphQlPayload }) => {
   }
 };
 
-const updateResourceById = (dispatch, { jsonApiPayload, graphQlPayload }) => {
-  if (jsonApiPayload) {
-    _dispatchAddOrReplaceAllJsonApiResources(
-      dispatch,
-      jsonApiNormalize(jsonApiPayload)
-    );
-  }
-
-  if (graphQlPayload) {
-    _dispatchAddOrReplaceAllGraphQlResources(
-      dispatch,
-      // TODO: fix this hard coded value
-      "<resource-name>",
-      graphQlNormalize(graphQlPayload)
-    );
-  }
-};
-
-const _dispatchAddOrReplaceAllJsonApiResources = (dispatch, resourcesById) => {
-  Object.entries(resourcesById).forEach(([resourceType, resources]) => {
-    Object.entries(
-      resources
-    ).forEach(([id, { type, attributes, links, relationships }]) => {
-      dispatch({
-        type: "ADD_OR_REPLACE_RESOURCE_BY_ID",
-        resourceType,
-        id,
-        attributes,
-        links,
-        relationships
-      });
-    });
-  });
-};
-
-// TODO: this is not quite done parsing the graphql
-const _dispatchAddOrReplaceAllGraphQlResources = (
+const updateResourceById = (
   dispatch,
-  type,
-  resourcesById
+  { id, type, attributes, links, relationships }
 ) => {
-  Object.entries(resourcesById).forEach(([resourceType, resources]) => {
-    Object.entries(resources).forEach(([id, resource]) => {
-      dispatch({
-        type: "ADD_OR_REPLACE_RESOURCE_BY_ID",
-        resourceType,
-        id,
-        attributes: resource,
-        links: null,
-        relationships: _buildRelationships(resourceType, resource)
-      });
-    });
+  dispatch({
+    type: "ADD_OR_REPLACE_RESOURCE_BY_ID",
+    resourceType: type,
+    id,
+    attributes,
+    links,
+    relationships: relationships || _buildRelationships(type, attributes)
   });
 };
 

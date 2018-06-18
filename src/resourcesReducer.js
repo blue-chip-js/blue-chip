@@ -13,7 +13,7 @@ export default function resourcesReducer(state = initialState, action) {
         _initializeResource(newState, resourceType);
 
         newState[resourceType][id] = {
-          resourceType,
+          type: resourceType,
           id,
           attributes,
           links,
