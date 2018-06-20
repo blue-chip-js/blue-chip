@@ -90,6 +90,25 @@ describe("post reducer", () => {
       });
     });
   });
+
+  describe("REMOVE_RESOURCE_BY_ID", () => {
+    it("should remove a resource from the store", () => {
+      const initialState = {
+        checklists: normalizedJsonApiChecklistsPayload
+      };
+      const checklist = normalizedJsonApiChecklistsPayload[1];
+      expect(checklist.id).toEqual(1);
+
+      const removeAction = {
+        type: "REMOVE_RESOURCE_BY_ID",
+        resourceType: checklist.type,
+        id: checklist.id
+      };
+      const state = reducer(initialState, removeAction);
+      expect(state[checklist.type][checklist.id]).toBeUndefined();
+      expect(Object.values(state[checklist.type]).length).toEqual(2);
+    });
+  });
 });
 
 function smallPayloadReducerCall() {

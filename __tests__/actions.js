@@ -1,4 +1,8 @@
-import { updateResources, updateResourceById } from "../lib/actions";
+import {
+  updateResources,
+  updateResourceById,
+  deleteResource
+} from "../lib/actions";
 import jsonApiPayload
   from "../__testHelpers__/fixtrues/checklistsJsonApiResponse";
 import graphQlPayload
@@ -87,6 +91,27 @@ describe("actions", () => {
 
       updateResourceById(dispatch, checklist);
       expect(dispatch).toBeCalledWith(updateAction);
+      expect(dispatch).toMatchSnapshot();
+    });
+  });
+
+  describe("deleteResource", () => {
+    test("dispatches remove resource action", () => {
+      const dispatch = jest.fn();
+
+      const checklist = {
+        id: 1,
+        type: "checklists"
+      };
+
+      const deleteAction = {
+        type: "REMOVE_RESOURCE_BY_ID",
+        resourceType: checklist.type,
+        id: checklist.id
+      };
+
+      deleteResource(dispatch, checklist);
+      expect(dispatch).toBeCalledWith(deleteAction);
       expect(dispatch).toMatchSnapshot();
     });
   });

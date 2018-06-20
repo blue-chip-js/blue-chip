@@ -1,5 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`actions deleteResource dispatches remove resource action 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "id": 1,
+        "resourceType": "checklists",
+        "type": "REMOVE_RESOURCE_BY_ID",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "isThrow": false,
+      "value": undefined,
+    },
+  ],
+}
+`;
+
 exports[`actions updateResourceById dispatches update action for a single resource 1`] = `
 [MockFunction] {
   "calls": Array [

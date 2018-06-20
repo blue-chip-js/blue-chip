@@ -43,6 +43,14 @@ const updateResourceById = (
   });
 };
 
+const deleteResource = (dispatch, { id, type }) => {
+  dispatch({
+    type: "REMOVE_RESOURCE_BY_ID",
+    resourceType: type,
+    id
+  });
+};
+
 const _buildRelationships = (type, resource) => {
   return Object.entries(resource).reduce((newObject, [key, value]) => {
     if (value && Array.isArray(value)) {
@@ -76,4 +84,4 @@ const _convertToJsonApiSpec = (resourceType, resourcesById) => {
   }, {});
 };
 
-export { updateResources, updateResourceById };
+export { updateResources, updateResourceById, deleteResource };
