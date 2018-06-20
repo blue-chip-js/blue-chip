@@ -49,11 +49,11 @@ describe("post reducer", () => {
         reducer(firstUpdatedState, checklistsMergeResourcesAction)
       ).toEqual({ checklists: normalizedJsonApiChecklistsPayload });
     });
-    it("benchmark small payload 100,000 times", () => {
-      smallPayloadReducerCall();
+    it("benchmark small payload 100,000 times", async () => {
+      await smallPayloadReducerCall();
     });
-    it("benchmark huge payload 1000 times", () => {
-      hugePayloadReducerCall();
+    it("benchmark huge payload 1000 times", async () => {
+      await hugePayloadReducerCall();
     });
   });
 
@@ -94,8 +94,10 @@ describe("post reducer", () => {
 
 function smallPayloadReducerCall() {
   return new Promise((resolve, reject) => {
-    const array = Array(1000).fill();
-    array.forEach(() => {
+    // increase this count to benchmark
+    const itterationCount = 1;
+    const array = Array(itterationCount).fill();
+    array.forEach((n, index) => {
       const checklistsMergeResourcesAction = {
         resourceType: "checklists",
         resourcesById: normalizedJsonApiChecklistsPayload,
@@ -103,14 +105,16 @@ function smallPayloadReducerCall() {
       };
 
       const firstUpdatedState = reducer({}, checklistsMergeResourcesAction);
-      if (index === array.length - 1) resolve();
+      if (index === array.length - 1) resolve(firstUpdatedState);
     });
   });
 }
 
 function hugePayloadReducerCall() {
   return new Promise((resolve, reject) => {
-    const array = Array(1000).fill();
+    // increase this count to benchmark
+    const itterationCount = 1;
+    const array = Array(itterationCount).fill();
     array.forEach((n, index) => {
       const checklistsMergeResourcesAction = {
         resourceType: "checklists",
