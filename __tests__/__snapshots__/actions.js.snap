@@ -20,7 +20,7 @@ exports[`actions deleteResource dispatches remove resource action 1`] = `
 }
 `;
 
-exports[`actions updateResourceById dispatches update action for a single resource 1`] = `
+exports[`actions updateResource dispatches update action for a single resource 1`] = `
 [MockFunction] {
   "calls": Array [
     Array [

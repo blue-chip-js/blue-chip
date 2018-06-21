@@ -1,6 +1,6 @@
 import {
   updateResources,
-  updateResourceById,
+  updateResource,
   deleteResource
 } from "../lib/actions";
 import jsonApiPayload
@@ -35,7 +35,7 @@ describe("actions", () => {
           type: "MERGE_RESOURCES"
         };
 
-        updateResources(dispatch, { jsonApiPayload });
+        updateResources(jsonApiPayload, dispatch);
         expect(dispatch).toBeCalledWith(tasksMergeResourcesAction);
         expect(dispatch).toBeCalledWith(checklistsMergeResourcesAction);
         expect(dispatch).toMatchSnapshot();
@@ -58,7 +58,7 @@ describe("actions", () => {
           type: "MERGE_RESOURCES"
         };
 
-        updateResources(dispatch, { graphQlPayload });
+        updateResources(graphQlPayload, dispatch);
         expect(dispatch).toBeCalledWith(tasksMergeResourcesAction);
         expect(dispatch).toBeCalledWith(checklistsMergeResourcesAction);
         expect(dispatch).toMatchSnapshot();
@@ -66,7 +66,7 @@ describe("actions", () => {
     });
   });
 
-  describe("updateResourceById", () => {
+  describe("updateResource", () => {
     test("dispatches update action for a single resource", () => {
       const dispatch = jest.fn();
 
@@ -89,7 +89,7 @@ describe("actions", () => {
         relationships: checklist.relationships
       };
 
-      updateResourceById(dispatch, checklist);
+      updateResource(checklist, dispatch);
       expect(dispatch).toBeCalledWith(updateAction);
       expect(dispatch).toMatchSnapshot();
     });

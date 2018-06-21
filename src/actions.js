@@ -1,37 +1,22 @@
 import jsonApiNormalize from "json-api-normalizer";
 import { GraphQLNormalizr } from "graphql-normalizr";
+import { Validator } from "jsonapi-validator";
 
+const jsonApiValidator = new Validator();
 const graphQLNormalizr = new GraphQLNormalizr();
 const graphQlNormalize = graphQLNormalizr.normalize;
 
-const updateResources = (dispatch, { jsonApiPayload, graphQlPayload }) => {
-  if (jsonApiPayload) {
-    Object.entries(
-      jsonApiNormalize(jsonApiPayload)
-    ).forEach(([resourceType, resourcesById]) => {
-      dispatch({
-        type: "MERGE_RESOURCES",
-        resourceType,
-        resourcesById
-      });
-    });
-  }
-
-  if (graphQlPayload) {
-    Object.entries(graphQlNormalize(graphQlPayload)).forEach(array => {
-      const [resourceType, resourcesById] = array;
-      dispatch({
-        type: "MERGE_RESOURCES",
-        resourceType,
-        resourcesById: _convertToJsonApiSpec(resourceType, resourcesById)
-      });
-    });
+const updateResources = (payload, dispatch) => {
+  if (_isGraphQl(payload)) {
+    _tryNormalizingGraphQl(payload, dispatch);
+  } else {
+    _tryNormalizingJsonAPi(payload, dispatch);
   }
 };
 
-const updateResourceById = (
-  dispatch,
-  { id, type, attributes, links, relationships }
+const updateResource = (
+  { id, type, attributes, links, relationships },
+  dispatch
 ) => {
   dispatch({
     type: "ADD_OR_REPLACE_RESOURCE_BY_ID",
@@ -49,6 +34,47 @@ const deleteResource = (dispatch, { id, type }) => {
     resourceType: type,
     id
   });
+};
+
+const _isGraphQl = payload => {
+  return (
+    payload["data"] &&
+    payload["data"][0] &&
+    payload["data"][0] &&
+    "__typename" in payload["data"][0]
+  );
+};
+
+const _tryNormalizingJsonAPi = (payload, dispatch) => {
+  try {
+    Object.entries(
+      jsonApiNormalize(payload)
+    ).forEach(([resourceType, resourcesById]) => {
+      dispatch({
+        type: "MERGE_RESOURCES",
+        resourceType,
+        resourcesById
+      });
+    });
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+const _tryNormalizingGraphQl = (payload, dispatch) => {
+  try {
+    Object.entries(graphQlNormalize(payload)).forEach(array => {
+      const [resourceType, resourcesById] = array;
+      dispatch({
+        type: "MERGE_RESOURCES",
+        resourceType,
+        resourcesById: _convertToJsonApiSpec(resourceType, resourcesById)
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const _buildRelationships = (type, resource) => {
@@ -84,4 +110,4 @@ const _convertToJsonApiSpec = (resourceType, resourcesById) => {
   }, {});
 };
 
-export { updateResources, updateResourceById, deleteResource };
+export { updateResources, updateResource, deleteResource };
