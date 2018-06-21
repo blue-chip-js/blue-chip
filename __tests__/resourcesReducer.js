@@ -114,7 +114,7 @@ describe("post reducer", () => {
 function smallPayloadReducerCall() {
   return new Promise((resolve, reject) => {
     // increase this count to benchmark
-    const itterationCount = 1;
+    const itterationCount = 100000;
     const array = Array(itterationCount).fill();
     array.forEach((n, index) => {
       const checklistsMergeResourcesAction = {
@@ -132,7 +132,7 @@ function smallPayloadReducerCall() {
 function hugePayloadReducerCall() {
   return new Promise((resolve, reject) => {
     // increase this count to benchmark
-    const itterationCount = 1;
+    const itterationCount = 1000;
     const array = Array(itterationCount).fill();
     array.forEach((n, index) => {
       const checklistsMergeResourcesAction = {

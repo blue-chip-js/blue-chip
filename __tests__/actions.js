@@ -1,7 +1,7 @@
 import {
   updateResources,
   updateResource,
-  deleteResource
+  removeResource
 } from "../lib/actions";
 import jsonApiPayload
   from "../__testHelpers__/fixtrues/checklistsJsonApiResponse";
@@ -95,7 +95,7 @@ describe("actions", () => {
     });
   });
 
-  describe("deleteResource", () => {
+  describe("removeResource", () => {
     test("dispatches remove resource action", () => {
       const dispatch = jest.fn();
 
@@ -110,7 +110,7 @@ describe("actions", () => {
         id: checklist.id
       };
 
-      deleteResource(dispatch, checklist);
+      removeResource(checklist, dispatch);
       expect(dispatch).toBeCalledWith(deleteAction);
       expect(dispatch).toMatchSnapshot();
     });

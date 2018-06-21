@@ -28,7 +28,7 @@ const updateResource = (
   });
 };
 
-const deleteResource = (dispatch, { id, type }) => {
+const removeResource = ({ id, type }, dispatch) => {
   dispatch({
     type: "REMOVE_RESOURCE_BY_ID",
     resourceType: type,
@@ -56,9 +56,8 @@ const _tryNormalizingJsonAPi = (payload, dispatch) => {
         resourcesById
       });
     });
-    return true;
   } catch (error) {
-    return false;
+    console.log(error);
   }
 };
 
@@ -110,4 +109,4 @@ const _convertToJsonApiSpec = (resourceType, resourcesById) => {
   }, {});
 };
 
-export { updateResources, updateResource, deleteResource };
+export { updateResources, updateResource, removeResource };

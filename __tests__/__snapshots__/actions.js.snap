@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`actions deleteResource dispatches remove resource action 1`] = `
+exports[`actions removeResource dispatches remove resource action 1`] = `
 [MockFunction] {
   "calls": Array [
     Array [
