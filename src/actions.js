@@ -6,11 +6,50 @@ const jsonApiValidator = new Validator();
 const graphQLNormalizr = new GraphQLNormalizr();
 const graphQlNormalize = graphQLNormalizr.normalize;
 
-const updateResources = (payload, dispatch) => {
+const updateResources = (payload, storeUpdater) => {
   if (_isGraphQl(payload)) {
-    _tryNormalizingGraphQl(payload, dispatch);
+    // TODO: refactor and abstract these.  Several functions can be pulled out
+    Object.entries(graphQlNormalize(payload)).forEach(array => {
+      const [resourceType, resourcesById] = array;
+      if (typeof storeUpdater === "function") {
+        // if it is a function asume it is Redux dispatch
+        storeUpdater({
+          type: "MERGE_RESOURCES",
+          resourceType,
+          resourcesById: _convertToJsonApiSpec(resourceType, resourcesById)
+        });
+      } else if (typeof storeUpdater === "object") {
+        // if it is a function asume it is MobX resources store
+        // TODO: pull out into a helper function.  Same method used in the reducer
+        Object.entries(resourcesById).forEach(([id, resource]) => {
+          if (!storeUpdater[resourceType]) {
+            storeUpdater[resourceType] = {};
+          }
+          storeUpdater[resourceType][id] = resource;
+        });
+      }
+    });
   } else {
-    _tryNormalizingJsonAPi(payload, dispatch);
+    Object.entries(
+      jsonApiNormalize(payload)
+    ).forEach(([resourceType, resourcesById]) => {
+      if (typeof storeUpdater === "function") {
+        // if it is a function asume it is Redux dispatch
+        storeUpdater({
+          type: "MERGE_RESOURCES",
+          resourceType,
+          resourcesById
+        });
+      } else if (typeof storeUpdater === "object") {
+        // TODO: pull out into a helper function.  Same method used in the reducer
+        Object.entries(resourcesById).forEach(([id, resource]) => {
+          if (!storeUpdater[resourceType]) {
+            storeUpdater[resourceType] = {};
+          }
+          storeUpdater[resourceType][id] = resource;
+        });
+      }
+    });
   }
 };
 
@@ -43,37 +82,6 @@ const _isGraphQl = payload => {
     payload["data"][0] &&
     "__typename" in payload["data"][0]
   );
-};
-
-const _tryNormalizingJsonAPi = (payload, dispatch) => {
-  try {
-    Object.entries(
-      jsonApiNormalize(payload)
-    ).forEach(([resourceType, resourcesById]) => {
-      dispatch({
-        type: "MERGE_RESOURCES",
-        resourceType,
-        resourcesById
-      });
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const _tryNormalizingGraphQl = (payload, dispatch) => {
-  try {
-    Object.entries(graphQlNormalize(payload)).forEach(array => {
-      const [resourceType, resourcesById] = array;
-      dispatch({
-        type: "MERGE_RESOURCES",
-        resourceType,
-        resourcesById: _convertToJsonApiSpec(resourceType, resourcesById)
-      });
-    });
-  } catch (error) {
-    console.log(error);
-  }
 };
 
 const _buildRelationships = (type, resource) => {
