@@ -21,7 +21,9 @@ const updateResources = (payload, storeUpdater) => {
       } else if (typeof storeUpdater === "object") {
         // if it is a function asume it is MobX resources store
         // TODO: pull out into a helper function.  Same method used in the reducer
-        Object.entries(resourcesById).forEach(([id, resource]) => {
+        Object.entries(
+          _convertToJsonApiSpec(resourceType, resourcesById)
+        ).forEach(([id, resource]) => {
           if (!storeUpdater[resourceType]) {
             storeUpdater[resourceType] = {};
           }
