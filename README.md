@@ -4,14 +4,19 @@
 
 ## Source
 [Github](https://github.com/mfpiccolo/blue-chip​)
+
 [NPM](​https://www.npmjs.com/package/blue-chip​)
+
+## Docs
+[Documentation](https://bluechip.gitbook.io/project/)
+
+[API](https://bluechip.gitbook.io/project/api)
 
 ## The Basics 
 There are only two things that BlueChip does.
 
 1. Normalize data and organize it in a store.
 2. Retrieve the data from the store and prepare it for use.
-
 
 ## What BlueChip Is 
 ### State API
