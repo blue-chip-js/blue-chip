@@ -1,6 +1,6 @@
 import pluralize from "pluralize";
 
-export default class QueryObject {
+export default class Query {
   constructor(klass, resourceName, resources, hasMany = [], belongsTo = []) {
     this.klass = klass;
     this.resourceName = resourceName;

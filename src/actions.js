@@ -95,6 +95,19 @@ const removeResource = ({ id, type }, storeUpdater) => {
   }
 };
 
+const removeResources = (resources, storeUpdater) => {
+  if (_isRedux(storeUpdater)) {
+    storeUpdater({
+      type: "REMOVE_RESOURCES_BY_ID",
+      resources
+    });
+  } else if (_isMobx(storeUpdater)) {
+    resources.forEach(({ type, id }) => {
+      delete storeUpdater[type][id];
+    });
+  }
+};
+
 const clearResources = (resourceTypes, storeUpdater) => {
   if (_isRedux(storeUpdater)) {
     storeUpdater({
@@ -155,4 +168,10 @@ const _convertToJsonApiSpec = (resourceType, resourcesById) => {
   }, {});
 };
 
-export { updateResources, updateResource, removeResource, clearResources };
+export {
+  updateResources,
+  updateResource,
+  removeResource,
+  removeResources,
+  clearResources
+};

@@ -1,9 +1,9 @@
 import pluralize from "pluralize";
-import QueryObject from "./QueryObject";
+import Query from "./Query";
 
 export default class BaseModel {
   static query(resources) {
-    return new QueryObject(
+    return new Query(
       this,
       pluralize(this.name.toLowerCase()),
       resources,
@@ -19,7 +19,7 @@ export default class BaseModel {
 
     if (hasMany.forEach) {
       hasMany.forEach(relationship =>
-        this._buildHasManyQueryObject(this, resources, relationship)
+        this._buildHasManyQuery(this, resources, relationship)
       );
     }
 
@@ -50,7 +50,7 @@ export default class BaseModel {
     };
   }
 
-  _buildHasManyQueryObject(resource, resources, relationship) {
+  _buildHasManyQuery(resource, resources, relationship) {
     const relationshipKey = pluralize(relationship.name.toLowerCase());
     if (!resource[relationshipKey]) {
       resource[relationshipKey] = () => {
@@ -61,7 +61,7 @@ export default class BaseModel {
           relationshipKey
         );
 
-        return new QueryObject(
+        return new Query(
           relationship,
           relationshipKey,
           newResouces,

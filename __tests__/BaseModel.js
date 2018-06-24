@@ -1,13 +1,13 @@
 import BaseModel from "../lib/BaseModel";
-import QueryObject from "../lib/QueryObject";
+import Query from "../lib/Query";
 
 import resources
   from "../__testHelpers__/fixtrues/checklistsAndTasksNormalized";
 import { Checklist, Task } from "../__testHelpers__/models";
 
 describe("BaseModel", () => {
-  test("query returns a QueryObject", () => {
-    expect(BaseModel.query(resources)).toBeInstanceOf(QueryObject);
+  test("query returns a Query", () => {
+    expect(BaseModel.query(resources)).toBeInstanceOf(Query);
   });
 
   test("handle undefined resources", () => {

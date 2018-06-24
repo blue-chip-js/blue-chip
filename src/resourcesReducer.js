@@ -36,6 +36,11 @@ export default function resourcesReducer(state = initialState, action) {
       case "REMOVE_RESOURCE_BY_ID":
         delete draft[resourceType][id];
         break;
+      case "REMOVE_RESOURCES_BY_ID":
+        resources.forEach(resource => {
+          const { resourceType, id } = resource;
+          delete draft[resourceType][id];
+        });
       case "CLEAR_RESOURCES":
         resourceTypes.forEach(resourceType => {
           draft[resourceType] = {};
