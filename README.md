@@ -1,9 +1,11 @@
 ## Source
 [Github](https://github.com/mfpiccolo/blue-chip​)
-[NPM](​https://www.npmjs.com/package/blue-chip​​)
+
+[NPM](https://www.npmjs.com/package/blue-chip)
 
 ## Docs
 [Documentation](https://bluechip.gitbook.io/project/)
+
 [API](https://bluechip.gitbook.io/project/api)
 
 ## The Basics 
