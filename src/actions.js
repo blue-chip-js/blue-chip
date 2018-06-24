@@ -57,16 +57,30 @@ const updateResources = (payload, storeUpdater) => {
 
 const updateResource = (
   { id, type, attributes, links, relationships },
-  dispatch
+  storeUpdater
 ) => {
-  dispatch({
-    type: "ADD_OR_REPLACE_RESOURCE_BY_ID",
-    resourceType: type,
-    id,
-    attributes,
-    links,
-    relationships: relationships || _buildRelationships(type, attributes)
-  });
+  if (typeof storeUpdater === "function") {
+    storeUpdater({
+      type: "ADD_OR_REPLACE_RESOURCE_BY_ID",
+      resourceType: type,
+      id,
+      attributes,
+      links,
+      relationships: relationships || _buildRelationships(type, attributes)
+    });
+  } else if (typeof storeUpdater === "object") {
+    if (!(resourceType in storeUpdater)) {
+      storeUpdater[resourceType] = {};
+    }
+
+    storeUpdater[resourceType][id] = {
+      type,
+      id,
+      attributes,
+      links,
+      relationships: relationships || _buildRelationships(type, attributes)
+    };
+  }
 };
 
 const removeResource = ({ id, type }, dispatch) => {

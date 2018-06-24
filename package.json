@@ -1,6 +1,6 @@
 {
   "name": "blue-chip",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Manages data in a consistent way when working with client-side JavaScript state management systems.",
   "main": "index.js",
   "scripts": {

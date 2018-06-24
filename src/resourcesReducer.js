@@ -26,9 +26,7 @@ export default function resourcesReducer(state = initialState, action) {
         };
         break;
       case "MERGE_RESOURCES":
-        if (!state[resourceType]) {
-          draft[resourceType] = {};
-        }
+        _initializeResource(draft, resourceType);
 
         Object.entries(resourcesById).forEach(
           ([id, resource]) => (draft[resourceType][id] = resource)
