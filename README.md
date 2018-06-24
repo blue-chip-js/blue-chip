@@ -1,6 +1,6 @@
-## Source
-[Github](https://github.com/mfpiccolo/blue-chip​)
+# BlueChip
 
+## Source
 [NPM](https://www.npmjs.com/package/blue-chip)
 
 ## Docs
