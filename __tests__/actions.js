@@ -2,6 +2,7 @@ import {
   updateResources,
   updateResource,
   removeResource,
+  removeResources,
   clearResources
 } from "../lib/actions";
 import jsonApiPayload
@@ -115,6 +116,31 @@ describe("actions", () => {
       });
     });
 
+    describe("removeResource", () => {
+      test("dispatches remove resource action", () => {
+        const dispatch = jest.fn();
+
+        const checklists = [
+          {
+            id: 1,
+            type: "checklists"
+          },
+          {
+            id: 2,
+            type: "checklists"
+          }
+        ];
+
+        const removeResourcesAction = {
+          type: "REMOVE_RESOURCES_BY_ID",
+          resources: checklists
+        };
+
+        removeResources(checklists, dispatch);
+        expect(dispatch).toBeCalledWith(removeResourcesAction);
+      });
+    });
+
     describe("clearResources", () => {
       test("clears the store for the provided resources", () => {
         const dispatch = jest.fn();
@@ -167,6 +193,23 @@ describe("actions", () => {
 
         removeResource(resource, store);
         expect(store).toEqual({ checklists: { 2: {} } });
+        expect(store).toMatchSnapshot();
+      });
+    });
+
+    describe("removeResources", () => {
+      test("clears the store for the provided resources", () => {
+        const store = {
+          checklists: { 1: {}, 2: {} }
+        };
+
+        const resources = [
+          { id: 1, type: "checklists" },
+          { id: 2, type: "checklists" }
+        ];
+
+        removeResources(resources, store);
+        expect(store).toEqual({ checklists: {} });
         expect(store).toMatchSnapshot();
       });
     });

@@ -167,3 +167,9 @@ Object {
   },
 }
 `;
+
+exports[`actions Mobx removeResources clears the store for the provided resources 1`] = `
+Object {
+  "checklists": Object {},
+}
+`;

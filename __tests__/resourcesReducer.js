@@ -110,6 +110,30 @@ describe("post reducer", () => {
     });
   });
 
+  describe("REMOVE_RESOURCEs_BY_ID", () => {
+    it("should remove multiple resources from the store", () => {
+      const initialState = {
+        checklists: normalizedJsonApiChecklistsPayload
+      };
+
+      const checklist1 = normalizedJsonApiChecklistsPayload[1];
+      const checklist2 = normalizedJsonApiChecklistsPayload[2];
+      const checklist3 = normalizedJsonApiChecklistsPayload[3];
+
+      const resources = [checklist1, checklist2];
+
+      const removeResourcesAction = {
+        type: "REMOVE_RESOURCES_BY_ID",
+        resources
+      };
+      const state = reducer(initialState, removeResourcesAction);
+      expect(state[checklist1.type][1]).toBeUndefined();
+      expect(state[checklist2.type][2]).toBeUndefined();
+      expect(state[checklist3.type][3]).toEqual(checklist3);
+      expect(Object.values(state[checklist1.type]).length).toEqual(1);
+    });
+  });
+
   describe("CLEAR_RESOURCES", () => {
     it("should clear resources from the store", () => {
       const initialState = {

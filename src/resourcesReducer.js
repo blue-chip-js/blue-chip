@@ -11,7 +11,8 @@ export default function resourcesReducer(state = initialState, action) {
     relationships,
     resourcesById,
     resourceTypes,
-    resourceType
+    resourceType,
+    resources
   } = action;
   return produce(state, draft => {
     switch (type) {
@@ -38,9 +39,9 @@ export default function resourcesReducer(state = initialState, action) {
         break;
       case "REMOVE_RESOURCES_BY_ID":
         resources.forEach(resource => {
-          const { resourceType, id } = resource;
-          delete draft[resourceType][id];
+          delete draft[resource.type][resource.id];
         });
+        break;
       case "CLEAR_RESOURCES":
         resourceTypes.forEach(resourceType => {
           draft[resourceType] = {};
