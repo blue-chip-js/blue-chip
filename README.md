@@ -1,4 +1,5 @@
 # BlueChip
+BlueChip accepts payloads from GraphQL or JsonAPI servers, normalizes them into your store and provides an ORM like syntax for retrieving the data for use.
 
 ## Source
 [NPM](https://www.npmjs.com/package/blue-chip)
