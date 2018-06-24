@@ -49,10 +49,10 @@ describe("post reducer", () => {
         reducer(firstUpdatedState, checklistsMergeResourcesAction)
       ).toEqual({ checklists: normalizedJsonApiChecklistsPayload });
     });
-    it("benchmark small payload 100,000 times", async () => {
+    it("benchmark small payload", async () => {
       await smallPayloadReducerCall();
     });
-    it("benchmark huge payload 1000 times", async () => {
+    it("benchmark huge payload", async () => {
       await hugePayloadReducerCall();
     });
   });
@@ -107,6 +107,55 @@ describe("post reducer", () => {
       const state = reducer(initialState, removeAction);
       expect(state[checklist.type][checklist.id]).toBeUndefined();
       expect(Object.values(state[checklist.type]).length).toEqual(2);
+    });
+  });
+
+  describe("CLEAR_RESOURCES", () => {
+    it("should clear resources from the store", () => {
+      const initialState = {
+        checklists: normalizedJsonApiChecklistsPayload
+      };
+
+      const removeAction = {
+        type: "CLEAR_RESOURCES",
+        resourceTypes: ["checklists"]
+      };
+      const state = reducer(initialState, removeAction);
+      expect(state["checklists"]).toEqual({});
+    });
+
+    it("should clear single resource from the store and leave the others", () => {
+      const initialState = {
+        checklists: normalizedJsonApiChecklistsPayload,
+        tasks: normalizedJsonApiTasksPayload
+      };
+
+      const removeAction = {
+        type: "CLEAR_RESOURCES",
+        resourceTypes: ["checklists"]
+      };
+      const state = reducer(initialState, removeAction);
+      expect(state).toEqual({
+        checklists: {},
+        tasks: normalizedJsonApiTasksPayload
+      });
+    });
+
+    it("should clear multiple resources from the store", () => {
+      const initialState = {
+        checklists: normalizedJsonApiChecklistsPayload,
+        tasks: normalizedJsonApiTasksPayload
+      };
+
+      const removeAction = {
+        type: "CLEAR_RESOURCES",
+        resourceTypes: ["checklists", "tasks"]
+      };
+      const state = reducer(initialState, removeAction);
+      expect(state).toEqual({
+        checklists: {},
+        tasks: {}
+      });
     });
   });
 });

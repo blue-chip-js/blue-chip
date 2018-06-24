@@ -10,6 +10,7 @@ export default function resourcesReducer(state = initialState, action) {
     links,
     relationships,
     resourcesById,
+    resourceTypes,
     resourceType
   } = action;
   return produce(state, draft => {
@@ -34,6 +35,11 @@ export default function resourcesReducer(state = initialState, action) {
         break;
       case "REMOVE_RESOURCE_BY_ID":
         delete draft[resourceType][id];
+        break;
+      case "CLEAR_RESOURCES":
+        resourceTypes.forEach(resourceType => {
+          draft[resourceType] = {};
+        });
         break;
     }
   });

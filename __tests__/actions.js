@@ -1,7 +1,8 @@
 import {
   updateResources,
   updateResource,
-  removeResource
+  removeResource,
+  clearResources
 } from "../lib/actions";
 import jsonApiPayload
   from "../__testHelpers__/fixtrues/checklistsJsonApiResponse";
@@ -15,7 +16,6 @@ import normalizedGraphQlTaskPayload
   from "../__testHelpers__/fixtrues/normalizedGraphQlTasksPayload";
 import normalizedGraphQlChecklistPayload
   from "../__testHelpers__/fixtrues/normalizedGraphQlChecklistsPayload";
-import resourcesReducer from "../src/resourcesReducer";
 
 describe("actions", () => {
   describe("Redux", () => {
@@ -39,7 +39,6 @@ describe("actions", () => {
           updateResources(jsonApiPayload, dispatch);
           expect(dispatch).toBeCalledWith(tasksMergeResourcesAction);
           expect(dispatch).toBeCalledWith(checklistsMergeResourcesAction);
-          expect(dispatch).toMatchSnapshot();
         });
       });
 
@@ -62,7 +61,6 @@ describe("actions", () => {
           updateResources(graphQlPayload, dispatch);
           expect(dispatch).toBeCalledWith(tasksMergeResourcesAction);
           expect(dispatch).toBeCalledWith(checklistsMergeResourcesAction);
-          expect(dispatch).toMatchSnapshot();
         });
       });
     });
@@ -94,7 +92,6 @@ describe("actions", () => {
 
         updateResource(checklist, dispatch);
         expect(dispatch).toBeCalledWith(updateAction);
-        expect(dispatch).toMatchSnapshot();
       });
     });
 
@@ -115,7 +112,22 @@ describe("actions", () => {
 
         removeResource(checklist, dispatch);
         expect(dispatch).toBeCalledWith(deleteAction);
-        expect(dispatch).toMatchSnapshot();
+      });
+    });
+
+    describe("clearResources", () => {
+      test("clears the store for the provided resources", () => {
+        const dispatch = jest.fn();
+
+        const resourceTypes = ["checklists", "tasks"];
+
+        const clearResourcesAction = {
+          type: "CLEAR_RESOURCES",
+          resourceTypes
+        };
+
+        clearResources(resourceTypes, dispatch);
+        expect(dispatch).toBeCalledWith(clearResourcesAction);
       });
     });
   });
@@ -125,19 +137,36 @@ describe("actions", () => {
       test("dispatches MERGE_RESOURCES for each ", () => {
         const store = {};
 
-        const tasksMergeResourcesAction = {
-          resourceType: "tasks",
-          resourcesById: normalizedJsonApiTasksPayload,
-          type: "MERGE_RESOURCES"
-        };
-
-        const checklistsMergeResourcesAction = {
-          resourceType: "checklists",
-          resourcesById: normalizedJsonApiChecklistsPayload,
-          type: "MERGE_RESOURCES"
-        };
-
         updateResources(jsonApiPayload, store);
+        expect(store).toMatchSnapshot();
+      });
+    });
+
+    describe("clearResources", () => {
+      test("clears the store for the provided resources", () => {
+        const store = {
+          checklists: { 1: {} },
+          tasks: { 1: {} }
+        };
+
+        const resourceTypes = ["checklists", "tasks"];
+
+        clearResources(resourceTypes, store);
+        expect(store).toEqual({ checklists: {}, tasks: {} });
+        expect(store).toMatchSnapshot();
+      });
+    });
+
+    describe("removeResource", () => {
+      test("clears the store for the provided resources", () => {
+        const store = {
+          checklists: { 1: {}, 2: {} }
+        };
+
+        const resource = { id: 1, type: "checklists" };
+
+        removeResource(resource, store);
+        expect(store).toEqual({ checklists: { 2: {} } });
         expect(store).toMatchSnapshot();
       });
     });

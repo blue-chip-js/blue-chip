@@ -11,14 +11,14 @@ const updateResources = (payload, storeUpdater) => {
     // TODO: refactor and abstract these.  Several functions can be pulled out
     Object.entries(graphQlNormalize(payload)).forEach(array => {
       const [resourceType, resourcesById] = array;
-      if (typeof storeUpdater === "function") {
+      if (_isRedux(storeUpdater)) {
         // if it is a function asume it is Redux dispatch
         storeUpdater({
           type: "MERGE_RESOURCES",
           resourceType,
           resourcesById: _convertToJsonApiSpec(resourceType, resourcesById)
         });
-      } else if (typeof storeUpdater === "object") {
+      } else if (_isMobx(storeUpdater)) {
         // if it is a function asume it is MobX resources store
         // TODO: pull out into a helper function.  Same method used in the reducer
         Object.entries(
@@ -35,14 +35,14 @@ const updateResources = (payload, storeUpdater) => {
     Object.entries(
       jsonApiNormalize(payload)
     ).forEach(([resourceType, resourcesById]) => {
-      if (typeof storeUpdater === "function") {
+      if (_isRedux(storeUpdater)) {
         // if it is a function asume it is Redux dispatch
         storeUpdater({
           type: "MERGE_RESOURCES",
           resourceType,
           resourcesById
         });
-      } else if (typeof storeUpdater === "object") {
+      } else if (_isMobx(storeUpdater)) {
         // TODO: pull out into a helper function.  Same method used in the reducer
         Object.entries(resourcesById).forEach(([id, resource]) => {
           if (!storeUpdater[resourceType]) {
@@ -59,7 +59,7 @@ const updateResource = (
   { id, type, attributes, links, relationships },
   storeUpdater
 ) => {
-  if (typeof storeUpdater === "function") {
+  if (_isRedux(storeUpdater)) {
     storeUpdater({
       type: "ADD_OR_REPLACE_RESOURCE_BY_ID",
       resourceType: type,
@@ -68,7 +68,7 @@ const updateResource = (
       links,
       relationships: relationships || _buildRelationships(type, attributes)
     });
-  } else if (typeof storeUpdater === "object") {
+  } else if (_isMobx(storeUpdater)) {
     if (!(type in storeUpdater)) {
       storeUpdater[type] = {};
     }
@@ -83,20 +83,42 @@ const updateResource = (
   }
 };
 
-const removeResource = ({ id, type }, dispatch) => {
-  dispatch({
-    type: "REMOVE_RESOURCE_BY_ID",
-    resourceType: type,
-    id
-  });
+const removeResource = ({ id, type }, storeUpdater) => {
+  if (_isRedux(storeUpdater)) {
+    storeUpdater({
+      type: "REMOVE_RESOURCE_BY_ID",
+      resourceType: type,
+      id
+    });
+  } else if (_isMobx(storeUpdater)) {
+    delete storeUpdater[type][id];
+  }
+};
+
+const clearResources = (resourceTypes, storeUpdater) => {
+  if (_isRedux(storeUpdater)) {
+    storeUpdater({
+      type: "CLEAR_RESOURCES",
+      resourceTypes
+    });
+  } else if (_isMobx(storeUpdater)) {
+    resourceTypes.forEach(resourceType => {
+      storeUpdater[resourceType] = {};
+    });
+  }
+};
+
+const _isRedux = storeUpdater => {
+  return typeof storeUpdater === "function";
+};
+
+const _isMobx = storeUpdater => {
+  return typeof storeUpdater === "object";
 };
 
 const _isGraphQl = payload => {
   return (
-    payload["data"] &&
-    payload["data"][0] &&
-    payload["data"][0] &&
-    "__typename" in payload["data"][0]
+    payload["data"] && payload["data"][0] && "__typename" in payload["data"][0]
   );
 };
 
@@ -133,4 +155,4 @@ const _convertToJsonApiSpec = (resourceType, resourcesById) => {
   }, {});
 };
 
-export { updateResources, updateResource, removeResource };
+export { updateResources, updateResource, removeResource, clearResources };
