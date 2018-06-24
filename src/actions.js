@@ -69,11 +69,11 @@ const updateResource = (
       relationships: relationships || _buildRelationships(type, attributes)
     });
   } else if (typeof storeUpdater === "object") {
-    if (!(resourceType in storeUpdater)) {
-      storeUpdater[resourceType] = {};
+    if (!(type in storeUpdater)) {
+      storeUpdater[type] = {};
     }
 
-    storeUpdater[resourceType][id] = {
+    storeUpdater[type][id] = {
       type,
       id,
       attributes,
