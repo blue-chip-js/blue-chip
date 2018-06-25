@@ -53,6 +53,10 @@ const updateResources = (payload, storeUpdater) => {
       } else if (_isSetState(storeUpdater)) {
         Object.entries(resourcesById).forEach(([id, resource]) => {
           storeUpdater(state => {
+            if (!state.resources[resourceType]) {
+              state.resources[resourceType] = {};
+            }
+
             state.resources[resourceType][id] = resource;
             return state;
           });
