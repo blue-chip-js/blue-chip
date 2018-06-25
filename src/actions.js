@@ -148,7 +148,11 @@ const clearResources = (resourceTypes, storeUpdater) => {
 };
 
 const _isRedux = storeUpdater => {
-  return storeUpdater.name === "dispatch";
+  return (
+    storeUpdater.name === "dispatch" ||
+    (typeof storeUpdater.toString() === "string" &&
+      !!storeUpdater.toString().match(/dispatch/))
+  );
 };
 
 const _isMobx = storeUpdater => {
