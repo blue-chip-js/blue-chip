@@ -104,6 +104,7 @@ const updateResource = (
         links,
         relationships: relationships || _buildRelationships(type, attributes)
       };
+      return state;
     });
   }
 };
