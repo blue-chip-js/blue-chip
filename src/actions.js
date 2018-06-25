@@ -91,6 +91,20 @@ const updateResource = (
       links,
       relationships: relationships || _buildRelationships(type, attributes)
     };
+  } else if (_isSetState(storeUpdater)) {
+    storeUpdater(state => {
+      if (!(type in state.resources)) {
+        state.resources[type] = {};
+      }
+
+      state.resources[type][id] = {
+        type,
+        id,
+        attributes,
+        links,
+        relationships: relationships || _buildRelationships(type, attributes)
+      };
+    });
   }
 };
 
