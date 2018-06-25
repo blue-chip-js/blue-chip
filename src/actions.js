@@ -50,6 +50,13 @@ const updateResources = (payload, storeUpdater) => {
           }
           storeUpdater[resourceType][id] = resource;
         });
+      } else if (_isSetState(storeUpdater)) {
+        Object.entries(resourcesById).forEach(([id, resource]) => {
+          storeUpdater(state => {
+            state.resources[resourceType][id] = resource;
+            return state;
+          });
+        });
       }
     });
   }
@@ -122,11 +129,15 @@ const clearResources = (resourceTypes, storeUpdater) => {
 };
 
 const _isRedux = storeUpdater => {
-  return typeof storeUpdater === "function";
+  return storeUpdater.name === "dispatch";
 };
 
 const _isMobx = storeUpdater => {
   return typeof storeUpdater === "object";
+};
+
+const _isSetState = storeUpdater => {
+  return typeof storeUpdater === "function";
 };
 
 const _isGraphQl = payload => {

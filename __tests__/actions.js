@@ -18,13 +18,14 @@ import normalizedGraphQlTaskPayload
 import normalizedGraphQlChecklistPayload
   from "../__testHelpers__/fixtrues/normalizedGraphQlChecklistsPayload";
 
+const dispatch = jest.fn().mockName("dispatch");
+Object.defineProperty(dispatch, "name", { value: "dispatch" });
+
 describe("actions", () => {
   describe("Redux", () => {
     describe("updateResources", () => {
       describe("JsonApi", () => {
         test("dispatches MERGE_RESOURCES for each ", () => {
-          const dispatch = jest.fn();
-
           const tasksMergeResourcesAction = {
             resourceType: "tasks",
             resourcesById: normalizedJsonApiTasksPayload,
@@ -45,8 +46,6 @@ describe("actions", () => {
 
       describe("GraphQl", () => {
         test("dispatches MERGE_RESOURCES for each ", () => {
-          const dispatch = jest.fn();
-
           const tasksMergeResourcesAction = {
             resourceType: "tasks",
             resourcesById: normalizedGraphQlTaskPayload,
@@ -68,8 +67,6 @@ describe("actions", () => {
 
     describe("updateResource", () => {
       test("dispatches update action for a single resource", () => {
-        const dispatch = jest.fn();
-
         const checklist = {
           id: 1,
           type: "checklists",
@@ -98,8 +95,6 @@ describe("actions", () => {
 
     describe("removeResource", () => {
       test("dispatches remove resource action", () => {
-        const dispatch = jest.fn();
-
         const checklist = {
           id: 1,
           type: "checklists"
@@ -118,8 +113,6 @@ describe("actions", () => {
 
     describe("removeResource", () => {
       test("dispatches remove resource action", () => {
-        const dispatch = jest.fn();
-
         const checklists = [
           {
             id: 1,
@@ -143,8 +136,6 @@ describe("actions", () => {
 
     describe("clearResources", () => {
       test("clears the store for the provided resources", () => {
-        const dispatch = jest.fn();
-
         const resourceTypes = ["checklists", "tasks"];
 
         const clearResourcesAction = {
