@@ -121,8 +121,6 @@ export default class Task extends BaseModel {
 const mapStateToProps = state => { 
   const { resources } = state; 
   return { 
-    loading: state.dataReducer.loading, 
-    error: state.dataReducer.error, 
     checklists: Checklist.query(resources) 
                   .all() 
                   .includes(["tasks"]) 
