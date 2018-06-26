@@ -31,11 +31,13 @@ And that is it for the State API.
 This is the meat of BlueChip. The selector API is how you prepare your data to be consumed by components. To select data, BlueChip offers a robust ORM-style syntax complete with models, relationships, filtering, includes and more. You only needs access to the resources store to be able to use the selector api. 
 
 Here is an example of using the ORM syntax to select from the store
-
+```javascript
 Checklist.query(resources)
   .where({ active: true })
   .includes(['tasks'])
   .toObjects()
+```
+
 ## What BlueChip Is Not 
 ### Fetching
 BlueChip is not interested in how you get your data. Fetch it, mock it, import it. However you get your data that is your business. The only requirement is that your data is formatted according to one of the adapters (JsonAPI, GraphQL). If it is not formatted you can write a custom adapter to normalize it.
