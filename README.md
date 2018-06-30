@@ -169,10 +169,14 @@ const store = {
 }  
 ```
 ## Project Status
-This project is currently in Alpha/Experimental phase.  The APIs will almost assuredly change prior to 1.0.  It is not ready for production yet so use at your own risk.  There are also unfinished features like MobX adapter
+This project is currently in Alpha/Experimental phase.  The APIs will almost assuredly change prior to 1.0.  It is not ready for production yet, so use at your own risk.
 
 ## RoadMap
-1. belongsTo relationship
-2. Add Unstated adapter
-3. Change API to be more modular to allow for configuring adapters
-4. Memoization
+1. Increase Test Coverage
+2. More tests and examples with a diverse range of GraphQL and JsonAPI payloads.
+3. Refactor state managment to be an adapter as an external packages
+4. Add Vue and Vuex
+5. Allow for configurable and custom normailzers so you can use ANY api and spec.
+6. Bundle optimization
+7. belongsTo relationship
+8. Memoization
