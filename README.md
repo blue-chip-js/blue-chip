@@ -173,10 +173,11 @@ This project is currently in Alpha/Experimental phase.  The APIs will almost ass
 
 ## RoadMap
 1. Increase Test Coverage
-2. More tests and examples with a diverse range of GraphQL and JsonAPI payloads.
-3. Refactor state managment to be an adapter as an external packages
-4. Add Vue and Vuex
-5. Allow for configurable and custom normailzers so you can use ANY api and spec.
-6. Bundle optimization
-7. belongsTo relationship
-8. Memoization
+2. Setup tests on CI
+3. More tests and examples with a diverse range of GraphQL and JsonAPI payloads.
+4. Refactor state managment to be an adapter as an external packages
+5. Add Vue and Vuex
+6. Allow for configurable and custom normailzers so you can use ANY api and spec.
+7. Bundle optimization
+8. belongsTo relationship
+9. Memoization
