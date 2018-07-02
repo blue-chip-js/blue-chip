@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
+    "cover": "jest --coverage --coverageReporters=text-lcov | coveralls",
     "build": "node_modules/babel-cli/bin/babel.js src --out-dir lib"
   },
   "keywords": [
@@ -27,6 +28,7 @@
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
-    "babel-preset-stage-0": "^6.24.1"
+    "babel-preset-stage-0": "^6.24.1",
+    "coveralls": "^3.0.2"
   }
 }
