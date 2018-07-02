@@ -1,4 +1,5 @@
-# BlueChip
+# [BlueChip](https://bluechip.gitbook.io/project/) &middot; [![Build Status](https://travis-ci.org/mfpiccolo/blue-chip.svg?branch=master)](https://travis-ci.org/mfpiccolo/blue-chip)
+
 BlueChip accepts payloads from GraphQL or JsonAPI servers, normalizes them into your store and provides an ORM like syntax for retrieving the data for use.
 
 ## Source
