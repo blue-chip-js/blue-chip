@@ -2,14 +2,6 @@
 
 BlueChip accepts payloads from GraphQL or JsonAPI servers, normalizes them into your store and provides an ORM like syntax for retrieving the data for use.
 
-## Source
-[NPM](https://www.npmjs.com/package/blue-chip)
-
-## Docs
-[Documentation](https://bluechip.gitbook.io/project/)
-
-[API](https://bluechip.gitbook.io/project/api)
-
 ## The Basics 
 There are only two things that BlueChip does.
 
@@ -20,11 +12,11 @@ There are only two things that BlueChip does.
 ### State API
 BlueChip will take your data, normalize it and place it into a shared resources store. The API on this side is pretty minimal.
 
-1. updateResources() - Takes an entire payload of resources, normalize it and merge it into the store.
-2. updateResource() - Merges in a single resource into your store
-3. removeResources() - Removes a list of resource from the store
-3. removeResource() - Removes a single resource from the store
-3. clearResources()  - Clears a resource store by types
+* `updateResources()` Takes an entire payload of resources, normalize it and merge it into the store.
+* `updateResource()`  Merges in a single resource into your store
+* `removeResources()` Removes a list of resource from the store
+* `removeResource()`  Removes a single resource from the store
+* `clearResources()`  Clears a resource store by types
 
 And that is it for the State API.
 
