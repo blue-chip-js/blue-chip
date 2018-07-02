@@ -4,7 +4,6 @@
   "description": "BlueChip accepts payloads from GraphQL or JsonAPI servers, normalizes them into your store and provides an ORM like syntax for retrieving the data for use.",
   "main": "index.js",
   "scripts": {
-    "prepublish": "yarn run build",
     "test": "jest",
     "build": "node_modules/babel-cli/bin/babel.js src --out-dir lib"
   },
