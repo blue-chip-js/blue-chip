@@ -32,14 +32,14 @@ export const toJsonApiSpec = (resourceType, resourcesById) => {
       id,
       attributes: _removeRelationships(resource),
       links: null,
-      relationships: _buildRelationships(resource)
+      relationships: buildRelationships(resource)
     };
 
     return formattedResourcesById;
   }, {});
 };
 
-const _buildRelationships = resource => {
+export const buildRelationships = resource => {
   return Object.entries(resource).reduce((newObject, [key, value]) => {
     if (value && Array.isArray(value)) {
       if (!newObject[key]) {

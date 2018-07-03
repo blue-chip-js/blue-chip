@@ -1,4 +1,4 @@
-import {isRedux, isMobx, isSetState} from "./helpers";
+import {isRedux, isMobx, isSetState, buildRelationships} from "./helpers";
 
 export default ({id, type, attributes, links, relationships}, storeUpdater) => {
   if (isRedux(storeUpdater)) {
@@ -8,7 +8,7 @@ export default ({id, type, attributes, links, relationships}, storeUpdater) => {
       id,
       attributes,
       links,
-      relationships: relationships || _buildRelationships(type, attributes)
+      relationships: relationships || buildRelationships(type, attributes)
     });
   } else if (isMobx(storeUpdater)) {
     if (!(type in storeUpdater)) {
@@ -20,7 +20,7 @@ export default ({id, type, attributes, links, relationships}, storeUpdater) => {
       id,
       attributes,
       links,
-      relationships: relationships || _buildRelationships(type, attributes)
+      relationships: relationships || buildRelationships(type, attributes)
     };
   } else if (isSetState(storeUpdater)) {
     storeUpdater(state => {
@@ -33,7 +33,7 @@ export default ({id, type, attributes, links, relationships}, storeUpdater) => {
         id,
         attributes,
         links,
-        relationships: relationships || _buildRelationships(type, attributes)
+        relationships: relationships || buildRelationships(type, attributes)
       };
       return state;
     });

@@ -1,4 +1,4 @@
-import reducer from "../lib/resourcesReducer";
+import reducer from "../src/resourcesReducer";
 import normalizedJsonApiChecklistsPayload
   from "../__testHelpers__/fixtrues/normalizedJsonApiChecklistsPayload";
 import normalizedJsonApiTasksPayload
@@ -47,7 +47,7 @@ describe("post reducer", () => {
       const firstUpdatedState = reducer({}, checklistsMergeResourcesAction);
       expect(
         reducer(firstUpdatedState, checklistsMergeResourcesAction)
-      ).toEqual({ checklists: normalizedJsonApiChecklistsPayload });
+      ).toEqual({checklists: normalizedJsonApiChecklistsPayload});
     });
     it("benchmark small payload", async () => {
       await smallPayloadReducerCall();
@@ -62,10 +62,10 @@ describe("post reducer", () => {
       const checklist = {
         id: 1,
         type: "checklists",
-        attributes: { name: "Onboarding Rest" },
-        links: { self: "http://example.com/checklists/1" },
+        attributes: {name: "Onboarding Rest"},
+        links: {self: "http://example.com/checklists/1"},
         relationships: {
-          tasks: { data: [{ id: 1, type: "tasks" }, { id: 2, type: "tasks" }] }
+          tasks: {data: [{id: 1, type: "tasks"}, {id: 2, type: "tasks"}]}
         }
       };
 
@@ -79,13 +79,13 @@ describe("post reducer", () => {
       };
 
       expect(reducer({}, updateAction)).toEqual({
-        checklists: { [checklist.id]: checklist }
+        checklists: {[checklist.id]: checklist}
       });
       expect(
-        reducer({}, { ...updateAction, attributes: { name: "changed" } })
+        reducer({}, {...updateAction, attributes: {name: "changed"}})
       ).toEqual({
         checklists: {
-          [checklist.id]: { ...checklist, attributes: { name: "changed" } }
+          [checklist.id]: {...checklist, attributes: {name: "changed"}}
         }
       });
     });

@@ -1,9 +1,9 @@
-import BaseModel from "../lib/BaseModel";
-import Query from "../lib/Query";
+import BaseModel from "../src/BaseModel";
+import Query from "../src/Query";
 
 import resources
   from "../__testHelpers__/fixtrues/checklistsAndTasksNormalized";
-import { Checklist, Task } from "../__testHelpers__/models";
+import {Checklist, Task} from "../__testHelpers__/models";
 
 describe("BaseModel", () => {
   test("query returns a Query", () => {
@@ -46,7 +46,7 @@ describe("BaseModel", () => {
     describe("where()", () => {
       test("filters by name", () => {
         const checklist = Checklist.query(resources)
-          .where({ name: "Project Audit Rest" })
+          .where({name: "Project Audit Rest"})
           .toModels()[0];
         expect(checklist.id).toEqual(2);
         expect(checklist).toMatchSnapshot();
@@ -54,7 +54,7 @@ describe("BaseModel", () => {
 
       test("filter by id", () => {
         const checklist = Checklist.query(resources)
-          .where({ id: 3 })
+          .where({id: 3})
           .toModels()[0];
         expect(checklist.id).toEqual(3);
         expect(checklist).toMatchSnapshot();
@@ -106,7 +106,7 @@ describe("BaseModel", () => {
     describe("where()", () => {
       test("", () => {
         const checklist = Checklist.query(resources)
-          .where({ name: "Project Audit Rest" })
+          .where({name: "Project Audit Rest"})
           .toObjects()[0];
         expect(checklist.id).toEqual(2);
         expect(checklist).toMatchSnapshot();
