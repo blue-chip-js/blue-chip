@@ -1,12 +1,12 @@
-import resourcesReducer from "./lib/resourcesReducer";
+import resourcesReducer from "./resourcesReducer";
 import {
   updateResources,
   updateResource,
   removeResource,
   removeResources,
   clearResources
-} from "./lib/actions";
-import BaseModel from "./lib/BaseModel";
+} from "./actions";
+import BaseModel from "./BaseModel";
 
 export {
   updateResources,

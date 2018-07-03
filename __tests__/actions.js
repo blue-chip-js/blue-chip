@@ -4,7 +4,7 @@ import {
   removeResource,
   removeResources,
   clearResources
-} from "../lib/actions";
+} from "../src/actions";
 import jsonApiPayload
   from "../__testHelpers__/fixtrues/checklistsJsonApiResponse";
 import graphQlPayload
@@ -19,7 +19,7 @@ import normalizedGraphQlChecklistPayload
   from "../__testHelpers__/fixtrues/normalizedGraphQlChecklistsPayload";
 
 const dispatch = jest.fn().mockName("dispatch");
-Object.defineProperty(dispatch, "name", { value: "dispatch" });
+Object.defineProperty(dispatch, "name", {value: "dispatch"});
 
 describe("actions", () => {
   describe("Redux", () => {
@@ -70,11 +70,11 @@ describe("actions", () => {
         const checklist = {
           id: 1,
           type: "checklists",
-          attributes: { name: "Onboarding Rest" },
-          links: { self: "http://example.com/checklists/1" },
+          attributes: {name: "Onboarding Rest"},
+          links: {self: "http://example.com/checklists/1"},
           relationships: {
             tasks: {
-              data: [{ id: 1, type: "tasks" }, { id: 2, type: "tasks" }]
+              data: [{id: 1, type: "tasks"}, {id: 2, type: "tasks"}]
             }
           }
         };
@@ -171,14 +171,14 @@ describe("actions", () => {
     describe("clearResources", () => {
       test("clears the store for the provided resources", () => {
         const store = {
-          checklists: { 1: {} },
-          tasks: { 1: {} }
+          checklists: {1: {}},
+          tasks: {1: {}}
         };
 
         const resourceTypes = ["checklists", "tasks"];
 
         clearResources(resourceTypes, store);
-        expect(store).toEqual({ checklists: {}, tasks: {} });
+        expect(store).toEqual({checklists: {}, tasks: {}});
         expect(store).toMatchSnapshot();
       });
     });
@@ -186,13 +186,13 @@ describe("actions", () => {
     describe("removeResource", () => {
       test("clears the store for the provided resources", () => {
         const store = {
-          checklists: { 1: {}, 2: {} }
+          checklists: {1: {}, 2: {}}
         };
 
-        const resource = { id: 1, type: "checklists" };
+        const resource = {id: 1, type: "checklists"};
 
         removeResource(resource, store);
-        expect(store).toEqual({ checklists: { 2: {} } });
+        expect(store).toEqual({checklists: {2: {}}});
         expect(store).toMatchSnapshot();
       });
     });
@@ -200,16 +200,16 @@ describe("actions", () => {
     describe("removeResources", () => {
       test("clears the store for the provided resources", () => {
         const store = {
-          checklists: { 1: {}, 2: {} }
+          checklists: {1: {}, 2: {}}
         };
 
         const resources = [
-          { id: 1, type: "checklists" },
-          { id: 2, type: "checklists" }
+          {id: 1, type: "checklists"},
+          {id: 2, type: "checklists"}
         ];
 
         removeResources(resources, store);
-        expect(store).toEqual({ checklists: {} });
+        expect(store).toEqual({checklists: {}});
         expect(store).toMatchSnapshot();
       });
     });
