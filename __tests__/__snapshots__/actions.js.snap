@@ -1,6 +1,165 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`actions Mobx JsonApi dispatches MERGE_RESOURCES for each  1`] = `
+exports[`actions Mobx clearResources clears the store for the provided resources 1`] = `
+Object {
+  "checklists": Object {},
+  "tasks": Object {},
+}
+`;
+
+exports[`actions Mobx removeResource clears the store for the provided resources 1`] = `
+Object {
+  "checklists": Object {
+    "2": Object {},
+  },
+}
+`;
+
+exports[`actions Mobx removeResources clears the store for the provided resources 1`] = `
+Object {
+  "checklists": Object {},
+}
+`;
+
+exports[`actions Mobx updateResources GraphQl updates the store 1`] = `
+Object {
+  "checklists": Object {
+    "4": Object {
+      "attributes": Object {
+        "id": 4,
+        "name": "Onboarding GraphQL",
+      },
+      "id": "4",
+      "links": null,
+      "relationships": Object {
+        "tasks": Object {
+          "data": Array [
+            Object {
+              "id": 7,
+              "type": "tasks",
+            },
+            Object {
+              "id": 8,
+              "type": "tasks",
+            },
+          ],
+        },
+      },
+      "type": "checklists",
+    },
+    "5": Object {
+      "attributes": Object {
+        "id": 5,
+        "name": "Project Audit GraphQL",
+      },
+      "id": "5",
+      "links": null,
+      "relationships": Object {
+        "tasks": Object {
+          "data": Array [
+            Object {
+              "id": 9,
+              "type": "tasks",
+            },
+            Object {
+              "id": 10,
+              "type": "tasks",
+            },
+          ],
+        },
+      },
+      "type": "checklists",
+    },
+    "6": Object {
+      "attributes": Object {
+        "id": 6,
+        "name": "QA Checklist GraphQL",
+      },
+      "id": "6",
+      "links": null,
+      "relationships": Object {
+        "tasks": Object {
+          "data": Array [
+            Object {
+              "id": 11,
+              "type": "tasks",
+            },
+            Object {
+              "id": 12,
+              "type": "tasks",
+            },
+          ],
+        },
+      },
+      "type": "checklists",
+    },
+  },
+  "tasks": Object {
+    "10": Object {
+      "attributes": Object {
+        "description": "Project Audit Graph 10",
+        "id": 10,
+      },
+      "id": "10",
+      "links": null,
+      "relationships": Object {},
+      "type": "tasks",
+    },
+    "11": Object {
+      "attributes": Object {
+        "description": "QA Checklist Graph 11",
+        "id": 11,
+      },
+      "id": "11",
+      "links": null,
+      "relationships": Object {},
+      "type": "tasks",
+    },
+    "12": Object {
+      "attributes": Object {
+        "description": "QA Checklist Graph 12",
+        "id": 12,
+      },
+      "id": "12",
+      "links": null,
+      "relationships": Object {},
+      "type": "tasks",
+    },
+    "7": Object {
+      "attributes": Object {
+        "description": "Onboarding Graph 7",
+        "id": 7,
+      },
+      "id": "7",
+      "links": null,
+      "relationships": Object {},
+      "type": "tasks",
+    },
+    "8": Object {
+      "attributes": Object {
+        "description": "Onboarding Graph 8",
+        "id": 8,
+      },
+      "id": "8",
+      "links": null,
+      "relationships": Object {},
+      "type": "tasks",
+    },
+    "9": Object {
+      "attributes": Object {
+        "description": "Project Audit Graph 9",
+        "id": 9,
+      },
+      "id": "9",
+      "links": null,
+      "relationships": Object {},
+      "type": "tasks",
+    },
+  },
+}
+`;
+
+exports[`actions Mobx updateResources JsonApi updates the store 1`] = `
 Object {
   "checklists": Object {
     "1": Object {
@@ -150,26 +309,5 @@ Object {
       "type": "tasks",
     },
   },
-}
-`;
-
-exports[`actions Mobx clearResources clears the store for the provided resources 1`] = `
-Object {
-  "checklists": Object {},
-  "tasks": Object {},
-}
-`;
-
-exports[`actions Mobx removeResource clears the store for the provided resources 1`] = `
-Object {
-  "checklists": Object {
-    "2": Object {},
-  },
-}
-`;
-
-exports[`actions Mobx removeResources clears the store for the provided resources 1`] = `
-Object {
-  "checklists": Object {},
 }
 `;

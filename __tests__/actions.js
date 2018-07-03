@@ -150,12 +150,21 @@ describe("actions", () => {
   });
 
   describe("Mobx", () => {
-    describe("JsonApi", () => {
-      test("dispatches MERGE_RESOURCES for each ", () => {
-        const store = {};
+    describe("updateResources", () => {
+      describe("JsonApi", () => {
+        test("updates the store", () => {
+          const store = {};
+          updateResources(jsonApiPayload, store);
+          expect(store).toMatchSnapshot();
+        });
+      });
 
-        updateResources(jsonApiPayload, store);
-        expect(store).toMatchSnapshot();
+      describe("GraphQl", () => {
+        test("updates the store", () => {
+          const store = {};
+          updateResources(graphQlPayload, store);
+          expect(store).toMatchSnapshot();
+        });
       });
     });
 
