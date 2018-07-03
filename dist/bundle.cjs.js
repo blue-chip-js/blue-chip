@@ -601,14 +601,14 @@ const toJsonApiSpec = (resourceType, resourcesById) => {
       id,
       attributes: _removeRelationships(resource),
       links: null,
-      relationships: _buildRelationships$1(resource)
+      relationships: buildRelationships(resource)
     };
 
     return formattedResourcesById;
   }, {});
 };
 
-const _buildRelationships$1 = resource => {
+const buildRelationships = resource => {
   return Object.entries(resource).reduce((newObject, [key, value]) => {
     if (value && Array.isArray(value)) {
       if (!newObject[key]) {
@@ -697,7 +697,7 @@ var updateResource = ({id, type, attributes, links, relationships}, storeUpdater
       id,
       attributes,
       links,
-      relationships: relationships || _buildRelationships(type, attributes)
+      relationships: relationships || buildRelationships(type, attributes)
     });
   } else if (isMobx(storeUpdater)) {
     if (!(type in storeUpdater)) {
@@ -709,7 +709,7 @@ var updateResource = ({id, type, attributes, links, relationships}, storeUpdater
       id,
       attributes,
       links,
-      relationships: relationships || _buildRelationships(type, attributes)
+      relationships: relationships || buildRelationships(type, attributes)
     };
   } else if (isSetState(storeUpdater)) {
     storeUpdater(state => {
@@ -722,7 +722,7 @@ var updateResource = ({id, type, attributes, links, relationships}, storeUpdater
         id,
         attributes,
         links,
-        relationships: relationships || _buildRelationships(type, attributes)
+        relationships: relationships || buildRelationships(type, attributes)
       };
       return state;
     });
