@@ -563,7 +563,7 @@
     draft[resourceType] = {};
   };
 
-  var resourcesMutation = {
+  var resourcesMutations = {
     UPDATE_RESOURCES: (state, {resourceType, resourcesById}) => {
       Object.entries(resourcesById).forEach(([id, resource]) => {
         if (!state[resourceType]) {
@@ -3770,7 +3770,7 @@
   };
 
   const _updateResourcesVuex = (storeUpdater, resourceType, resourcesById) => {
-    storeUpdater("MERGE_RESOURCES", {resourceType, resourcesById});
+    storeUpdater("UPDATE_RESOURCES", {resourceType, resourcesById});
   };
 
   var updateResource = ({id, type, attributes, links, relationships}, storeUpdater) => {
@@ -4619,7 +4619,7 @@
   exports.removeResources = removeResources;
   exports.clearResources = clearResources;
   exports.resourcesReducer = resourcesReducer;
-  exports.mutation = resourcesMutation;
+  exports.mutations = resourcesMutations;
   exports.BaseModel = BaseModel;
 
   Object.defineProperty(exports, '__esModule', { value: true });
