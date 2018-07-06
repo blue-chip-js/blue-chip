@@ -561,7 +561,7 @@ const _initializeResource = (draft, resourceType) => {
   draft[resourceType] = {};
 };
 
-var resourcesMutation = {
+var resourcesMutations = {
   UPDATE_RESOURCES: (state, {resourceType, resourcesById}) => {
     Object.entries(resourcesById).forEach(([id, resource]) => {
       if (!state[resourceType]) {
@@ -705,7 +705,7 @@ const _updateResourcesSetState = (
 };
 
 const _updateResourcesVuex = (storeUpdater, resourceType, resourcesById) => {
-  storeUpdater("MERGE_RESOURCES", {resourceType, resourcesById});
+  storeUpdater("UPDATE_RESOURCES", {resourceType, resourcesById});
 };
 
 var updateResource = ({id, type, attributes, links, relationships}, storeUpdater) => {
@@ -1060,4 +1060,4 @@ class BaseModel {
   }
 }
 
-export { updateResources, updateResource, removeResource, removeResources, clearResources, resourcesReducer, resourcesMutation as mutation, BaseModel };
+export { updateResources, updateResource, removeResource, removeResources, clearResources, resourcesReducer, resourcesMutations as mutations, BaseModel };
