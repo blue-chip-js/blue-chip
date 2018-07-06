@@ -71,5 +71,5 @@ const _updateResourcesSetState = (
 };
 
 const _updateResourcesVuex = (storeUpdater, resourceType, resourcesById) => {
-  storeUpdater("MERGE_RESOURCES", {resourceType, resourcesById});
+  storeUpdater("UPDATE_RESOURCES", {resourceType, resourcesById});
 };
