@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`removeResources Redux removeResources clears the store for the provided resources 1`] = `
+Object {
+  "checklists": Object {},
+}
+`;

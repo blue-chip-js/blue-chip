@@ -110,7 +110,7 @@ describe("post reducer", () => {
     });
   });
 
-  describe("REMOVE_RESOURCEs_BY_ID", () => {
+  describe("REMOVE_RESOURCES_BY_ID", () => {
     it("should remove multiple resources from the store", () => {
       const initialState = {
         checklists: normalizedJsonApiChecklistsPayload
