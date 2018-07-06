@@ -1,4 +1,5 @@
 import resourcesReducer from "./resourcesReducer";
+import mutation from "./resourcesMutation";
 import {
   updateResources,
   updateResource,
@@ -15,5 +16,6 @@ export {
   removeResources,
   clearResources,
   resourcesReducer,
+  mutation,
   BaseModel
 };

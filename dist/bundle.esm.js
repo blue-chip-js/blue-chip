@@ -561,6 +561,17 @@ const _initializeResource = (draft, resourceType) => {
   draft[resourceType] = {};
 };
 
+var resourcesMutation = {
+  UPDATE_RESOURCES: (state, {resourceType, resourcesById}) => {
+    Object.entries(resourcesById).forEach(([id, resource]) => {
+      if (!state[resourceType]) {
+        state[resourceType] = {};
+      }
+      state[resourceType][id] = resource;
+    });
+  }
+};
+
 const GraphQL = "GraphQL";
 const JsonAPI = "JsonAPI";
 
@@ -584,6 +595,14 @@ const isMobx = storeUpdater => {
 
 const isSetState = storeUpdater => {
   return typeof storeUpdater === "function";
+};
+
+const isVuex = storeUpdater => {
+  return (
+    storeUpdater.name === "boundCommit" ||
+    (typeof storeUpdater.toString() === "string" &&
+      !!storeUpdater.toString().match(/boundCommit/))
+  );
 };
 
 const toJsonApiSpec = (resourceType, resourcesById) => {
@@ -647,6 +666,8 @@ const _updateResourcesByStateManger = (spec, payload, storeUpdater) => {
       _updateResourcesRedux(storeUpdater, resourceType, rById);
     } else if (isMobx(storeUpdater)) {
       _updateResourcesMobx(storeUpdater, resourceType, rById);
+    } else if (isVuex(storeUpdater)) {
+      _updateResourcesVuex(storeUpdater, resourceType, rById);
     } else if (isSetState(storeUpdater)) {
       _updateResourcesSetState(storeUpdater, resourceType, rById);
     }
@@ -681,6 +702,10 @@ const _updateResourcesSetState = (
       return state;
     });
   });
+};
+
+const _updateResourcesVuex = (storeUpdater, resourceType, resourcesById) => {
+  storeUpdater("MERGE_RESOURCES", {resourceType, resourcesById});
 };
 
 var updateResource = ({id, type, attributes, links, relationships}, storeUpdater) => {
@@ -1035,4 +1060,4 @@ class BaseModel {
   }
 }
 
-export { updateResources, updateResource, removeResource, removeResources, clearResources, resourcesReducer, BaseModel };
+export { updateResources, updateResource, removeResource, removeResources, clearResources, resourcesReducer, resourcesMutation as mutation, BaseModel };
