@@ -563,6 +563,17 @@
     draft[resourceType] = {};
   };
 
+  var resourcesMutation = {
+    UPDATE_RESOURCES: (state, {resourceType, resourcesById}) => {
+      Object.entries(resourcesById).forEach(([id, resource]) => {
+        if (!state[resourceType]) {
+          state[resourceType] = {};
+        }
+        state[resourceType][id] = resource;
+      });
+    }
+  };
+
   var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
   function commonjsRequire () {
@@ -3651,6 +3662,14 @@
     return typeof storeUpdater === "function";
   };
 
+  const isVuex = storeUpdater => {
+    return (
+      storeUpdater.name === "boundCommit" ||
+      (typeof storeUpdater.toString() === "string" &&
+        !!storeUpdater.toString().match(/boundCommit/))
+    );
+  };
+
   const toJsonApiSpec = (resourceType, resourcesById) => {
     return Object.entries(
       resourcesById
@@ -3712,6 +3731,8 @@
         _updateResourcesRedux(storeUpdater, resourceType, rById);
       } else if (isMobx(storeUpdater)) {
         _updateResourcesMobx(storeUpdater, resourceType, rById);
+      } else if (isVuex(storeUpdater)) {
+        _updateResourcesVuex(storeUpdater, resourceType, rById);
       } else if (isSetState(storeUpdater)) {
         _updateResourcesSetState(storeUpdater, resourceType, rById);
       }
@@ -3746,6 +3767,10 @@
         return state;
       });
     });
+  };
+
+  const _updateResourcesVuex = (storeUpdater, resourceType, resourcesById) => {
+    storeUpdater("MERGE_RESOURCES", {resourceType, resourcesById});
   };
 
   var updateResource = ({id, type, attributes, links, relationships}, storeUpdater) => {
@@ -4594,6 +4619,7 @@
   exports.removeResources = removeResources;
   exports.clearResources = clearResources;
   exports.resourcesReducer = resourcesReducer;
+  exports.mutation = resourcesMutation;
   exports.BaseModel = BaseModel;
 
   Object.defineProperty(exports, '__esModule', { value: true });

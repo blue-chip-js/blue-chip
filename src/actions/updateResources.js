@@ -9,6 +9,7 @@ import {
   isRedux,
   isMobx,
   isSetState,
+  isVuex,
   toJsonApiSpec,
   GraphQL,
   JsonAPI
@@ -31,6 +32,8 @@ const _updateResourcesByStateManger = (spec, payload, storeUpdater) => {
       _updateResourcesRedux(storeUpdater, resourceType, rById);
     } else if (isMobx(storeUpdater)) {
       _updateResourcesMobx(storeUpdater, resourceType, rById);
+    } else if (isVuex(storeUpdater)) {
+      _updateResourcesVuex(storeUpdater, resourceType, rById);
     } else if (isSetState(storeUpdater)) {
       _updateResourcesSetState(storeUpdater, resourceType, rById);
     }
@@ -65,4 +68,8 @@ const _updateResourcesSetState = (
       return state;
     });
   });
+};
+
+const _updateResourcesVuex = (storeUpdater, resourceType, resourcesById) => {
+  storeUpdater("MERGE_RESOURCES", {resourceType, resourcesById});
 };
