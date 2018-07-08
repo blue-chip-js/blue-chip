@@ -1,6 +1,455 @@
 import jsonApiNormalize from 'json-api-normalizer';
 import { GraphQLNormalizr } from 'graphql-normalizr';
 import pluralize from 'pluralize';
+import { resourcesReducer } from '.adapters/redux/resourcesReducer';
+export { resourcesReducer } from '.adapters/redux/resourcesReducer';
+import resourcesMutations from '.adapters/mobx/resourcesMutations';
+export { default as mutations } from '.adapters/mobx/resourcesMutations';
+
+const isGraphQl = payload => {
+  return (
+    payload["data"] && payload["data"][0] && "__typename" in payload["data"][0]
+  );
+};
+
+const isRedux = mutator => {
+  return (
+    mutator.name === "dispatch" ||
+    (typeof mutator.toString() === "string" &&
+      !!mutator.toString().match(/dispatch/))
+  );
+};
+
+const isMobx = mutator => {
+  return typeof mutator === "object";
+};
+
+const isSetState = mutator => {
+  return typeof mutator === "function";
+};
+
+const toJsonApiSpec = (resourceType, resourcesById) => {
+  return Object.entries(
+    resourcesById
+  ).reduce((formattedResourcesById, [id, resource]) => {
+    formattedResourcesById[id] = {
+      type: resourceType,
+      id,
+      attributes: _removeRelationships(resource),
+      links: null,
+      relationships: buildRelationships(resource)
+    };
+
+    return formattedResourcesById;
+  }, {});
+};
+
+const buildRelationships = resource => {
+  return Object.entries(resource).reduce((newObject, [key, value]) => {
+    if (value && Array.isArray(value)) {
+      if (!newObject[key]) {
+        newObject[key] = {data: []};
+      }
+
+      newObject[key].data = value.map(id => ({type: key, id}));
+    }
+    return newObject;
+  }, {});
+};
+
+const _removeRelationships = resource => {
+  return Object.entries(resource).reduce((newObject, [key, value]) => {
+    if (
+      !(value && Array.isArray(value)) ||
+      !(value && typeof value === "object")
+    ) {
+      newObject[key] = value;
+    }
+    return newObject;
+  }, {});
+};
+
+var updateResource = ({id, type, attributes, links, relationships}, mutator) => {
+  if (isRedux(mutator)) {
+    mutator({
+      type: "ADD_OR_REPLACE_RESOURCE_BY_ID",
+      resourceType: type,
+      id,
+      attributes,
+      links,
+      relationships: relationships || buildRelationships(type, attributes)
+    });
+  } else if (isMobx(mutator)) {
+    if (!(type in mutator)) {
+      mutator[type] = {};
+    }
+
+    mutator[type][id] = {
+      type,
+      id,
+      attributes,
+      links,
+      relationships: relationships || buildRelationships(type, attributes)
+    };
+  } else if (isSetState(mutator)) {
+    mutator(state => {
+      if (!(type in state.resources)) {
+        state.resources[type] = {};
+      }
+
+      state.resources[type][id] = {
+        type,
+        id,
+        attributes,
+        links,
+        relationships: relationships || buildRelationships(type, attributes)
+      };
+      return state;
+    });
+  }
+};
+
+var removeResources = (resources, mutator) => {
+  if (isRedux(mutator)) {
+    mutator({
+      type: "REMOVE_RESOURCES_BY_ID",
+      resources
+    });
+  } else if (isMobx(mutator)) {
+    resources.forEach(({type, id}) => {
+      delete mutator[type][id];
+    });
+  }
+};
+
+var removeResource = ({id, type}, mutator) => {
+  if (isRedux(mutator)) {
+    mutator({
+      type: "REMOVE_RESOURCE_BY_ID",
+      resourceType: type,
+      id
+    });
+  } else if (isMobx(mutator)) {
+    delete mutator[type][id];
+  }
+};
+
+var clearResources = (resourceTypes, mutator) => {
+  if (isRedux(mutator)) {
+    mutator({
+      type: "CLEAR_RESOURCES",
+      resourceTypes
+    });
+  } else if (isMobx(mutator)) {
+    resourceTypes.forEach(resourceType => {
+      mutator[resourceType] = {};
+    });
+  }
+};
+
+const graphQLNormalizr = new GraphQLNormalizr();
+const graphQlNormalize = graphQLNormalizr.normalize;
+
+class Actions {
+  static config({adapter, mutator}) {
+    return new Actions(adapter, mutator);
+  }
+
+  constructor(adapter, mutator) {
+    this.adapter = adapter;
+    this.mutator = mutator;
+  }
+
+  updateResources(spec, payload, mutator) {
+    Object.entries(
+      isGraphQl(payload) ? graphQlNormalize(payload) : jsonApiNormalize(payload)
+    ).forEach(([resourceType, resourcesById]) => {
+      const rById = isGraphQl(payload)
+        ? toJsonApiSpec(resourceType, resourcesById)
+        : resourcesById;
+
+      this.adapter.updateResources(mutator, resourceType, rById);
+    });
+  }
+}
+
+class Query {
+  constructor(klass, resourceName, resources, hasMany = [], belongsTo = []) {
+    this.klass = klass;
+    this.resourceName = resourceName;
+    this.resources = resources;
+    this.currentIncludes = [];
+    this.currentResources = {};
+    this.hasMany = hasMany;
+    this.belongsTo = belongsTo;
+    this._setCurrentResources();
+  }
+
+  find(id) {
+    const {
+      resources,
+      resourceName,
+      klass,
+      _convertToModel,
+      hasMany,
+      belongsTo
+    } = this;
+    const { attributes } =
+      resources[resourceName] && resources[resourceName][id];
+    return _convertToModel(
+      klass,
+      resources,
+      { id, ...attributes },
+      hasMany,
+      belongsTo
+    );
+  }
+
+  first() {
+    const { resources, resourceName } = this;
+    const _resources = resources[resourceName];
+    return _resources && _resources[Object.keys(_resources)[0]];
+  }
+
+  all() {
+    return this;
+  }
+
+  where(params) {
+    this._filterAndSetCurrentResourcesByParams(params);
+    return this;
+  }
+
+  whereRelated(relationship, params) {
+    const { resourceName } = this;
+
+    this.currentResources = relationship
+      .query(this.resources)
+      .where(params)
+      .includes([resourceName])
+      .toObjects()
+      .reduce((newResource, relatedResource) => {
+        const relation = relatedResource[resourceName];
+        relation.forEach(({ type, id, ...attributes }) => {
+          newResource[id] = { type, id, attributes };
+        });
+        return newResource;
+      }, {});
+    return this;
+  }
+
+  includes(relationshipTypes) {
+    this.currentIncludes = relationshipTypes;
+    return this;
+  }
+
+  toModels() {
+    if (!this.currentResources) return [];
+    return this._reduceCurrentResources("models");
+  }
+
+  toObjects() {
+    if (!this.currentResources) return [];
+    return this._reduceCurrentResources("objects");
+  }
+
+  // Private
+
+  _reduceCurrentResources(reducerType) {
+    // TODO: needs to be refactored
+    const conversion = reducerType === "models"
+      ? this._convertToModel
+      : this._convertToObject;
+    const {
+      currentIncludes,
+      currentResources,
+      resources,
+      _flattenRelationships,
+      hasMany,
+      belongsTo
+    } = this;
+
+    return Object.values(
+      currentResources
+    ).map(({ id, attributes, relationships, types, links }) => {
+      const newFormattedResource = conversion(
+        this.klass,
+        resources,
+        {
+          id,
+          ...attributes
+        },
+        hasMany,
+        belongsTo
+      );
+
+      if (!currentIncludes.length) return newFormattedResource;
+      return conversion(
+        this.klass,
+        resources,
+        {
+          ...newFormattedResource,
+          ..._flattenRelationships(
+            relationships
+          ).reduce((nextRelationshipObjects, { id, type }) => {
+            if (!currentIncludes.includes(type)) return nextRelationshipObjects;
+            if (!(type in nextRelationshipObjects)) {
+              nextRelationshipObjects[type] = [];
+            }
+
+            if (!resources[type]) return nextRelationshipObjects;
+            const relationData = resources[type][id];
+            if (!relationData) return nextRelationshipObjects;
+            const relationClass = this.hasMany.find(klass => {
+              return pluralize(klass.name.toLowerCase()) === type;
+            });
+
+            nextRelationshipObjects[type].push(
+              conversion(relationClass, resources, {
+                id,
+                ...relationData.attributes
+              })
+            );
+
+            return nextRelationshipObjects;
+          }, {})
+        },
+        hasMany,
+        belongsTo
+      );
+    });
+  }
+
+  _convertToModel(klass, resources, resource, hasMany, belongsTo) {
+    return new klass(resources, resource, hasMany, belongsTo);
+  }
+
+  _convertToObject(klass, resources, resource, hasMany, belongsTo) {
+    return resource;
+  }
+
+  _flattenRelationships(relationships) {
+    return Object.values(
+      relationships
+    ).reduce((nextRelationships, { data }) => {
+      return [...nextRelationships, ...data];
+    }, []);
+  }
+
+  _setCurrentResources() {
+    if (this._isEmpty(this.currentResources) && this.resources) {
+      this.currentResources = this.resources[this.resourceName];
+    }
+  }
+
+  _filterAndSetCurrentResourcesByParams(params) {
+    const resourcesByID = Object.entries(
+      this.currentResources
+    ).reduce((newResource, [id, resource]) => {
+      this._filterResourceByParams(params, newResource, resource, id);
+      return newResource;
+    }, {});
+    this.currentResources = resourcesByID;
+  }
+
+  _filterResourceByParams(params, newResource, resource, id) {
+    Object.entries(params).forEach(([key, value]) => {
+      if (key === "id" && resource.id === value) {
+        newResource[id] = resource;
+      } else if (resource.attributes[key] === value) {
+        newResource[id] = resource;
+      }
+    });
+  }
+
+  _isEmpty(obj) {
+    if (
+      obj === null ||
+      obj === undefined ||
+      Array.isArray(obj) ||
+      typeof obj !== "object"
+    ) {
+      return true;
+    }
+    return Object.getOwnPropertyNames(obj).length === 0 ? true : false;
+  }
+}
+
+class BaseModel {
+  static query(resources) {
+    return new Query(
+      this,
+      pluralize(this.name.toLowerCase()),
+      resources,
+      this.hasMany,
+      this.belongsTo
+    );
+  }
+
+  constructor(resources, attributes, hasMany = [], belongsTo = []) {
+    Object.entries(attributes).forEach(([key, value]) => {
+      this[key] = value;
+    });
+
+    if (hasMany.forEach) {
+      hasMany.forEach(relationship =>
+        this._buildHasManyQuery(this, resources, relationship)
+      );
+    }
+
+    if (belongsTo.forEach) {
+      belongsTo.forEach(relationship => {
+        const relationshipKey = relationship.name.toLowerCase();
+        this[relationshipKey] = () => {
+          // needs to return the related model
+        };
+      });
+    }
+  }
+
+  _filterResources(resource, resources, relationship, relationshipKey) {
+    const currentResourceKey = pluralize(
+      resource.constructor.name.toLowerCase()
+    );
+    const resourceClass = resource.constructor;
+    const relationshipClass = relationship;
+    return {
+      ...resources,
+      [currentResourceKey]: resources[currentResourceKey][resource.id],
+      [relationshipKey]: relationshipClass
+        .query(resources)
+        .whereRelated(resourceClass, {
+          id: resource.id
+        }).currentResources
+    };
+  }
+
+  _buildHasManyQuery(resource, resources, relationship) {
+    const relationshipKey = pluralize(relationship.name.toLowerCase());
+    if (!resource[relationshipKey]) {
+      resource[relationshipKey] = () => {
+        const newResouces = resource._filterResources(
+          resource,
+          resources,
+          relationship,
+          relationshipKey
+        );
+
+        return new Query(
+          relationship,
+          relationshipKey,
+          newResouces,
+          relationship.hasMany,
+          relationship.belongsTo
+        );
+      };
+    }
+  }
+}
+
+const updateResources = (mutator, resourceType, resourcesById) => {
+  mutator({type: "UPDATE_RESOURCES", resourceType, resourcesById});
+};
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
   return typeof obj;
@@ -507,7 +956,7 @@ function produce(baseState, producer) {
 
 const initialState = {};
 
-function resourcesReducer(state = initialState, action) {
+function resourcesReducer$1(state = initialState, action) {
   const {
     type,
     id,
@@ -532,7 +981,7 @@ function resourcesReducer(state = initialState, action) {
           relationships
         };
         break;
-      case "MERGE_RESOURCES":
+      case "UPDATE_RESOURCES":
         _initializeResource(draft, resourceType);
 
         Object.entries(resourcesById).forEach(
@@ -561,503 +1010,9 @@ const _initializeResource = (draft, resourceType) => {
   draft[resourceType] = {};
 };
 
-var resourcesMutations = {
-  UPDATE_RESOURCES: (state, {resourceType, resourcesById}) => {
-    Object.entries(resourcesById).forEach(([id, resource]) => {
-      if (!state[resourceType]) {
-        state[resourceType] = {};
-      }
-      state[resourceType][id] = resource;
-    });
-  }
+var index = {
+  updateResources,
+  resourcesReducer: resourcesReducer$1
 };
 
-const GraphQL = "GraphQL";
-const JsonAPI = "JsonAPI";
-
-const isGraphQl = payload => {
-  return (
-    payload["data"] && payload["data"][0] && "__typename" in payload["data"][0]
-  );
-};
-
-const isRedux = storeUpdater => {
-  return (
-    storeUpdater.name === "dispatch" ||
-    (typeof storeUpdater.toString() === "string" &&
-      !!storeUpdater.toString().match(/dispatch/))
-  );
-};
-
-const isMobx = storeUpdater => {
-  return typeof storeUpdater === "object";
-};
-
-const isSetState = storeUpdater => {
-  return typeof storeUpdater === "function";
-};
-
-const isVuex = storeUpdater => {
-  return (
-    storeUpdater.name === "boundCommit" ||
-    (typeof storeUpdater.toString() === "string" &&
-      !!storeUpdater.toString().match(/boundCommit/))
-  );
-};
-
-const toJsonApiSpec = (resourceType, resourcesById) => {
-  return Object.entries(
-    resourcesById
-  ).reduce((formattedResourcesById, [id, resource]) => {
-    formattedResourcesById[id] = {
-      type: resourceType,
-      id,
-      attributes: _removeRelationships(resource),
-      links: null,
-      relationships: buildRelationships(resource)
-    };
-
-    return formattedResourcesById;
-  }, {});
-};
-
-const buildRelationships = resource => {
-  return Object.entries(resource).reduce((newObject, [key, value]) => {
-    if (value && Array.isArray(value)) {
-      if (!newObject[key]) {
-        newObject[key] = {data: []};
-      }
-
-      newObject[key].data = value.map(id => ({type: key, id}));
-    }
-    return newObject;
-  }, {});
-};
-
-const _removeRelationships = resource => {
-  return Object.entries(resource).reduce((newObject, [key, value]) => {
-    if (
-      !(value && Array.isArray(value)) ||
-      !(value && typeof value === "object")
-    ) {
-      newObject[key] = value;
-    }
-    return newObject;
-  }, {});
-};
-
-const graphQLNormalizr = new GraphQLNormalizr();
-const graphQlNormalize = graphQLNormalizr.normalize;
-
-var updateResources = (payload, storeUpdater) => {
-  isGraphQl(payload)
-    ? _updateResourcesByStateManger(GraphQL, payload, storeUpdater)
-    : _updateResourcesByStateManger(JsonAPI, payload, storeUpdater);
-};
-
-const _updateResourcesByStateManger = (spec, payload, storeUpdater) => {
-  Object.entries(
-    spec === GraphQL ? graphQlNormalize(payload) : jsonApiNormalize(payload)
-  ).forEach(([resourceType, resourcesById]) => {
-    const rById = spec === GraphQL
-      ? toJsonApiSpec(resourceType, resourcesById)
-      : resourcesById;
-    if (isRedux(storeUpdater)) {
-      _updateResourcesRedux(storeUpdater, resourceType, rById);
-    } else if (isMobx(storeUpdater)) {
-      _updateResourcesMobx(storeUpdater, resourceType, rById);
-    } else if (isVuex(storeUpdater)) {
-      _updateResourcesVuex(storeUpdater, resourceType, rById);
-    } else if (isSetState(storeUpdater)) {
-      _updateResourcesSetState(storeUpdater, resourceType, rById);
-    }
-  });
-};
-
-const _updateResourcesRedux = (storeUpdater, resourceType, resourcesById) => {
-  storeUpdater({type: "MERGE_RESOURCES", resourceType, resourcesById});
-};
-
-const _updateResourcesMobx = (storeUpdater, resourceType, resourcesById) => {
-  Object.entries(resourcesById).forEach(([id, resource]) => {
-    if (!storeUpdater[resourceType]) {
-      storeUpdater[resourceType] = {};
-    }
-    storeUpdater[resourceType][id] = resource;
-  });
-};
-
-const _updateResourcesSetState = (
-  storeUpdater,
-  resourceType,
-  resourcesById
-) => {
-  Object.entries(resourcesById).forEach(([id, resource]) => {
-    storeUpdater(state => {
-      if (!state.resources[resourceType]) {
-        state.resources[resourceType] = {};
-      }
-
-      state.resources[resourceType][id] = resource;
-      return state;
-    });
-  });
-};
-
-const _updateResourcesVuex = (storeUpdater, resourceType, resourcesById) => {
-  storeUpdater("UPDATE_RESOURCES", {resourceType, resourcesById});
-};
-
-var updateResource = ({id, type, attributes, links, relationships}, storeUpdater) => {
-  if (isRedux(storeUpdater)) {
-    storeUpdater({
-      type: "ADD_OR_REPLACE_RESOURCE_BY_ID",
-      resourceType: type,
-      id,
-      attributes,
-      links,
-      relationships: relationships || buildRelationships(type, attributes)
-    });
-  } else if (isMobx(storeUpdater)) {
-    if (!(type in storeUpdater)) {
-      storeUpdater[type] = {};
-    }
-
-    storeUpdater[type][id] = {
-      type,
-      id,
-      attributes,
-      links,
-      relationships: relationships || buildRelationships(type, attributes)
-    };
-  } else if (isSetState(storeUpdater)) {
-    storeUpdater(state => {
-      if (!(type in state.resources)) {
-        state.resources[type] = {};
-      }
-
-      state.resources[type][id] = {
-        type,
-        id,
-        attributes,
-        links,
-        relationships: relationships || buildRelationships(type, attributes)
-      };
-      return state;
-    });
-  }
-};
-
-var removeResources = (resources, storeUpdater) => {
-  if (isRedux(storeUpdater)) {
-    storeUpdater({
-      type: "REMOVE_RESOURCES_BY_ID",
-      resources
-    });
-  } else if (isMobx(storeUpdater)) {
-    resources.forEach(({type, id}) => {
-      delete storeUpdater[type][id];
-    });
-  }
-};
-
-var removeResource = ({id, type}, storeUpdater) => {
-  if (isRedux(storeUpdater)) {
-    storeUpdater({
-      type: "REMOVE_RESOURCE_BY_ID",
-      resourceType: type,
-      id
-    });
-  } else if (isMobx(storeUpdater)) {
-    delete storeUpdater[type][id];
-  }
-};
-
-var clearResources = (resourceTypes, storeUpdater) => {
-  if (isRedux(storeUpdater)) {
-    storeUpdater({
-      type: "CLEAR_RESOURCES",
-      resourceTypes
-    });
-  } else if (isMobx(storeUpdater)) {
-    resourceTypes.forEach(resourceType => {
-      storeUpdater[resourceType] = {};
-    });
-  }
-};
-
-class Query {
-  constructor(klass, resourceName, resources, hasMany = [], belongsTo = []) {
-    this.klass = klass;
-    this.resourceName = resourceName;
-    this.resources = resources;
-    this.currentIncludes = [];
-    this.currentResources = {};
-    this.hasMany = hasMany;
-    this.belongsTo = belongsTo;
-    this._setCurrentResources();
-  }
-
-  find(id) {
-    const {
-      resources,
-      resourceName,
-      klass,
-      _convertToModel,
-      hasMany,
-      belongsTo
-    } = this;
-    const { attributes } =
-      resources[resourceName] && resources[resourceName][id];
-    return _convertToModel(
-      klass,
-      resources,
-      { id, ...attributes },
-      hasMany,
-      belongsTo
-    );
-  }
-
-  first() {
-    const { resources, resourceName } = this;
-    const _resources = resources[resourceName];
-    return _resources && _resources[Object.keys(_resources)[0]];
-  }
-
-  all() {
-    return this;
-  }
-
-  where(params) {
-    this._filterAndSetCurrentResourcesByParams(params);
-    return this;
-  }
-
-  whereRelated(relationship, params) {
-    const { resourceName } = this;
-
-    this.currentResources = relationship
-      .query(this.resources)
-      .where(params)
-      .includes([resourceName])
-      .toObjects()
-      .reduce((newResource, relatedResource) => {
-        const relation = relatedResource[resourceName];
-        relation.forEach(({ type, id, ...attributes }) => {
-          newResource[id] = { type, id, attributes };
-        });
-        return newResource;
-      }, {});
-    return this;
-  }
-
-  includes(relationshipTypes) {
-    this.currentIncludes = relationshipTypes;
-    return this;
-  }
-
-  toModels() {
-    if (!this.currentResources) return [];
-    return this._reduceCurrentResources("models");
-  }
-
-  toObjects() {
-    if (!this.currentResources) return [];
-    return this._reduceCurrentResources("objects");
-  }
-
-  // Private
-
-  _reduceCurrentResources(reducerType) {
-    // TODO: needs to be refactored
-    const conversion = reducerType === "models"
-      ? this._convertToModel
-      : this._convertToObject;
-    const {
-      currentIncludes,
-      currentResources,
-      resources,
-      _flattenRelationships,
-      hasMany,
-      belongsTo
-    } = this;
-
-    return Object.values(
-      currentResources
-    ).map(({ id, attributes, relationships, types, links }) => {
-      const newFormattedResource = conversion(
-        this.klass,
-        resources,
-        {
-          id,
-          ...attributes
-        },
-        hasMany,
-        belongsTo
-      );
-
-      if (!currentIncludes.length) return newFormattedResource;
-      return conversion(
-        this.klass,
-        resources,
-        {
-          ...newFormattedResource,
-          ..._flattenRelationships(
-            relationships
-          ).reduce((nextRelationshipObjects, { id, type }) => {
-            if (!currentIncludes.includes(type)) return nextRelationshipObjects;
-            if (!(type in nextRelationshipObjects)) {
-              nextRelationshipObjects[type] = [];
-            }
-
-            if (!resources[type]) return nextRelationshipObjects;
-            const relationData = resources[type][id];
-            if (!relationData) return nextRelationshipObjects;
-            const relationClass = this.hasMany.find(klass => {
-              return pluralize(klass.name.toLowerCase()) === type;
-            });
-
-            nextRelationshipObjects[type].push(
-              conversion(relationClass, resources, {
-                id,
-                ...relationData.attributes
-              })
-            );
-
-            return nextRelationshipObjects;
-          }, {})
-        },
-        hasMany,
-        belongsTo
-      );
-    });
-  }
-
-  _convertToModel(klass, resources, resource, hasMany, belongsTo) {
-    return new klass(resources, resource, hasMany, belongsTo);
-  }
-
-  _convertToObject(klass, resources, resource, hasMany, belongsTo) {
-    return resource;
-  }
-
-  _flattenRelationships(relationships) {
-    return Object.values(
-      relationships
-    ).reduce((nextRelationships, { data }) => {
-      return [...nextRelationships, ...data];
-    }, []);
-  }
-
-  _setCurrentResources() {
-    if (this._isEmpty(this.currentResources) && this.resources) {
-      this.currentResources = this.resources[this.resourceName];
-    }
-  }
-
-  _filterAndSetCurrentResourcesByParams(params) {
-    const resourcesByID = Object.entries(
-      this.currentResources
-    ).reduce((newResource, [id, resource]) => {
-      this._filterResourceByParams(params, newResource, resource, id);
-      return newResource;
-    }, {});
-    this.currentResources = resourcesByID;
-  }
-
-  _filterResourceByParams(params, newResource, resource, id) {
-    Object.entries(params).forEach(([key, value]) => {
-      if (key === "id" && resource.id === value) {
-        newResource[id] = resource;
-      } else if (resource.attributes[key] === value) {
-        newResource[id] = resource;
-      }
-    });
-  }
-
-  _isEmpty(obj) {
-    if (
-      obj === null ||
-      obj === undefined ||
-      Array.isArray(obj) ||
-      typeof obj !== "object"
-    ) {
-      return true;
-    }
-    return Object.getOwnPropertyNames(obj).length === 0 ? true : false;
-  }
-}
-
-class BaseModel {
-  static query(resources) {
-    return new Query(
-      this,
-      pluralize(this.name.toLowerCase()),
-      resources,
-      this.hasMany,
-      this.belongsTo
-    );
-  }
-
-  constructor(resources, attributes, hasMany = [], belongsTo = []) {
-    Object.entries(attributes).forEach(([key, value]) => {
-      this[key] = value;
-    });
-
-    if (hasMany.forEach) {
-      hasMany.forEach(relationship =>
-        this._buildHasManyQuery(this, resources, relationship)
-      );
-    }
-
-    if (belongsTo.forEach) {
-      belongsTo.forEach(relationship => {
-        const relationshipKey = relationship.name.toLowerCase();
-        this[relationshipKey] = () => {
-          // needs to return the related model
-        };
-      });
-    }
-  }
-
-  _filterResources(resource, resources, relationship, relationshipKey) {
-    const currentResourceKey = pluralize(
-      resource.constructor.name.toLowerCase()
-    );
-    const resourceClass = resource.constructor;
-    const relationshipClass = relationship;
-    return {
-      ...resources,
-      [currentResourceKey]: resources[currentResourceKey][resource.id],
-      [relationshipKey]: relationshipClass
-        .query(resources)
-        .whereRelated(resourceClass, {
-          id: resource.id
-        }).currentResources
-    };
-  }
-
-  _buildHasManyQuery(resource, resources, relationship) {
-    const relationshipKey = pluralize(relationship.name.toLowerCase());
-    if (!resource[relationshipKey]) {
-      resource[relationshipKey] = () => {
-        const newResouces = resource._filterResources(
-          resource,
-          resources,
-          relationship,
-          relationshipKey
-        );
-
-        return new Query(
-          relationship,
-          relationshipKey,
-          newResouces,
-          relationship.hasMany,
-          relationship.belongsTo
-        );
-      };
-    }
-  }
-}
-
-export { updateResources, updateResource, removeResource, removeResources, clearResources, resourcesReducer, resourcesMutations as mutations, BaseModel };
+export { Actions, updateResource, removeResource, removeResources, clearResources, BaseModel, index as reduxAdapter };

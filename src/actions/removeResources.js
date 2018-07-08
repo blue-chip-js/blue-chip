@@ -1,16 +1,16 @@
 import {isRedux, isMobx, isSetState} from "./helpers";
 
-export default (resources, storeUpdater) => {
-  if (isRedux(storeUpdater)) {
-    storeUpdater({
+export default (resources, mutator) => {
+  if (isRedux(mutator)) {
+    mutator({
       type: "REMOVE_RESOURCES_BY_ID",
       resources
     });
-  } else if (isMobx(storeUpdater)) {
+  } else if (isMobx(mutator)) {
     resources.forEach(({type, id}) => {
-      delete storeUpdater[type][id];
+      delete mutator[type][id];
     });
-  } else if (isSetState(storeUpdater)) {
+  } else if (isSetState(mutator)) {
     // TODO: need to implement
   }
 };

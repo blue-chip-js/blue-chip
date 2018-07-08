@@ -18,17 +18,17 @@ Object.defineProperty(dispatch, "name", {value: "dispatch"});
 describe("updateResources", () => {
   describe("Redux", () => {
     describe("JsonApi", () => {
-      test("dispatches MERGE_RESOURCES for each ", () => {
+      test("dispatches UPDATE_RESOURCES for each ", () => {
         const tasksMergeResourcesAction = {
           resourceType: "tasks",
           resourcesById: normalizedJsonApiTasksPayload,
-          type: "MERGE_RESOURCES"
+          type: "UPDATE_RESOURCES"
         };
 
         const checklistsMergeResourcesAction = {
           resourceType: "checklists",
           resourcesById: normalizedJsonApiChecklistsPayload,
-          type: "MERGE_RESOURCES"
+          type: "UPDATE_RESOURCES"
         };
 
         updateResources(jsonApiPayload, dispatch);
@@ -38,17 +38,17 @@ describe("updateResources", () => {
     });
 
     describe("GraphQl", () => {
-      test("dispatches MERGE_RESOURCES for each ", () => {
+      test("dispatches UPDATE_RESOURCES for each ", () => {
         const tasksMergeResourcesAction = {
           resourceType: "tasks",
           resourcesById: normalizedGraphQlTaskPayload,
-          type: "MERGE_RESOURCES"
+          type: "UPDATE_RESOURCES"
         };
 
         const checklistsMergeResourcesAction = {
           resourceType: "checklists",
           resourcesById: normalizedGraphQlChecklistPayload,
-          type: "MERGE_RESOURCES"
+          type: "UPDATE_RESOURCES"
         };
 
         updateResources(graphQlPayload, dispatch);

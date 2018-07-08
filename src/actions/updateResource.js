@@ -1,8 +1,8 @@
 import {isRedux, isMobx, isSetState, buildRelationships} from "./helpers";
 
-export default ({id, type, attributes, links, relationships}, storeUpdater) => {
-  if (isRedux(storeUpdater)) {
-    storeUpdater({
+export default ({id, type, attributes, links, relationships}, mutator) => {
+  if (isRedux(mutator)) {
+    mutator({
       type: "ADD_OR_REPLACE_RESOURCE_BY_ID",
       resourceType: type,
       id,
@@ -10,20 +10,20 @@ export default ({id, type, attributes, links, relationships}, storeUpdater) => {
       links,
       relationships: relationships || buildRelationships(type, attributes)
     });
-  } else if (isMobx(storeUpdater)) {
-    if (!(type in storeUpdater)) {
-      storeUpdater[type] = {};
+  } else if (isMobx(mutator)) {
+    if (!(type in mutator)) {
+      mutator[type] = {};
     }
 
-    storeUpdater[type][id] = {
+    mutator[type][id] = {
       type,
       id,
       attributes,
       links,
       relationships: relationships || buildRelationships(type, attributes)
     };
-  } else if (isSetState(storeUpdater)) {
-    storeUpdater(state => {
+  } else if (isSetState(mutator)) {
+    mutator(state => {
       if (!(type in state.resources)) {
         state.resources[type] = {};
       }
