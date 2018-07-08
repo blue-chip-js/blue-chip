@@ -23,6 +23,14 @@ export const isSetState = storeUpdater => {
   return typeof storeUpdater === "function";
 };
 
+export const isVuex = storeUpdater => {
+  return (
+    storeUpdater.name === "boundCommit" ||
+    (typeof storeUpdater.toString() === "string" &&
+      !!storeUpdater.toString().match(/boundCommit/))
+  );
+};
+
 export const toJsonApiSpec = (resourceType, resourcesById) => {
   return Object.entries(
     resourcesById

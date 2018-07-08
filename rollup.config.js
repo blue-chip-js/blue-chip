@@ -5,7 +5,7 @@ import pkg from "./package.json";
 export default [
   // browser-friendly UMD build
   {
-    input: "src/index.js",
+    input: "lib/index.js",
     output: {
       name: "bundle.js",
       file: pkg.browser,
@@ -21,7 +21,7 @@ export default [
   // an array for the `output` option, where we can specify
   // `file` and `format` for each target)
   {
-    input: "src/index.js",
+    input: "lib/index.js",
     output: [{file: pkg.main, format: "cjs"}, {file: pkg.module, format: "es"}],
     plugins: [resolve()],
     external: ["pluralize", "json-api-normalizer", "graphql-normalizr"]
