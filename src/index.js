@@ -1,5 +1,5 @@
-import {resourcesReducer} from ".adapters/redux/resourcesReducer";
-import mutations from ".adapters/mobx/resourcesMutations";
+import {resourcesReducer} from "./adapters/redux";
+import mutations from "./adapters/vuex/resourcesMutations";
 import {
   Actions,
   updateResource,

@@ -605,6 +605,7 @@ each(objectTraps, function (key, fn) {
     };
 });
 
+<<<<<<< HEAD
 function createState(parent, base) {
     return {
         modified: false,
@@ -953,6 +954,13 @@ function produce(baseState, producer) {
         var returnValue = producer(baseState);
         return returnValue === undefined ? baseState : returnValue;
     }
+=======
+var _redux = require("./adapters/redux");
+
+var _redux2 = _interopRequireDefault(_redux);
+
+var _resourcesMutations = require("./adapters/vuex/resourcesMutations");
+>>>>>>> Add config
 
     if (!isProxyable(baseState)) throw new Error("the first argument to an immer producer should be a primitive, plain object or array, got " + (typeof baseState === "undefined" ? "undefined" : _typeof(baseState)) + ": \"" + baseState + "\"");
     return getUseProxies() ? produceProxy(baseState, producer) : produceEs5(baseState, producer);
@@ -988,6 +996,7 @@ function resourcesReducer$1(state = initialState, action) {
       case "UPDATE_RESOURCES":
         _initializeResource(draft, resourceType);
 
+<<<<<<< HEAD
         Object.entries(resourcesById).forEach(
           ([id, resource]) => (draft[resourceType][id] = resource)
         );
@@ -1028,3 +1037,16 @@ exports.removeResources = removeResources;
 exports.clearResources = clearResources;
 exports.BaseModel = BaseModel;
 exports.reduxAdapter = index;
+=======
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.Actions = _actions.Actions;
+exports.updateResource = _actions.updateResource;
+exports.removeResource = _actions.removeResource;
+exports.removeResources = _actions.removeResources;
+exports.clearResources = _actions.clearResources;
+exports.resourcesReducer = _redux.resourcesReducer;
+exports.mutations = _resourcesMutations2.default;
+exports.BaseModel = _BaseModel2.default;
+exports.reduxAdapter = _redux2.default;
+>>>>>>> Add config

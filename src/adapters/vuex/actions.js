@@ -1,3 +1,3 @@
-export const updateResourcesVuex = (mutator, resourceType, resourcesById) => {
+export const updateResources = (mutator, resourceType, resourcesById) => {
   mutator("UPDATE_RESOURCES", {resourceType, resourcesById});
 };
