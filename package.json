@@ -8,8 +8,9 @@
   "scripts": {
     "test": "jest",
     "cover": "jest --coverage --coverageReporters=text-lcov | coveralls",
-    "build": "rollup -c",
-    "dev": "rollup -c -w"
+    "build": "yarn run babel && rollup -c",
+    "dev": "rollup -c -w",
+    "babel": "node_modules/babel-cli/bin/babel.js src --out-dir lib"
   },
   "keywords": [
     "redux",
