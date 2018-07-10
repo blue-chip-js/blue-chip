@@ -1,4 +1,4 @@
 import resourcesMutations from "./resourcesMutations";
-import {updateResources} from "./actions";
+import * as actions from "./actions";
 
-export {resourcesMutations, updateResources};
+export {actions, resourcesMutations};

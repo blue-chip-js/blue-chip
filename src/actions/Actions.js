@@ -27,4 +27,20 @@ export default class Actions {
       this.actions.updateResources(this.mutator, resourceType, rById);
     });
   }
+
+  updateResource(resource) {
+    this.actions.updateResource(this.mutator, resource);
+  }
+
+  removeResources(resources) {
+    this.actions.removeResources(this.mutator, resources);
+  }
+
+  removeResource(resource) {
+    this.actions.removeResource(this.mutator, resource);
+  }
+
+  clearResources(resourceTypes) {
+    this.actions.clearResources(this.mutator, resourceTypes);
+  }
 }
