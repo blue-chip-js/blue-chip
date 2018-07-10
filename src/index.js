@@ -1,5 +1,3 @@
-import {resourcesReducer} from "./adapters/redux";
-import mutations from "./adapters/vuex/resourcesMutations";
 import {
   Actions,
   updateResource,
@@ -8,7 +6,10 @@ import {
   clearResources
 } from "./actions";
 import BaseModel from "./BaseModel";
+
+// TODO: remove to adapters
 import reduxAdapter from "./adapters/redux";
+import mutations from "./adapters/vuex/resourcesMutations";
 
 export {
   Actions,
@@ -16,8 +17,7 @@ export {
   removeResource,
   removeResources,
   clearResources,
-  resourcesReducer,
-  mutations,
   BaseModel,
+  mutations,
   reduxAdapter
 };

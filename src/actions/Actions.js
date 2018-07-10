@@ -12,11 +12,11 @@ export default class Actions {
   }
 
   constructor(adapter, mutator) {
-    this.adapter = adapter;
+    this.actions = adapter.actions;
     this.mutator = mutator;
   }
 
-  updateResources(spec, payload, mutator) {
+  updateResources(payload) {
     Object.entries(
       isGraphQl(payload) ? graphQlNormalize(payload) : jsonApiNormalize(payload)
     ).forEach(([resourceType, resourcesById]) => {
@@ -24,7 +24,7 @@ export default class Actions {
         ? toJsonApiSpec(resourceType, resourcesById)
         : resourcesById;
 
-      this.adapter.updateResources(mutator, resourceType, rById);
+      this.actions.updateResources(this.mutator, resourceType, rById);
     });
   }
 }

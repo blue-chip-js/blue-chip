@@ -600,6 +600,16 @@ each(objectTraps, function (key, fn) {
         return fn.apply(this, arguments);
     };
 });
+<<<<<<< HEAD
+=======
+exports.reduxAdapter = exports.mutations = exports.BaseModel = exports.clearResources = exports.removeResources = exports.removeResource = exports.updateResource = exports.Actions = undefined;
+
+var _actions = require("./actions");
+
+var _BaseModel = require("./BaseModel");
+
+var _BaseModel2 = _interopRequireDefault(_BaseModel);
+>>>>>>> Initial working adapters with updateResources
 
 <<<<<<< HEAD
 function createState(parent, base) {
@@ -993,6 +1003,7 @@ function resourcesReducer$1(state = initialState, action) {
         _initializeResource(draft, resourceType);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         Object.entries(resourcesById).forEach(
           ([id, resource]) => (draft[resourceType][id] = resource)
         );
@@ -1026,15 +1037,17 @@ var index = {
 
 export { Actions, updateResource, removeResource, removeResources, clearResources, BaseModel, index as reduxAdapter };
 =======
+=======
+>>>>>>> Initial working adapters with updateResources
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// TODO: remove to adapters
 exports.Actions = _actions.Actions;
 exports.updateResource = _actions.updateResource;
 exports.removeResource = _actions.removeResource;
 exports.removeResources = _actions.removeResources;
 exports.clearResources = _actions.clearResources;
-exports.resourcesReducer = _redux.resourcesReducer;
-exports.mutations = _resourcesMutations2.default;
 exports.BaseModel = _BaseModel2.default;
+exports.mutations = _resourcesMutations2.default;
 exports.reduxAdapter = _redux2.default;
 >>>>>>> Add config
