@@ -2,6 +2,37 @@
 
 BlueChip accepts payloads from GraphQL or JsonAPI servers, normalizes them into your store and provides an ORM like syntax for retrieving the data for use.
 
+<details>
+  <summary><strong>Table of Contents</strong></summary>
+<!-- toc -->
+
+- [The Basics](#the-basics)
+- [What BlueChip Is](#what-blue-chip-is)
+  - [State API](#state-api)
+  - [Selector API](#selector-api)
+- [What BlueChip Is Not ](#what-bluechip-is-not)
+  - [Fetching](#fetching)
+  - [Client Side Store](#client-side-store)
+- [Why BlueChip?](#why-bluechip)
+- [Demos](#demos)
+  - [Redux Demo](#redux-demo)
+  - [MobX Demo](#mobx-demo)
+  - [React setState Demo](#react-set-state-demo)
+  - [Unstated Demo](#unstated-demo)
+- [Getting Started](#getting-started)
+- [Redux](#redux)
+  - [Actions](#actions)
+  - [Update a Single Resource](#update-a-single-resource)
+  - [Reducers](#reducers)
+  - [Models](#models)
+  - [Containers](#containers)
+  - [Store Structure](#store-structure)
+- [Project Status](#project-status)
+- [Roadmap](#roadmap)
+
+<!-- tocstop -->
+</details>
+
 ## The Basics 
 There are only two things that BlueChip does.
 
@@ -47,13 +78,15 @@ BlueChip is agnostic to which client-side state management library you choose to
 
 You are familiar with and prefer using ORM's when querying and working with data. 
 
-## Redux Demo
+## Demos
+
+### Redux Demo
 [Demo BlueChip/Redux Applicaiton](https://codesandbox.io/s/l5j9qk86q7)
-## MobX Demo
+### MobX Demo
 [Demo BlueChip/Mobx Application](https://codesandbox.io/s/1qpv9r03qj)
-## React setState Demo
+### React setState Demo
 [Demo BlueChip/React setState Application](https://codesandbox.io/s/4z5xw80q8w)
-## Unstated Demo
+### Unstated Demo
 [Demo Unstated Application](https://codesandbox.io/s/xjl733kjq4)
 
 ## Getting Started 
@@ -62,7 +95,9 @@ To start, choose your state management flavor. This is an example using Redux.
 `$ npm i -S blue-chip`
 Or
 `yarn add blue-chip`
+
 ## Redux
+
 ### Actions
 Batch update resources:
 ```javascript
@@ -80,7 +115,7 @@ export const fetchChecklists = async (dispatch, state) => {
   }
 };
 ```
-### Update a single resource:
+### Update a single resource
 ```javascript
 import { updateResource } from 'blue-chip';
 ​
