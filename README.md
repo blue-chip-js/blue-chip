@@ -7,7 +7,7 @@ BlueChip accepts payloads from GraphQL or JsonAPI servers, normalizes them into 
 <!-- toc -->
 
 - [The Basics](#the-basics)
-- [What BlueChip Is](#what-blue-chip-is)
+- [What BlueChip Is](#what-bluechip-is)
   - [State API](#state-api)
   - [Selector API](#selector-api)
 - [What BlueChip Is Not ](#what-bluechip-is-not)
