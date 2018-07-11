@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`updateResources MobX updateResources GraphQl updates the store 1`] = `
+exports[`mobx updateResources GraphQl updates the store 1`] = `
 Object {
   "checklists": Object {
     "4": Object {
@@ -138,7 +138,7 @@ Object {
 }
 `;
 
-exports[`updateResources MobX updateResources JsonApi updates the store 1`] = `
+exports[`mobx updateResources JsonApi updates the store 1`] = `
 Object {
   "checklists": Object {
     "1": Object {
@@ -288,5 +288,26 @@ Object {
       "type": "tasks",
     },
   },
+}
+`;
+
+exports[`mobx updateResources clearResources clears the store for the provided resources 1`] = `
+Object {
+  "checklists": Object {},
+  "tasks": Object {},
+}
+`;
+
+exports[`mobx updateResources removeResource clears the store for the provided resources 1`] = `
+Object {
+  "checklists": Object {
+    "2": Object {},
+  },
+}
+`;
+
+exports[`mobx updateResources removeResources clears the store for the provided resources 1`] = `
+Object {
+  "checklists": Object {},
 }
 `;

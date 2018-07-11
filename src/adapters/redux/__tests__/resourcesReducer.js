@@ -1,10 +1,10 @@
-import reducer from "../src/adapters/redux/resourcesReducer";
+import reducer from "../resourcesReducer";
 import normalizedJsonApiChecklistsPayload
-  from "../__testHelpers__/fixtrues/normalizedJsonApiChecklistsPayload";
+  from "../../../../__testHelpers__/fixtrues/normalizedJsonApiChecklistsPayload";
 import normalizedJsonApiTasksPayload
-  from "../__testHelpers__/fixtrues/normalizedJsonApiTasksPayload";
+  from "../../../../__testHelpers__/fixtrues/normalizedJsonApiTasksPayload";
 import hugeNormalizedJsonApiChecklistsPayload
-  from "../__testHelpers__/fixtrues/hugeNormalizedJsonApiChecklistsPayload";
+  from "../../../../__testHelpers__/fixtrues/hugeNormalizedJsonApiChecklistsPayload";
 
 describe("post reducer", () => {
   describe("UPDATE_RESOURCES", () => {
