@@ -17,9 +17,11 @@ BlueChip accepts payloads from GraphQL or JsonAPI servers, normalizes them into 
 - [Demos](#demos)
   - [Redux Demo](#redux-demo)
   - [MobX Demo](#mobx-demo)
-  - [React setState Demo](#react-set-state-demo)
+  - [React setState Demo](#react-setstate-demo)
   - [Unstated Demo](#unstated-demo)
 - [Getting Started](#getting-started)
+  - [Adapters](#adapters)    
+  - [Configuration](#configuration)
 - [Redux](#redux)
   - [Actions](#actions)
   - [Update a Single Resource](#update-a-single-resource)
@@ -95,6 +97,24 @@ To start, choose your state management flavor. This is an example using Redux.
 `$ npm i -S blue-chip`
 Or
 `yarn add blue-chip`
+
+### Adapters
+
+To ensure that BlueChip is as flexible as possible, the state managment layer is implemented as adapters. These adapters are what do the work to mutate the state managment stores while BlueChip is in charge of delegating.  To use the adapters you will need to setup a configuration file.
+
+### Configuration
+
+The configuration file needs to be setup so that you can import and use the mutator actions.
+
+```
+import { Actions, ReduxAdapter } from "blue-chip";
+import store from "./store";
+
+export const actions = Actions.config({
+  adapter: ReduxAdapter,
+  mutator: store.dispatch
+});
+```
 
 ## Redux
 
