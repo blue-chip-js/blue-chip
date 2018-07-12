@@ -1,36 +1,36 @@
-import reducer from "../src/resourcesReducer";
+import reducer from "../resourcesReducer";
 import normalizedJsonApiChecklistsPayload
-  from "../__testHelpers__/fixtrues/normalizedJsonApiChecklistsPayload";
+  from "../../../../__testHelpers__/fixtrues/normalizedJsonApiChecklistsPayload";
 import normalizedJsonApiTasksPayload
-  from "../__testHelpers__/fixtrues/normalizedJsonApiTasksPayload";
+  from "../../../../__testHelpers__/fixtrues/normalizedJsonApiTasksPayload";
 import hugeNormalizedJsonApiChecklistsPayload
-  from "../__testHelpers__/fixtrues/hugeNormalizedJsonApiChecklistsPayload";
+  from "../../../../__testHelpers__/fixtrues/hugeNormalizedJsonApiChecklistsPayload";
 
 describe("post reducer", () => {
-  describe("MERGE_RESOURCES", () => {
+  describe("UPDATE_RESOURCES", () => {
     it("should return the initial state", () => {
       expect(reducer(undefined, {})).toEqual({});
     });
-    it("should update the store given a MERGE_RESOURCES action", () => {
+    it("should update the store given a UPDATE_RESOURCES action", () => {
       const checklistsMergeResourcesAction = {
         resourceType: "tasks",
         resourcesById: normalizedJsonApiChecklistsPayload,
-        type: "MERGE_RESOURCES"
+        type: "UPDATE_RESOURCES"
       };
       expect(reducer({}, checklistsMergeResourcesAction)).toEqual({
         tasks: normalizedJsonApiChecklistsPayload
       });
     });
-    it("should handle multiple resources given multiple MERGE_RESOURCES", () => {
+    it("should handle multiple resources given multiple UPDATE_RESOURCES", () => {
       const checklistsMergeResourcesAction = {
         resourceType: "checklists",
         resourcesById: normalizedJsonApiChecklistsPayload,
-        type: "MERGE_RESOURCES"
+        type: "UPDATE_RESOURCES"
       };
       const tasksMergeResourcesAction = {
         resourceType: "tasks",
         resourcesById: normalizedJsonApiTasksPayload,
-        type: "MERGE_RESOURCES"
+        type: "UPDATE_RESOURCES"
       };
       const firstUpdatedState = reducer({}, checklistsMergeResourcesAction);
       expect(reducer(firstUpdatedState, tasksMergeResourcesAction)).toEqual({
@@ -42,7 +42,7 @@ describe("post reducer", () => {
       const checklistsMergeResourcesAction = {
         resourceType: "checklists",
         resourcesById: normalizedJsonApiChecklistsPayload,
-        type: "MERGE_RESOURCES"
+        type: "UPDATE_RESOURCES"
       };
       const firstUpdatedState = reducer({}, checklistsMergeResourcesAction);
       expect(
@@ -193,7 +193,7 @@ function smallPayloadReducerCall() {
       const checklistsMergeResourcesAction = {
         resourceType: "checklists",
         resourcesById: normalizedJsonApiChecklistsPayload,
-        type: "MERGE_RESOURCES"
+        type: "UPDATE_RESOURCES"
       };
 
       const firstUpdatedState = reducer({}, checklistsMergeResourcesAction);
@@ -211,7 +211,7 @@ function hugePayloadReducerCall() {
       const checklistsMergeResourcesAction = {
         resourceType: "checklists",
         resourcesById: hugeNormalizedJsonApiChecklistsPayload,
-        type: "MERGE_RESOURCES"
+        type: "UPDATE_RESOURCES"
       };
 
       const firstUpdatedState = reducer({}, checklistsMergeResourcesAction);

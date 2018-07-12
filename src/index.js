@@ -1,19 +1,17 @@
-import resourcesReducer from "./resourcesReducer";
-import {
-  updateResources,
-  updateResource,
-  removeResource,
-  removeResources,
-  clearResources
-} from "./actions";
+import {Actions} from "./actions";
 import BaseModel from "./BaseModel";
 
+// TODO: remove to adapters
+import reduxAdapter from "./adapters/redux";
+import mobxAdapter from "./adapters/mobx";
+import setStateAdapter from "./adapters/setState";
+import vuexAdapter from "./adapters/vuex";
+
 export {
-  updateResources,
-  updateResource,
-  removeResource,
-  removeResources,
-  clearResources,
-  resourcesReducer,
-  BaseModel
+  Actions,
+  BaseModel,
+  vuexAdapter,
+  reduxAdapter,
+  mobxAdapter,
+  setStateAdapter
 };

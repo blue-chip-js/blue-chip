@@ -27,7 +27,7 @@ export default function resourcesReducer(state = initialState, action) {
           relationships
         };
         break;
-      case "MERGE_RESOURCES":
+      case "UPDATE_RESOURCES":
         _initializeResource(draft, resourceType);
 
         Object.entries(resourcesById).forEach(

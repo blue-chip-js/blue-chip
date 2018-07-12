@@ -7,20 +7,28 @@ export const isGraphQl = payload => {
   );
 };
 
-export const isRedux = storeUpdater => {
+export const isRedux = mutator => {
   return (
-    storeUpdater.name === "dispatch" ||
-    (typeof storeUpdater.toString() === "string" &&
-      !!storeUpdater.toString().match(/dispatch/))
+    mutator.name === "dispatch" ||
+    (typeof mutator.toString() === "string" &&
+      !!mutator.toString().match(/dispatch/))
   );
 };
 
-export const isMobx = storeUpdater => {
-  return typeof storeUpdater === "object";
+export const isMobx = mutator => {
+  return typeof mutator === "object";
 };
 
-export const isSetState = storeUpdater => {
-  return typeof storeUpdater === "function";
+export const isSetState = mutator => {
+  return typeof mutator === "function";
+};
+
+export const isVuex = mutator => {
+  return (
+    mutator.name === "boundCommit" ||
+    (typeof mutator.toString() === "string" &&
+      !!mutator.toString().match(/boundCommit/))
+  );
 };
 
 export const toJsonApiSpec = (resourceType, resourcesById) => {

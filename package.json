@@ -1,6 +1,6 @@
 {
   "name": "blue-chip",
-  "version": "0.1.21",
+  "version": "0.1.26",
   "description": "BlueChip accepts payloads from GraphQL or JsonAPI servers, normalizes them into your store and provides an ORM like syntax for retrieving the data for use.",
   "main": "dist/bundle.cjs.js",
   "module": "dist/bundle.esm.js",
@@ -8,8 +8,9 @@
   "scripts": {
     "test": "jest",
     "cover": "jest --coverage --coverageReporters=text-lcov | coveralls",
-    "build": "rollup -c",
-    "dev": "rollup -c -w"
+    "build": "yarn run babel && rollup -c",
+    "dev": "rollup -c -w",
+    "babel": "node_modules/babel-cli/bin/babel.js src --out-dir lib"
   },
   "keywords": [
     "redux",
