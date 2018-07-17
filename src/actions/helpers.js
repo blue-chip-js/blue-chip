@@ -7,30 +7,6 @@ export const isGraphQl = payload => {
   );
 };
 
-export const isRedux = mutator => {
-  return (
-    mutator.name === "dispatch" ||
-    (typeof mutator.toString() === "string" &&
-      !!mutator.toString().match(/dispatch/))
-  );
-};
-
-export const isMobx = mutator => {
-  return typeof mutator === "object";
-};
-
-export const isSetState = mutator => {
-  return typeof mutator === "function";
-};
-
-export const isVuex = mutator => {
-  return (
-    mutator.name === "boundCommit" ||
-    (typeof mutator.toString() === "string" &&
-      !!mutator.toString().match(/boundCommit/))
-  );
-};
-
 export const toJsonApiSpec = (resourceType, resourcesById) => {
   return Object.entries(
     resourcesById
@@ -44,23 +20,6 @@ export const toJsonApiSpec = (resourceType, resourcesById) => {
     };
 
     return formattedResourcesById;
-  }, {});
-};
-
-export const buildRelationships = resource => {
-  return Object.entries(resource).reduce((newObject, [key, value]) => {
-    if (value && Array.isArray(value)) {
-      if (!newObject[key]) {
-        newObject[key] = {data: []};
-      }
-
-      newObject[key].data = value.map(id => ({type: key, id}));
-    }
-
-    if (value && typeof value === "object") {
-      // TODO: handle hasOne and belongsTo
-    }
-    return newObject;
   }, {});
 };
 
