@@ -74,9 +74,9 @@ BlueChip is agnostic to which client-side state management library you choose to
 ## Why BlueChip?
 1. You have multiple data sources (or multiple projects with different data sources) and want to consistently interact with all of them in the same way in your client-side state management systems.  You can easily normalize and connect components from GraphQL, JsonAPI and custom formatted API's.
 
-2. You already have a state manager that you like or is a requirement of a project and do not want to adopt multiple to handle both GraphQL and JSON Rest data.
+2. You would like to keep resources unnessted in your stores for ease of updating, simplicity of mutation schema and ability to easily share resources across your application.
 
-3. You would like to keep resources unnessted in your stores for ease of updating, simplicity of mutation schema and ability to easily share resources across your application.
+3. You already have a state manager that you like or is a requirement of a project and do not want to adopt multiple to handle both GraphQL and JSON Rest data.
 
 You are familiar with and prefer using ORM's when querying and working with data. 
 
