@@ -107,11 +107,12 @@ To ensure that BlueChip is as flexible as possible, the state managment layer is
 The configuration file needs to be setup so that you can import and use the mutator actions.
 
 ```
-import { Actions, ReduxAdapter } from "blue-chip";
+import { Actions } from "@blue-chip/core";
+import reduxAdapter from "@blue-chip/redux-adapter";
 import store from "./store";
 
 export const actions = Actions.config({
-  adapter: ReduxAdapter,
+  adapter: reduxAdapter,
   mutator: store.dispatch
 });
 ```
@@ -121,52 +122,63 @@ export const actions = Actions.config({
 ### Actions
 Batch update resources:
 ```javascript
-import { updateResources } from 'blue-chip';
-​
-export const fetchChecklists = async (dispatch, state) => { 
-  dispatch({ type: "LOADING_DATA" }); 
-  try { 
-    const response = await fetch("/checklists.json"); 
+import { actions } from "../BlueChipConfig";
+
+export const fetchChecklists = async (dispatch, state) => {
+  dispatch({ type: "LOADING_DATA" });
+  try {
+    const response = await fetch("/checklists.json", {
+      headers: {
+        "content-type": "application/json"
+      }
+    });
     const payload = await response.json();
-    updateResources(payload, dispatch); 
-    dispatch({ type: "LOADING_SUCCESS" }); } 
-  catch (error) { 
-    dispatch({ type: "LOADING_ERROR" }); 
+
+    actions.updateResources(payload);
+    dispatch({ type: "LOADING_SUCCESS" });
+  } catch (error) {
+    console.log("error", error);
+    dispatch({ type: "LOADING_ERROR" });
   }
 };
 ```
 ### Update a single resource
 ```javascript
-import { updateResource } from 'blue-chip';
-​
-export const updateTask = ({ id, ...attributes }, dispatch) => { 
-  const resource = { id, attributes, type: "tasks" };
-  updateResource(resource, dispatch);
+import { actions } from "../BlueChipConfig";
+
+export const updateTask = ({ id, ...attributes }) => {
+  actions.updateResource({ id, attributes, type: "tasks" });
 };
 ```
 ### Reducers
 ```javascript
 import { combineReducers } from "redux";
-import { resourcesReducer as resources } from 'blue-chip';
-​
-export default combineReducers({resources});
+import reduxAdapter from "@blue-chip/redux-adapter";
+
+export default combineReducers({
+  resources: reduxAdapter.resourcesReducer
+});
 ```
 ### Models
 Just like any other ORM you will be defining model classes:
 ```javascript
-import { BaseModel } from "blue-chip";
+import { BaseModel } from "@blue-chip/core";
 import Task from "./Task";
-​
-export default class Checklist extends BaseModel { 
-   static get hasMany() { return [Task]; }
+
+export default class Checklist extends BaseModel {
+  static get hasMany() {
+    return [Task];
+  }
 }
 ```
 ```javascript
-import { BaseModel } from "blue-chip";
+import { BaseModel } from "@blue-chip/core";
 import Checklist from "./Checklist";
-​
-export default class Task extends BaseModel { 
-  static get belongsTo() { return [Checklist]; }
+
+export default class Task extends BaseModel {
+  static get belongsTo() {
+    return [Checklist];
+  }
 }
 ```
 ### Containers
@@ -180,11 +192,11 @@ const mapStateToProps = state => {
                   .toObjects() 
   };
 };
-​
+
 const mapDispatchToProps = dispatch => ({ 
   updateTask: task => updateTask(dispatch, task)
 });
-​
+
 export default connect(mapStateToProps, mapDispatchToProps)(Container);
 ```
 ### Store Structure
