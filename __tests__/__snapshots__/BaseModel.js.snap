@@ -3,13 +3,13 @@
 exports[`BaseModel models all() Returns a list of models 1`] = `
 Array [
   Checklist {
-    "id": 1,
-    "name": "Onboarding Rest",
+    "id": 2,
+    "name": "Project Audit Rest",
     "tasks": [Function],
   },
   Checklist {
-    "id": 2,
-    "name": "Project Audit Rest",
+    "id": 1,
+    "name": "Onboarding Rest",
     "tasks": [Function],
   },
   Checklist {
@@ -30,6 +30,7 @@ Checklist {
 
 exports[`BaseModel models first() returns the first record in the store 1`] = `
 Object {
+  "__index": 1,
   "attributes": Object {
     "name": "Onboarding Rest",
   },
@@ -73,20 +74,6 @@ Array [
 exports[`BaseModel models includes()  1`] = `
 Array [
   Checklist {
-    "id": 1,
-    "name": "Onboarding Rest",
-    "tasks": Array [
-      Task {
-        "description": "Onboarding REST 1",
-        "id": 1,
-      },
-      Task {
-        "description": "Onboarding REST 2",
-        "id": 2,
-      },
-    ],
-  },
-  Checklist {
     "id": 2,
     "name": "Project Audit Rest",
     "tasks": Array [
@@ -97,6 +84,20 @@ Array [
       Task {
         "description": "Project Audit Rest 4",
         "id": 4,
+      },
+    ],
+  },
+  Checklist {
+    "id": 1,
+    "name": "Onboarding Rest",
+    "tasks": Array [
+      Task {
+        "description": "Onboarding REST 1",
+        "id": 1,
+      },
+      Task {
+        "description": "Onboarding REST 2",
+        "id": 2,
       },
     ],
   },
@@ -136,12 +137,12 @@ Checklist {
 exports[`BaseModel objects all()  1`] = `
 Array [
   Object {
-    "id": 1,
-    "name": "Onboarding Rest",
-  },
-  Object {
     "id": 2,
     "name": "Project Audit Rest",
+  },
+  Object {
+    "id": 1,
+    "name": "Onboarding Rest",
   },
   Object {
     "id": 3,
@@ -161,20 +162,6 @@ Checklist {
 exports[`BaseModel objects includes()  1`] = `
 Array [
   Object {
-    "id": 1,
-    "name": "Onboarding Rest",
-    "tasks": Array [
-      Object {
-        "description": "Onboarding REST 1",
-        "id": 1,
-      },
-      Object {
-        "description": "Onboarding REST 2",
-        "id": 2,
-      },
-    ],
-  },
-  Object {
     "id": 2,
     "name": "Project Audit Rest",
     "tasks": Array [
@@ -185,6 +172,20 @@ Array [
       Object {
         "description": "Project Audit Rest 4",
         "id": 4,
+      },
+    ],
+  },
+  Object {
+    "id": 1,
+    "name": "Onboarding Rest",
+    "tasks": Array [
+      Object {
+        "description": "Onboarding REST 1",
+        "id": 1,
+      },
+      Object {
+        "description": "Onboarding REST 2",
+        "id": 2,
       },
     ],
   },

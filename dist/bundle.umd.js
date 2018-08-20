@@ -3082,10 +3082,23 @@
 	      id,
 	      attributes: _removeRelationships(resource),
 	      links: null,
-	      relationships: buildRelationships(resource)
+	      relationships: _buildRelationships(resource)
 	    };
 
 	    return formattedResourcesById;
+	  }, {});
+	};
+
+	const _buildRelationships = resource => {
+	  return Object.entries(resource).reduce((newObject, [key, value]) => {
+	    if (value && Array.isArray(value)) {
+	      if (!newObject[key]) {
+	        newObject[key] = {data: []};
+	      }
+
+	      newObject[key].data = value.map(id => ({type: key, id}));
+	    }
+	    return newObject;
 	  }, {});
 	};
 
@@ -3652,19 +3665,18 @@
 	      hasMany,
 	      belongsTo
 	    } = this;
-	    const { attributes } =
-	      resources[resourceName] && resources[resourceName][id];
+	    const {attributes} = resources[resourceName] && resources[resourceName][id];
 	    return _convertToModel(
 	      klass,
 	      resources,
-	      { id, ...attributes },
+	      {id, ...attributes},
 	      hasMany,
 	      belongsTo
 	    );
 	  }
 
 	  first() {
-	    const { resources, resourceName } = this;
+	    const {resources, resourceName} = this;
 	    const _resources = resources[resourceName];
 	    return _resources && _resources[Object.keys(_resources)[0]];
 	  }
@@ -3679,7 +3691,7 @@
 	  }
 
 	  whereRelated(relationship, params) {
-	    const { resourceName } = this;
+	    const {resourceName} = this;
 
 	    this.currentResources = relationship
 	      .query(this.resources)
@@ -3688,8 +3700,8 @@
 	      .toObjects()
 	      .reduce((newResource, relatedResource) => {
 	        const relation = relatedResource[resourceName];
-	        relation.forEach(({ type, id, ...attributes }) => {
-	          newResource[id] = { type, id, attributes };
+	        relation.forEach(({type, id, ...attributes}) => {
+	          newResource[id] = {type, id, attributes};
 	        });
 	        return newResource;
 	      }, {});
@@ -3713,6 +3725,10 @@
 
 	  // Private
 
+	  _sortByIndex(resource1, resource2) {
+	    return resource1.__index - resource2.__index;
+	  }
+
 	  _reduceCurrentResources(reducerType) {
 	    // TODO: needs to be refactored
 	    const conversion = reducerType === "models"
@@ -3727,55 +3743,56 @@
 	      belongsTo
 	    } = this;
 
-	    return Object.values(
-	      currentResources
-	    ).map(({ id, attributes, relationships, types, links }) => {
-	      const newFormattedResource = conversion(
-	        this.klass,
-	        resources,
-	        {
-	          id,
-	          ...attributes
-	        },
-	        hasMany,
-	        belongsTo
-	      );
+	    return Object.values(currentResources)
+	      .sort(this._sortByIndex)
+	      .map(({id, attributes, relationships, types, links}) => {
+	        const newFormattedResource = conversion(
+	          this.klass,
+	          resources,
+	          {
+	            id,
+	            ...attributes
+	          },
+	          hasMany,
+	          belongsTo
+	        );
 
-	      if (!currentIncludes.length) return newFormattedResource;
-	      return conversion(
-	        this.klass,
-	        resources,
-	        {
-	          ...newFormattedResource,
-	          ..._flattenRelationships(
-	            relationships
-	          ).reduce((nextRelationshipObjects, { id, type }) => {
-	            if (!currentIncludes.includes(type)) return nextRelationshipObjects;
-	            if (!(type in nextRelationshipObjects)) {
-	              nextRelationshipObjects[type] = [];
-	            }
+	        if (!currentIncludes.length) return newFormattedResource;
+	        return conversion(
+	          this.klass,
+	          resources,
+	          {
+	            ...newFormattedResource,
+	            ..._flattenRelationships(
+	              relationships
+	            ).reduce((nextRelationshipObjects, {id, type}) => {
+	              if (!currentIncludes.includes(type))
+	                return nextRelationshipObjects;
+	              if (!(type in nextRelationshipObjects)) {
+	                nextRelationshipObjects[type] = [];
+	              }
 
-	            if (!resources[type]) return nextRelationshipObjects;
-	            const relationData = resources[type][id];
-	            if (!relationData) return nextRelationshipObjects;
-	            const relationClass = this.hasMany.find(klass => {
-	              return pluralize(klass.name.toLowerCase()) === type;
-	            });
+	              if (!resources[type]) return nextRelationshipObjects;
+	              const relationData = resources[type][id];
+	              if (!relationData) return nextRelationshipObjects;
+	              const relationClass = this.hasMany.find(klass => {
+	                return pluralize(klass.name.toLowerCase()) === type;
+	              });
 
-	            nextRelationshipObjects[type].push(
-	              conversion(relationClass, resources, {
-	                id,
-	                ...relationData.attributes
-	              })
-	            );
+	              nextRelationshipObjects[type].push(
+	                conversion(relationClass, resources, {
+	                  id,
+	                  ...relationData.attributes
+	                })
+	              );
 
-	            return nextRelationshipObjects;
-	          }, {})
-	        },
-	        hasMany,
-	        belongsTo
-	      );
-	    });
+	              return nextRelationshipObjects;
+	            }, {})
+	          },
+	          hasMany,
+	          belongsTo
+	        );
+	      });
 	  }
 
 	  _convertToModel(klass, resources, resource, hasMany, belongsTo) {
@@ -3787,9 +3804,7 @@
 	  }
 
 	  _flattenRelationships(relationships) {
-	    return Object.values(
-	      relationships
-	    ).reduce((nextRelationships, { data }) => {
+	    return Object.values(relationships).reduce((nextRelationships, {data}) => {
 	      return [...nextRelationships, ...data];
 	    }, []);
 	  }
