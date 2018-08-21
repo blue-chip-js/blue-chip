@@ -73,8 +73,8 @@ class Actions {
       isGraphQl(payload) ? graphQlNormalize(payload) : jsonApiNormalize(payload)
     ).forEach(([resourceType, resourcesById]) => {
       const rById = isGraphQl(payload)
-        ? toJsonApiSpec(resourceType, resourcesById)
-        : resourcesById;
+        ? this._addIndex(toJsonApiSpec(resourceType, resourcesById), payload)
+        : this._addIndex(resourcesById, payload);
 
       this.actions.updateResources(this.mutator, resourceType, rById);
     });
@@ -94,6 +94,19 @@ class Actions {
 
   clearResources(resourceTypes) {
     this.actions.clearResources(this.mutator, resourceTypes);
+  }
+
+  _addIndex(resourcesById, payload) {
+    return Object.entries(
+      resourcesById
+    ).reduce((indexedResourcesById, [id, resource]) => {
+      const __index = payload.data.findIndex(
+        rsource => rsource.id.toString() === id.toString()
+      );
+      if (__index === -1) console.log(__index, type, resource);
+      indexedResourcesById[id] = {...resource, __index};
+      return indexedResourcesById;
+    }, {});
   }
 }
 
