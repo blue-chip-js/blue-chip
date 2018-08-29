@@ -94,7 +94,7 @@ class Actions {
   }
 }
 function _createIndexForJsonApi(payload) { 
-  const index = [];
+  let index = [];
   if (payload.data) {
     const data = Array.isArray(payload.data) ? payload.data : [ payload.data ];
     index = data.map((item) => item.id);
@@ -103,8 +103,7 @@ function _createIndexForJsonApi(payload) {
 }
 
 function _createIndexForGraphQl(payload) { 
-  const index = [];
-  return index;
+  return [];
 }
 
 const lowerCaseFirst = string => {
