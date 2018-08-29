@@ -17,6 +17,9 @@ export default class Actions {
   }
 
   updateResources(payload) {
+    // Create insert order index
+    let index = isGraphQl(payload) ? _createIndexForGraphQl(payload) : _createIndexForJsonApi(payload);
+
     Object.entries(
       isGraphQl(payload) ? graphQlNormalize(payload) : jsonApiNormalize(payload)
     ).forEach(([resourceType, resourcesById]) => {
@@ -24,7 +27,7 @@ export default class Actions {
         ? toJsonApiSpec(resourceType, resourcesById)
         : resourcesById;
 
-      this.actions.updateResources(this.mutator, resourceType, rById);
+      this.actions.updateResources(this.mutator, resourceType, rById, index);
     });
   }
 
@@ -43,4 +46,18 @@ export default class Actions {
   clearResources(resourceTypes) {
     this.actions.clearResources(this.mutator, resourceTypes);
   }
+};
+
+function _createIndexForJsonApi(payload) { 
+  const index = [];
+  if (payload.data) {
+    const data = Array.isArray(payload.data) ? payload.data : [ payload.data ];
+    index = data.map((item) => item.id);
+  }
+  return index;
+}
+
+function _createIndexForGraphQl(payload) { 
+  const index = [];
+  return index;
 }

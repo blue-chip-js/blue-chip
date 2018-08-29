@@ -1,4 +1,5 @@
 import pluralize from "pluralize";
+import {lowerCaseFirst} from "./utils";
 
 export default class Query {
   constructor(klass, resourceName, resources, hasMany = [], belongsTo = []) {
@@ -34,7 +35,15 @@ export default class Query {
   first() {
     const {resources, resourceName} = this;
     const _resources = resources[resourceName];
-    return _resources && _resources[Object.keys(_resources)[0]];
+    const _index = resources.index[resourceName];
+    return _resources && _index && _resources[_index[0]];
+  }
+
+  last() {
+    const {resources, resourceName} = this;
+    const _resources = resources[resourceName];
+    const _index = resources.index[resourceName];
+    return _resources && _index && _resources[_index[_index.length - 1]];
   }
 
   all() {
@@ -81,8 +90,9 @@ export default class Query {
 
   // Private
 
-  _sortByIndex(resource1, resource2) {
-    return resource1.__index - resource2.__index;
+  _sortByIndex(resource1, resource2, resources, resourceName) {
+    const index = resources.index[resourceName];
+    return index.indexOf(resource1.id) - index.indexOf(resource2.id);
   }
 
   _reduceCurrentResources(reducerType) {
@@ -94,13 +104,14 @@ export default class Query {
       currentIncludes,
       currentResources,
       resources,
+      resourceName,
       _flattenRelationships,
       hasMany,
       belongsTo
     } = this;
 
     return Object.values(currentResources)
-      .sort(this._sortByIndex)
+      .sort((resource1, resource2) => this._sortByIndex(resource1, resource2, resources, resourceName))
       .map(({id, attributes, relationships, types, links}) => {
         const newFormattedResource = conversion(
           this.klass,
@@ -132,7 +143,7 @@ export default class Query {
               const relationData = resources[type][id];
               if (!relationData) return nextRelationshipObjects;
               const relationClass = this.hasMany.find(klass => {
-                return pluralize(klass.name.toLowerCase()) === type;
+                return lowerCaseFirst(pluralize(klass.name)) === type;
               });
 
               nextRelationshipObjects[type].push(

@@ -3,8 +3,8 @@
 exports[`BaseModel models all() Returns a list of models 1`] = `
 Array [
   Checklist {
-    "id": 2,
-    "name": "Project Audit Rest",
+    "id": 3,
+    "name": "QA Checklist Rest",
     "tasks": [Function],
   },
   Checklist {
@@ -13,8 +13,8 @@ Array [
     "tasks": [Function],
   },
   Checklist {
-    "id": 3,
-    "name": "QA Checklist Rest",
+    "id": 2,
+    "name": "Project Audit Rest",
     "tasks": [Function],
   },
 ]
@@ -28,25 +28,24 @@ Checklist {
 }
 `;
 
-exports[`BaseModel models first() returns the first record in the store 1`] = `
+exports[`BaseModel models first() returns the first record in the store BY resource index 1`] = `
 Object {
-  "__index": 1,
   "attributes": Object {
-    "name": "Onboarding Rest",
+    "name": "QA Checklist Rest",
   },
-  "id": 1,
+  "id": 3,
   "links": Object {
-    "self": "http://example.com/checklists/1",
+    "self": "http://example.com/checklists/3",
   },
   "relationships": Object {
     "tasks": Object {
       "data": Array [
         Object {
-          "id": 1,
+          "id": 5,
           "type": "tasks",
         },
         Object {
-          "id": 2,
+          "id": 6,
           "type": "tasks",
         },
       ],
@@ -74,16 +73,16 @@ Array [
 exports[`BaseModel models includes()  1`] = `
 Array [
   Checklist {
-    "id": 2,
-    "name": "Project Audit Rest",
+    "id": 3,
+    "name": "QA Checklist Rest",
     "tasks": Array [
       Task {
-        "description": "Project Audit Rest 3",
-        "id": 3,
+        "description": "QA Checklist Rest 5",
+        "id": 5,
       },
       Task {
-        "description": "Project Audit Rest 4",
-        "id": 4,
+        "description": "QA Checklist Rest 6",
+        "id": 6,
       },
     ],
   },
@@ -102,20 +101,47 @@ Array [
     ],
   },
   Checklist {
-    "id": 3,
-    "name": "QA Checklist Rest",
+    "id": 2,
+    "name": "Project Audit Rest",
     "tasks": Array [
       Task {
-        "description": "QA Checklist Rest 5",
-        "id": 5,
+        "description": "Project Audit Rest 3",
+        "id": 3,
       },
       Task {
-        "description": "QA Checklist Rest 6",
-        "id": 6,
+        "description": "Project Audit Rest 4",
+        "id": 4,
       },
     ],
   },
 ]
+`;
+
+exports[`BaseModel models last() returns the last record in the store BY resource index 1`] = `
+Object {
+  "attributes": Object {
+    "name": "Project Audit Rest",
+  },
+  "id": 2,
+  "links": Object {
+    "self": "http://example.com/checklists/2",
+  },
+  "relationships": Object {
+    "tasks": Object {
+      "data": Array [
+        Object {
+          "id": 3,
+          "type": "tasks",
+        },
+        Object {
+          "id": 4,
+          "type": "tasks",
+        },
+      ],
+    },
+  },
+  "type": "checklists",
+}
 `;
 
 exports[`BaseModel models where() filter by id 1`] = `
@@ -137,16 +163,16 @@ Checklist {
 exports[`BaseModel objects all()  1`] = `
 Array [
   Object {
-    "id": 2,
-    "name": "Project Audit Rest",
+    "id": 3,
+    "name": "QA Checklist Rest",
   },
   Object {
     "id": 1,
     "name": "Onboarding Rest",
   },
   Object {
-    "id": 3,
-    "name": "QA Checklist Rest",
+    "id": 2,
+    "name": "Project Audit Rest",
   },
 ]
 `;
@@ -162,16 +188,16 @@ Checklist {
 exports[`BaseModel objects includes()  1`] = `
 Array [
   Object {
-    "id": 2,
-    "name": "Project Audit Rest",
+    "id": 3,
+    "name": "QA Checklist Rest",
     "tasks": Array [
       Object {
-        "description": "Project Audit Rest 3",
-        "id": 3,
+        "description": "QA Checklist Rest 5",
+        "id": 5,
       },
       Object {
-        "description": "Project Audit Rest 4",
-        "id": 4,
+        "description": "QA Checklist Rest 6",
+        "id": 6,
       },
     ],
   },
@@ -190,16 +216,16 @@ Array [
     ],
   },
   Object {
-    "id": 3,
-    "name": "QA Checklist Rest",
+    "id": 2,
+    "name": "Project Audit Rest",
     "tasks": Array [
       Object {
-        "description": "QA Checklist Rest 5",
-        "id": 5,
+        "description": "Project Audit Rest 3",
+        "id": 3,
       },
       Object {
-        "description": "QA Checklist Rest 6",
-        "id": 6,
+        "description": "Project Audit Rest 4",
+        "id": 4,
       },
     ],
   },

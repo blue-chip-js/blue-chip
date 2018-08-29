@@ -1,11 +1,12 @@
 import pluralize from "pluralize";
 import Query from "./Query";
+import {lowerCaseFirst} from "./utils";
 
 export default class BaseModel {
   static query(resources) {
     return new Query(
       this,
-      pluralize(this.name.toLowerCase()),
+      lowerCaseFirst(pluralize(this.name)),
       resources,
       this.hasMany,
       this.belongsTo
@@ -25,7 +26,7 @@ export default class BaseModel {
 
     if (belongsTo.forEach) {
       belongsTo.forEach(relationship => {
-        const relationshipKey = relationship.name.toLowerCase();
+        const relationshipKey = lowerCaseFirst(relationship.name);
         this[relationshipKey] = () => {
           // needs to return the related model
         };
@@ -34,9 +35,9 @@ export default class BaseModel {
   }
 
   _filterResources(resource, resources, relationship, relationshipKey) {
-    const currentResourceKey = pluralize(
-      resource.constructor.name.toLowerCase()
-    );
+    const currentResourceKey = lowerCaseFirst(pluralize(
+      resource.constructor.name
+    ));
     const resourceClass = resource.constructor;
     const relationshipClass = relationship;
     return {
@@ -51,7 +52,7 @@ export default class BaseModel {
   }
 
   _buildHasManyQuery(resource, resources, relationship) {
-    const relationshipKey = pluralize(relationship.name.toLowerCase());
+    const relationshipKey = lowerCaseFirst(pluralize(relationship.name));
     if (!resource[relationshipKey]) {
       resource[relationshipKey] = () => {
         const newResouces = resource._filterResources(

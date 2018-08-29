@@ -36,9 +36,17 @@ describe("BaseModel", () => {
     });
 
     describe("first()", () => {
-      test("returns the first record in the store", () => {
+      test("returns the first record in the store BY resource index", () => {
         const checklist = Checklist.query(resources).first();
-        expect(checklist.id).toEqual(1);
+        expect(checklist.id).toEqual(3);
+        expect(checklist).toMatchSnapshot();
+      });
+    });
+
+    describe("last()", () => {
+      test("returns the last record in the store BY resource index", () => {
+        const checklist = Checklist.query(resources).last();
+        expect(checklist.id).toEqual(2);
         expect(checklist).toMatchSnapshot();
       });
     });

@@ -63,6 +63,9 @@ class Actions {
   }
 
   updateResources(payload) {
+    // Create insert order index
+    let index = isGraphQl(payload) ? _createIndexForGraphQl(payload) : _createIndexForJsonApi(payload);
+
     Object.entries(
       isGraphQl(payload) ? graphQlNormalize(payload) : jsonApiNormalize(payload)
     ).forEach(([resourceType, resourcesById]) => {
@@ -70,7 +73,7 @@ class Actions {
         ? toJsonApiSpec(resourceType, resourcesById)
         : resourcesById;
 
-      this.actions.updateResources(this.mutator, resourceType, rById);
+      this.actions.updateResources(this.mutator, resourceType, rById, index);
     });
   }
 
@@ -90,6 +93,23 @@ class Actions {
     this.actions.clearResources(this.mutator, resourceTypes);
   }
 }
+function _createIndexForJsonApi(payload) { 
+  const index = [];
+  if (payload.data) {
+    const data = Array.isArray(payload.data) ? payload.data : [ payload.data ];
+    index = data.map((item) => item.id);
+  }
+  return index;
+}
+
+function _createIndexForGraphQl(payload) { 
+  const index = [];
+  return index;
+}
+
+const lowerCaseFirst = string => {
+ return string.charAt(0).toLowerCase() + string.slice(1);
+};
 
 class Query {
   constructor(klass, resourceName, resources, hasMany = [], belongsTo = []) {
@@ -125,7 +145,15 @@ class Query {
   first() {
     const {resources, resourceName} = this;
     const _resources = resources[resourceName];
-    return _resources && _resources[Object.keys(_resources)[0]];
+    const _index = resources.index[resourceName];
+    return _resources && _index && _resources[_index[0]];
+  }
+
+  last() {
+    const {resources, resourceName} = this;
+    const _resources = resources[resourceName];
+    const _index = resources.index[resourceName];
+    return _resources && _index && _resources[_index[_index.length - 1]];
   }
 
   all() {
@@ -172,8 +200,9 @@ class Query {
 
   // Private
 
-  _sortByIndex(resource1, resource2) {
-    return resource1.__index - resource2.__index;
+  _sortByIndex(resource1, resource2, resources, resourceName) {
+    const index = resources.index[resourceName];
+    return index.indexOf(resource1.id) - index.indexOf(resource2.id);
   }
 
   _reduceCurrentResources(reducerType) {
@@ -185,13 +214,14 @@ class Query {
       currentIncludes,
       currentResources,
       resources,
+      resourceName,
       _flattenRelationships,
       hasMany,
       belongsTo
     } = this;
 
     return Object.values(currentResources)
-      .sort(this._sortByIndex)
+      .sort((resource1, resource2) => this._sortByIndex(resource1, resource2, resources, resourceName))
       .map(({id, attributes, relationships, types, links}) => {
         const newFormattedResource = conversion(
           this.klass,
@@ -223,7 +253,7 @@ class Query {
               const relationData = resources[type][id];
               if (!relationData) return nextRelationshipObjects;
               const relationClass = this.hasMany.find(klass => {
-                return pluralize(klass.name.toLowerCase()) === type;
+                return lowerCaseFirst(pluralize(klass.name)) === type;
               });
 
               nextRelationshipObjects[type].push(
@@ -299,7 +329,7 @@ class BaseModel {
   static query(resources) {
     return new Query(
       this,
-      pluralize(this.name.toLowerCase()),
+      lowerCaseFirst(pluralize(this.name)),
       resources,
       this.hasMany,
       this.belongsTo
@@ -319,7 +349,7 @@ class BaseModel {
 
     if (belongsTo.forEach) {
       belongsTo.forEach(relationship => {
-        const relationshipKey = relationship.name.toLowerCase();
+        const relationshipKey = lowerCaseFirst(relationship.name);
         this[relationshipKey] = () => {
           // needs to return the related model
         };
@@ -328,9 +358,9 @@ class BaseModel {
   }
 
   _filterResources(resource, resources, relationship, relationshipKey) {
-    const currentResourceKey = pluralize(
-      resource.constructor.name.toLowerCase()
-    );
+    const currentResourceKey = lowerCaseFirst(pluralize(
+      resource.constructor.name
+    ));
     const resourceClass = resource.constructor;
     const relationshipClass = relationship;
     return {
@@ -345,7 +375,7 @@ class BaseModel {
   }
 
   _buildHasManyQuery(resource, resources, relationship) {
-    const relationshipKey = pluralize(relationship.name.toLowerCase());
+    const relationshipKey = lowerCaseFirst(pluralize(relationship.name));
     if (!resource[relationshipKey]) {
       resource[relationshipKey] = () => {
         const newResouces = resource._filterResources(
