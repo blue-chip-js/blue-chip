@@ -1,5 +1,6 @@
 import resolve from "rollup-plugin-node-resolve";
 import commonjs from "rollup-plugin-commonjs";
+import babel from "rollup-plugin-babel";
 import pkg from "./package.json";
 
 export default [
@@ -10,7 +11,11 @@ export default [
       file: pkg.browser,
       format: "umd"
     },
-    plugins: [resolve(), commonjs()]
+    plugins: [
+      resolve(),
+      babel(),
+      commonjs()
+    ]
   },
   {
     input: "src/index.js",

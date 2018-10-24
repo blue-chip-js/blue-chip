@@ -18,13 +18,19 @@
 		return module = { exports: {} }, fn(module, module.exports), module.exports;
 	}
 
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 	/** Detect free variable `global` from Node.js. */
-	var freeGlobal = typeof commonjsGlobal == 'object' && commonjsGlobal && commonjsGlobal.Object === Object && commonjsGlobal;
+	var freeGlobal = (typeof commonjsGlobal === 'undefined' ? 'undefined' : _typeof(commonjsGlobal)) == 'object' && commonjsGlobal && commonjsGlobal.Object === Object && commonjsGlobal;
 
 	var _freeGlobal = freeGlobal;
 
+	var _typeof$1 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+
+
 	/** Detect free variable `self`. */
-	var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+	var freeSelf = (typeof self === 'undefined' ? 'undefined' : _typeof$1(self)) == 'object' && self && self.Object === Object && self;
 
 	/** Used as a reference to the global object. */
 	var root = _freeGlobal || freeSelf || Function('return this')();
@@ -32,9 +38,9 @@
 	var _root = root;
 
 	/** Built-in value references. */
-	var Symbol$1 = _root.Symbol;
+	var _Symbol = _root.Symbol;
 
-	var _Symbol = Symbol$1;
+	var _Symbol_1 = _Symbol;
 
 	/**
 	 * A specialized version of `_.map` for arrays without support for iteratee
@@ -99,7 +105,7 @@
 	var nativeObjectToString = objectProto.toString;
 
 	/** Built-in value references. */
-	var symToStringTag = _Symbol ? _Symbol.toStringTag : undefined;
+	var symToStringTag = _Symbol_1 ? _Symbol_1.toStringTag : undefined;
 
 	/**
 	 * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
@@ -157,7 +163,7 @@
 	    undefinedTag = '[object Undefined]';
 
 	/** Built-in value references. */
-	var symToStringTag$1 = _Symbol ? _Symbol.toStringTag : undefined;
+	var symToStringTag$1 = _Symbol_1 ? _Symbol_1.toStringTag : undefined;
 
 	/**
 	 * The base implementation of `getTag` without fallbacks for buggy environments.
@@ -167,15 +173,15 @@
 	 * @returns {string} Returns the `toStringTag`.
 	 */
 	function baseGetTag(value) {
-	  if (value == null) {
-	    return value === undefined ? undefinedTag : nullTag;
-	  }
-	  return (symToStringTag$1 && symToStringTag$1 in Object(value))
-	    ? _getRawTag(value)
-	    : _objectToString(value);
+	    if (value == null) {
+	        return value === undefined ? undefinedTag : nullTag;
+	    }
+	    return symToStringTag$1 && symToStringTag$1 in Object(value) ? _getRawTag(value) : _objectToString(value);
 	}
 
 	var _baseGetTag = baseGetTag;
+
+	var _typeof$2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 	/**
 	 * Checks if `value` is object-like. A value is object-like if it's not `null`
@@ -202,10 +208,14 @@
 	 * // => false
 	 */
 	function isObjectLike(value) {
-	  return value != null && typeof value == 'object';
+	  return value != null && (typeof value === 'undefined' ? 'undefined' : _typeof$2(value)) == 'object';
 	}
 
 	var isObjectLike_1 = isObjectLike;
+
+	var _typeof$3 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+
 
 	/** `Object#toString` result references. */
 	var symbolTag = '[object Symbol]';
@@ -228,8 +238,7 @@
 	 * // => false
 	 */
 	function isSymbol(value) {
-	  return typeof value == 'symbol' ||
-	    (isObjectLike_1(value) && _baseGetTag(value) == symbolTag);
+	    return (typeof value === 'undefined' ? 'undefined' : _typeof$3(value)) == 'symbol' || isObjectLike_1(value) && _baseGetTag(value) == symbolTag;
 	}
 
 	var isSymbol_1 = isSymbol;
@@ -238,7 +247,7 @@
 	var INFINITY = 1 / 0;
 
 	/** Used to convert symbols to primitives and strings. */
-	var symbolProto = _Symbol ? _Symbol.prototype : undefined,
+	var symbolProto = _Symbol_1 ? _Symbol_1.prototype : undefined,
 	    symbolToString = symbolProto ? symbolProto.toString : undefined;
 
 	/**
@@ -261,8 +270,8 @@
 	  if (isSymbol_1(value)) {
 	    return symbolToString ? symbolToString.call(value) : '';
 	  }
-	  var result = (value + '');
-	  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
+	  var result = value + '';
+	  return result == '0' && 1 / value == -INFINITY ? '-0' : result;
 	}
 
 	var _baseToString = baseToString;
@@ -308,13 +317,13 @@
 	      length = array.length;
 
 	  if (start < 0) {
-	    start = -start > length ? 0 : (length + start);
+	    start = -start > length ? 0 : length + start;
 	  }
 	  end = end > length ? length : end;
 	  if (end < 0) {
 	    end += length;
 	  }
-	  length = start > end ? 0 : ((end - start) >>> 0);
+	  length = start > end ? 0 : end - start >>> 0;
 	  start >>>= 0;
 
 	  var result = Array(length);
@@ -338,7 +347,7 @@
 	function castSlice(array, start, end) {
 	  var length = array.length;
 	  end = end === undefined ? length : end;
-	  return (!start && end >= length) ? array : _baseSlice(array, start, end);
+	  return !start && end >= length ? array : _baseSlice(array, start, end);
 	}
 
 	var _castSlice = castSlice;
@@ -355,7 +364,7 @@
 	var rsZWJ = '\\u200d';
 
 	/** Used to detect strings with [zero-width joiners or code points from the astral planes](http://eev.ee/blog/2015/09/12/dark-corners-of-unicode/). */
-	var reHasUnicode = RegExp('[' + rsZWJ + rsAstralRange  + rsComboRange + rsVarRange + ']');
+	var reHasUnicode = RegExp('[' + rsZWJ + rsAstralRange + rsComboRange + rsVarRange + ']');
 
 	/**
 	 * Checks if `string` contains Unicode symbols.
@@ -419,7 +428,7 @@
 	 * @returns {Array} Returns the converted array.
 	 */
 	function unicodeToArray(string) {
-	  return string.match(reUnicode) || [];
+	    return string.match(reUnicode) || [];
 	}
 
 	var _unicodeToArray = unicodeToArray;
@@ -432,9 +441,7 @@
 	 * @returns {Array} Returns the converted array.
 	 */
 	function stringToArray(string) {
-	  return _hasUnicode(string)
-	    ? _unicodeToArray(string)
-	    : _asciiToArray(string);
+	    return _hasUnicode(string) ? _unicodeToArray(string) : _asciiToArray(string);
 	}
 
 	var _stringToArray = stringToArray;
@@ -447,20 +454,14 @@
 	 * @returns {Function} Returns the new case function.
 	 */
 	function createCaseFirst(methodName) {
-	  return function(string) {
+	  return function (string) {
 	    string = toString_1(string);
 
-	    var strSymbols = _hasUnicode(string)
-	      ? _stringToArray(string)
-	      : undefined;
+	    var strSymbols = _hasUnicode(string) ? _stringToArray(string) : undefined;
 
-	    var chr = strSymbols
-	      ? strSymbols[0]
-	      : string.charAt(0);
+	    var chr = strSymbols ? strSymbols[0] : string.charAt(0);
 
-	    var trailing = strSymbols
-	      ? _castSlice(strSymbols, 1).join('')
-	      : string.slice(1);
+	    var trailing = strSymbols ? _castSlice(strSymbols, 1).join('') : string.slice(1);
 
 	    return chr[methodName]() + trailing;
 	  };
@@ -545,7 +546,7 @@
 	 * @returns {Function} Returns the new accessor function.
 	 */
 	function basePropertyOf(object) {
-	  return function(key) {
+	  return function (key) {
 	    return object == null ? undefined : object[key];
 	  };
 	}
@@ -555,59 +556,59 @@
 	/** Used to map Latin Unicode letters to basic Latin letters. */
 	var deburredLetters = {
 	  // Latin-1 Supplement block.
-	  '\xc0': 'A',  '\xc1': 'A', '\xc2': 'A', '\xc3': 'A', '\xc4': 'A', '\xc5': 'A',
-	  '\xe0': 'a',  '\xe1': 'a', '\xe2': 'a', '\xe3': 'a', '\xe4': 'a', '\xe5': 'a',
-	  '\xc7': 'C',  '\xe7': 'c',
-	  '\xd0': 'D',  '\xf0': 'd',
-	  '\xc8': 'E',  '\xc9': 'E', '\xca': 'E', '\xcb': 'E',
-	  '\xe8': 'e',  '\xe9': 'e', '\xea': 'e', '\xeb': 'e',
-	  '\xcc': 'I',  '\xcd': 'I', '\xce': 'I', '\xcf': 'I',
-	  '\xec': 'i',  '\xed': 'i', '\xee': 'i', '\xef': 'i',
-	  '\xd1': 'N',  '\xf1': 'n',
-	  '\xd2': 'O',  '\xd3': 'O', '\xd4': 'O', '\xd5': 'O', '\xd6': 'O', '\xd8': 'O',
-	  '\xf2': 'o',  '\xf3': 'o', '\xf4': 'o', '\xf5': 'o', '\xf6': 'o', '\xf8': 'o',
-	  '\xd9': 'U',  '\xda': 'U', '\xdb': 'U', '\xdc': 'U',
-	  '\xf9': 'u',  '\xfa': 'u', '\xfb': 'u', '\xfc': 'u',
-	  '\xdd': 'Y',  '\xfd': 'y', '\xff': 'y',
+	  '\xc0': 'A', '\xc1': 'A', '\xc2': 'A', '\xc3': 'A', '\xc4': 'A', '\xc5': 'A',
+	  '\xe0': 'a', '\xe1': 'a', '\xe2': 'a', '\xe3': 'a', '\xe4': 'a', '\xe5': 'a',
+	  '\xc7': 'C', '\xe7': 'c',
+	  '\xd0': 'D', '\xf0': 'd',
+	  '\xc8': 'E', '\xc9': 'E', '\xca': 'E', '\xcb': 'E',
+	  '\xe8': 'e', '\xe9': 'e', '\xea': 'e', '\xeb': 'e',
+	  '\xcc': 'I', '\xcd': 'I', '\xce': 'I', '\xcf': 'I',
+	  '\xec': 'i', '\xed': 'i', '\xee': 'i', '\xef': 'i',
+	  '\xd1': 'N', '\xf1': 'n',
+	  '\xd2': 'O', '\xd3': 'O', '\xd4': 'O', '\xd5': 'O', '\xd6': 'O', '\xd8': 'O',
+	  '\xf2': 'o', '\xf3': 'o', '\xf4': 'o', '\xf5': 'o', '\xf6': 'o', '\xf8': 'o',
+	  '\xd9': 'U', '\xda': 'U', '\xdb': 'U', '\xdc': 'U',
+	  '\xf9': 'u', '\xfa': 'u', '\xfb': 'u', '\xfc': 'u',
+	  '\xdd': 'Y', '\xfd': 'y', '\xff': 'y',
 	  '\xc6': 'Ae', '\xe6': 'ae',
 	  '\xde': 'Th', '\xfe': 'th',
 	  '\xdf': 'ss',
 	  // Latin Extended-A block.
-	  '\u0100': 'A',  '\u0102': 'A', '\u0104': 'A',
-	  '\u0101': 'a',  '\u0103': 'a', '\u0105': 'a',
-	  '\u0106': 'C',  '\u0108': 'C', '\u010a': 'C', '\u010c': 'C',
-	  '\u0107': 'c',  '\u0109': 'c', '\u010b': 'c', '\u010d': 'c',
-	  '\u010e': 'D',  '\u0110': 'D', '\u010f': 'd', '\u0111': 'd',
-	  '\u0112': 'E',  '\u0114': 'E', '\u0116': 'E', '\u0118': 'E', '\u011a': 'E',
-	  '\u0113': 'e',  '\u0115': 'e', '\u0117': 'e', '\u0119': 'e', '\u011b': 'e',
-	  '\u011c': 'G',  '\u011e': 'G', '\u0120': 'G', '\u0122': 'G',
-	  '\u011d': 'g',  '\u011f': 'g', '\u0121': 'g', '\u0123': 'g',
-	  '\u0124': 'H',  '\u0126': 'H', '\u0125': 'h', '\u0127': 'h',
-	  '\u0128': 'I',  '\u012a': 'I', '\u012c': 'I', '\u012e': 'I', '\u0130': 'I',
-	  '\u0129': 'i',  '\u012b': 'i', '\u012d': 'i', '\u012f': 'i', '\u0131': 'i',
-	  '\u0134': 'J',  '\u0135': 'j',
-	  '\u0136': 'K',  '\u0137': 'k', '\u0138': 'k',
-	  '\u0139': 'L',  '\u013b': 'L', '\u013d': 'L', '\u013f': 'L', '\u0141': 'L',
-	  '\u013a': 'l',  '\u013c': 'l', '\u013e': 'l', '\u0140': 'l', '\u0142': 'l',
-	  '\u0143': 'N',  '\u0145': 'N', '\u0147': 'N', '\u014a': 'N',
-	  '\u0144': 'n',  '\u0146': 'n', '\u0148': 'n', '\u014b': 'n',
-	  '\u014c': 'O',  '\u014e': 'O', '\u0150': 'O',
-	  '\u014d': 'o',  '\u014f': 'o', '\u0151': 'o',
-	  '\u0154': 'R',  '\u0156': 'R', '\u0158': 'R',
-	  '\u0155': 'r',  '\u0157': 'r', '\u0159': 'r',
-	  '\u015a': 'S',  '\u015c': 'S', '\u015e': 'S', '\u0160': 'S',
-	  '\u015b': 's',  '\u015d': 's', '\u015f': 's', '\u0161': 's',
-	  '\u0162': 'T',  '\u0164': 'T', '\u0166': 'T',
-	  '\u0163': 't',  '\u0165': 't', '\u0167': 't',
-	  '\u0168': 'U',  '\u016a': 'U', '\u016c': 'U', '\u016e': 'U', '\u0170': 'U', '\u0172': 'U',
-	  '\u0169': 'u',  '\u016b': 'u', '\u016d': 'u', '\u016f': 'u', '\u0171': 'u', '\u0173': 'u',
-	  '\u0174': 'W',  '\u0175': 'w',
-	  '\u0176': 'Y',  '\u0177': 'y', '\u0178': 'Y',
-	  '\u0179': 'Z',  '\u017b': 'Z', '\u017d': 'Z',
-	  '\u017a': 'z',  '\u017c': 'z', '\u017e': 'z',
+	  '\u0100': 'A', '\u0102': 'A', '\u0104': 'A',
+	  '\u0101': 'a', '\u0103': 'a', '\u0105': 'a',
+	  '\u0106': 'C', '\u0108': 'C', '\u010A': 'C', '\u010C': 'C',
+	  '\u0107': 'c', '\u0109': 'c', '\u010B': 'c', '\u010D': 'c',
+	  '\u010E': 'D', '\u0110': 'D', '\u010F': 'd', '\u0111': 'd',
+	  '\u0112': 'E', '\u0114': 'E', '\u0116': 'E', '\u0118': 'E', '\u011A': 'E',
+	  '\u0113': 'e', '\u0115': 'e', '\u0117': 'e', '\u0119': 'e', '\u011B': 'e',
+	  '\u011C': 'G', '\u011E': 'G', '\u0120': 'G', '\u0122': 'G',
+	  '\u011D': 'g', '\u011F': 'g', '\u0121': 'g', '\u0123': 'g',
+	  '\u0124': 'H', '\u0126': 'H', '\u0125': 'h', '\u0127': 'h',
+	  '\u0128': 'I', '\u012A': 'I', '\u012C': 'I', '\u012E': 'I', '\u0130': 'I',
+	  '\u0129': 'i', '\u012B': 'i', '\u012D': 'i', '\u012F': 'i', '\u0131': 'i',
+	  '\u0134': 'J', '\u0135': 'j',
+	  '\u0136': 'K', '\u0137': 'k', '\u0138': 'k',
+	  '\u0139': 'L', '\u013B': 'L', '\u013D': 'L', '\u013F': 'L', '\u0141': 'L',
+	  '\u013A': 'l', '\u013C': 'l', '\u013E': 'l', '\u0140': 'l', '\u0142': 'l',
+	  '\u0143': 'N', '\u0145': 'N', '\u0147': 'N', '\u014A': 'N',
+	  '\u0144': 'n', '\u0146': 'n', '\u0148': 'n', '\u014B': 'n',
+	  '\u014C': 'O', '\u014E': 'O', '\u0150': 'O',
+	  '\u014D': 'o', '\u014F': 'o', '\u0151': 'o',
+	  '\u0154': 'R', '\u0156': 'R', '\u0158': 'R',
+	  '\u0155': 'r', '\u0157': 'r', '\u0159': 'r',
+	  '\u015A': 'S', '\u015C': 'S', '\u015E': 'S', '\u0160': 'S',
+	  '\u015B': 's', '\u015D': 's', '\u015F': 's', '\u0161': 's',
+	  '\u0162': 'T', '\u0164': 'T', '\u0166': 'T',
+	  '\u0163': 't', '\u0165': 't', '\u0167': 't',
+	  '\u0168': 'U', '\u016A': 'U', '\u016C': 'U', '\u016E': 'U', '\u0170': 'U', '\u0172': 'U',
+	  '\u0169': 'u', '\u016B': 'u', '\u016D': 'u', '\u016F': 'u', '\u0171': 'u', '\u0173': 'u',
+	  '\u0174': 'W', '\u0175': 'w',
+	  '\u0176': 'Y', '\u0177': 'y', '\u0178': 'Y',
+	  '\u0179': 'Z', '\u017B': 'Z', '\u017D': 'Z',
+	  '\u017A': 'z', '\u017C': 'z', '\u017E': 'z',
 	  '\u0132': 'IJ', '\u0133': 'ij',
 	  '\u0152': 'Oe', '\u0153': 'oe',
-	  '\u0149': "'n", '\u017f': 's'
+	  '\u0149': "'n", '\u017F': 's'
 	};
 
 	/**
@@ -714,7 +715,7 @@
 	    rsBreakRange = rsMathOpRange + rsNonCharRange + rsPunctuationRange + rsSpaceRange;
 
 	/** Used to compose unicode capture groups. */
-	var rsApos = "['\u2019]",
+	var rsApos = '[\'\u2019]',
 	    rsBreak = '[' + rsBreakRange + ']',
 	    rsCombo$2 = '[' + rsComboRange$3 + ']',
 	    rsDigits = '\\d+',
@@ -743,16 +744,7 @@
 	    rsEmoji = '(?:' + [rsDingbat, rsRegional$1, rsSurrPair$1].join('|') + ')' + rsSeq$1;
 
 	/** Used to match complex or compound words. */
-	var reUnicodeWord = RegExp([
-	  rsUpper + '?' + rsLower + '+' + rsOptContrLower + '(?=' + [rsBreak, rsUpper, '$'].join('|') + ')',
-	  rsMiscUpper + '+' + rsOptContrUpper + '(?=' + [rsBreak, rsUpper + rsMiscLower, '$'].join('|') + ')',
-	  rsUpper + '?' + rsMiscLower + '+' + rsOptContrLower,
-	  rsUpper + '+' + rsOptContrUpper,
-	  rsOrdUpper,
-	  rsOrdLower,
-	  rsDigits,
-	  rsEmoji
-	].join('|'), 'g');
+	var reUnicodeWord = RegExp([rsUpper + '?' + rsLower + '+' + rsOptContrLower + '(?=' + [rsBreak, rsUpper, '$'].join('|') + ')', rsMiscUpper + '+' + rsOptContrUpper + '(?=' + [rsBreak, rsUpper + rsMiscLower, '$'].join('|') + ')', rsUpper + '?' + rsMiscLower + '+' + rsOptContrLower, rsUpper + '+' + rsOptContrUpper, rsOrdUpper, rsOrdLower, rsDigits, rsEmoji].join('|'), 'g');
 
 	/**
 	 * Splits a Unicode `string` into an array of its words.
@@ -762,7 +754,7 @@
 	 * @returns {Array} Returns the words of `string`.
 	 */
 	function unicodeWords(string) {
-	  return string.match(reUnicodeWord) || [];
+	    return string.match(reUnicodeWord) || [];
 	}
 
 	var _unicodeWords = unicodeWords;
@@ -799,7 +791,7 @@
 	var words_1 = words;
 
 	/** Used to compose unicode capture groups. */
-	var rsApos$1 = "['\u2019]";
+	var rsApos$1 = '[\'\u2019]';
 
 	/** Used to match apostrophes. */
 	var reApos = RegExp(rsApos$1, 'g');
@@ -812,7 +804,7 @@
 	 * @returns {Function} Returns the new compounder function.
 	 */
 	function createCompounder(callback) {
-	  return function(string) {
+	  return function (string) {
 	    return _arrayReduce(words_1(deburr_1(string).replace(reApos, '')), callback, '');
 	  };
 	}
@@ -839,7 +831,7 @@
 	 * _.camelCase('__FOO_BAR__');
 	 * // => 'fooBar'
 	 */
-	var camelCase = _createCompounder(function(result, word, index) {
+	var camelCase = _createCompounder(function (result, word, index) {
 	  word = word.toLowerCase();
 	  return result + (index ? capitalize_1(word) : word);
 	});
@@ -933,9 +925,10 @@
 	 * _.isArguments([1, 2, 3]);
 	 * // => false
 	 */
-	var isArguments = _baseIsArguments(function() { return arguments; }()) ? _baseIsArguments : function(value) {
-	  return isObjectLike_1(value) && hasOwnProperty$1.call(value, 'callee') &&
-	    !propertyIsEnumerable.call(value, 'callee');
+	var isArguments = _baseIsArguments(function () {
+	    return arguments;
+	}()) ? _baseIsArguments : function (value) {
+	    return isObjectLike_1(value) && hasOwnProperty$1.call(value, 'callee') && !propertyIsEnumerable.call(value, 'callee');
 	};
 
 	var isArguments_1 = isArguments;
@@ -960,11 +953,15 @@
 	var stubFalse_1 = stubFalse;
 
 	var isBuffer_1 = createCommonjsModule(function (module, exports) {
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+
+
 	/** Detect free variable `exports`. */
-	var freeExports = exports && !exports.nodeType && exports;
+	var freeExports = (_typeof(exports)) == 'object' && exports && !exports.nodeType && exports;
 
 	/** Detect free variable `module`. */
-	var freeModule = freeExports && 'object' == 'object' && module && !module.nodeType && module;
+	var freeModule = freeExports && (_typeof(module)) == 'object' && module && !module.nodeType && module;
 
 	/** Detect the popular CommonJS extension `module.exports`. */
 	var moduleExports = freeModule && freeModule.exports === freeExports;
@@ -997,6 +994,8 @@
 	module.exports = isBuffer;
 	});
 
+	var _typeof$4 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 	/** Used as references for various `Number` constants. */
 	var MAX_SAFE_INTEGER = 9007199254740991;
 
@@ -1012,13 +1011,10 @@
 	 * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
 	 */
 	function isIndex(value, length) {
-	  var type = typeof value;
+	  var type = typeof value === 'undefined' ? 'undefined' : _typeof$4(value);
 	  length = length == null ? MAX_SAFE_INTEGER : length;
 
-	  return !!length &&
-	    (type == 'number' ||
-	      (type != 'symbol' && reIsUint.test(value))) &&
-	        (value > -1 && value % 1 == 0 && value < length);
+	  return !!length && (type == 'number' || type != 'symbol' && reIsUint.test(value)) && value > -1 && value % 1 == 0 && value < length;
 	}
 
 	var _isIndex = isIndex;
@@ -1053,8 +1049,7 @@
 	 * // => false
 	 */
 	function isLength(value) {
-	  return typeof value == 'number' &&
-	    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER$1;
+	  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER$1;
 	}
 
 	var isLength_1 = isLength;
@@ -1088,19 +1083,8 @@
 
 	/** Used to identify `toStringTag` values of typed arrays. */
 	var typedArrayTags = {};
-	typedArrayTags[float32Tag] = typedArrayTags[float64Tag] =
-	typedArrayTags[int8Tag] = typedArrayTags[int16Tag] =
-	typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] =
-	typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] =
-	typedArrayTags[uint32Tag] = true;
-	typedArrayTags[argsTag$1] = typedArrayTags[arrayTag] =
-	typedArrayTags[arrayBufferTag] = typedArrayTags[boolTag] =
-	typedArrayTags[dataViewTag] = typedArrayTags[dateTag] =
-	typedArrayTags[errorTag] = typedArrayTags[funcTag] =
-	typedArrayTags[mapTag] = typedArrayTags[numberTag] =
-	typedArrayTags[objectTag] = typedArrayTags[regexpTag] =
-	typedArrayTags[setTag] = typedArrayTags[stringTag] =
-	typedArrayTags[weakMapTag] = false;
+	typedArrayTags[float32Tag] = typedArrayTags[float64Tag] = typedArrayTags[int8Tag] = typedArrayTags[int16Tag] = typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] = typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] = typedArrayTags[uint32Tag] = true;
+	typedArrayTags[argsTag$1] = typedArrayTags[arrayTag] = typedArrayTags[arrayBufferTag] = typedArrayTags[boolTag] = typedArrayTags[dataViewTag] = typedArrayTags[dateTag] = typedArrayTags[errorTag] = typedArrayTags[funcTag] = typedArrayTags[mapTag] = typedArrayTags[numberTag] = typedArrayTags[objectTag] = typedArrayTags[regexpTag] = typedArrayTags[setTag] = typedArrayTags[stringTag] = typedArrayTags[weakMapTag] = false;
 
 	/**
 	 * The base implementation of `_.isTypedArray` without Node.js optimizations.
@@ -1110,8 +1094,7 @@
 	 * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.
 	 */
 	function baseIsTypedArray(value) {
-	  return isObjectLike_1(value) &&
-	    isLength_1(value.length) && !!typedArrayTags[_baseGetTag(value)];
+	    return isObjectLike_1(value) && isLength_1(value.length) && !!typedArrayTags[_baseGetTag(value)];
 	}
 
 	var _baseIsTypedArray = baseIsTypedArray;
@@ -1124,7 +1107,7 @@
 	 * @returns {Function} Returns the new capped function.
 	 */
 	function baseUnary(func) {
-	  return function(value) {
+	  return function (value) {
 	    return func(value);
 	  };
 	}
@@ -1132,11 +1115,15 @@
 	var _baseUnary = baseUnary;
 
 	var _nodeUtil = createCommonjsModule(function (module, exports) {
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+
+
 	/** Detect free variable `exports`. */
-	var freeExports = exports && !exports.nodeType && exports;
+	var freeExports = (_typeof(exports)) == 'object' && exports && !exports.nodeType && exports;
 
 	/** Detect free variable `module`. */
-	var freeModule = freeExports && 'object' == 'object' && module && !module.nodeType && module;
+	var freeModule = freeExports && (_typeof(module)) == 'object' && module && !module.nodeType && module;
 
 	/** Detect the popular CommonJS extension `module.exports`. */
 	var moduleExports = freeModule && freeModule.exports === freeExports;
@@ -1145,7 +1132,7 @@
 	var freeProcess = moduleExports && _freeGlobal.process;
 
 	/** Used to access faster Node.js helpers. */
-	var nodeUtil = (function() {
+	var nodeUtil = function () {
 	  try {
 	    // Use `util.types` for Node.js 10+.
 	    var types = freeModule && freeModule.require && freeModule.require('util').types;
@@ -1157,7 +1144,7 @@
 	    // Legacy `process.binding('util')` for Node.js < 10.
 	    return freeProcess && freeProcess.binding && freeProcess.binding('util');
 	  } catch (e) {}
-	}());
+	}();
 
 	module.exports = nodeUtil;
 	});
@@ -1210,17 +1197,15 @@
 	      length = result.length;
 
 	  for (var key in value) {
-	    if ((inherited || hasOwnProperty$2.call(value, key)) &&
-	        !(skipIndexes && (
-	           // Safari 9 has enumerable `arguments.length` in strict mode.
-	           key == 'length' ||
-	           // Node.js 0.10 has enumerable non-index properties on buffers.
-	           (isBuff && (key == 'offset' || key == 'parent')) ||
-	           // PhantomJS 2 has enumerable non-index properties on typed arrays.
-	           (isType && (key == 'buffer' || key == 'byteLength' || key == 'byteOffset')) ||
-	           // Skip index properties.
-	           _isIndex(key, length)
-	        ))) {
+	    if ((inherited || hasOwnProperty$2.call(value, key)) && !(skipIndexes && (
+	    // Safari 9 has enumerable `arguments.length` in strict mode.
+	    key == 'length' ||
+	    // Node.js 0.10 has enumerable non-index properties on buffers.
+	    isBuff && (key == 'offset' || key == 'parent') ||
+	    // PhantomJS 2 has enumerable non-index properties on typed arrays.
+	    isType && (key == 'buffer' || key == 'byteLength' || key == 'byteOffset') ||
+	    // Skip index properties.
+	    _isIndex(key, length)))) {
 	      result.push(key);
 	    }
 	  }
@@ -1241,7 +1226,7 @@
 	 */
 	function isPrototype(value) {
 	  var Ctor = value && value.constructor,
-	      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto$4;
+	      proto = typeof Ctor == 'function' && Ctor.prototype || objectProto$4;
 
 	  return value === proto;
 	}
@@ -1257,7 +1242,7 @@
 	 * @returns {Function} Returns the new function.
 	 */
 	function overArg(func, transform) {
-	  return function(arg) {
+	  return function (arg) {
 	    return func(transform(arg));
 	  };
 	}
@@ -1297,6 +1282,8 @@
 
 	var _baseKeys = baseKeys;
 
+	var _typeof$5 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 	/**
 	 * Checks if `value` is the
 	 * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
@@ -1323,7 +1310,7 @@
 	 * // => false
 	 */
 	function isObject(value) {
-	  var type = typeof value;
+	  var type = typeof value === 'undefined' ? 'undefined' : _typeof$5(value);
 	  return value != null && (type == 'object' || type == 'function');
 	}
 
@@ -1353,13 +1340,13 @@
 	 * // => false
 	 */
 	function isFunction(value) {
-	  if (!isObject_1(value)) {
-	    return false;
-	  }
-	  // The use of `Object#toString` avoids issues with the `typeof` operator
-	  // in Safari 9 which returns 'object' for typed arrays and other constructors.
-	  var tag = _baseGetTag(value);
-	  return tag == funcTag$1 || tag == genTag || tag == asyncTag || tag == proxyTag;
+	    if (!isObject_1(value)) {
+	        return false;
+	    }
+	    // The use of `Object#toString` avoids issues with the `typeof` operator
+	    // in Safari 9 which returns 'object' for typed arrays and other constructors.
+	    var tag = _baseGetTag(value);
+	    return tag == funcTag$1 || tag == genTag || tag == asyncTag || tag == proxyTag;
 	}
 
 	var isFunction_1 = isFunction;
@@ -1476,7 +1463,7 @@
 	 * // => true
 	 */
 	function eq(value, other) {
-	  return value === other || (value !== value && other !== other);
+	  return value === other || value !== value && other !== other;
 	}
 
 	var eq_1 = eq;
@@ -1601,14 +1588,14 @@
 	 * @param {Array} [entries] The key-value pairs to cache.
 	 */
 	function ListCache(entries) {
-	  var index = -1,
-	      length = entries == null ? 0 : entries.length;
+	    var index = -1,
+	        length = entries == null ? 0 : entries.length;
 
-	  this.clear();
-	  while (++index < length) {
-	    var entry = entries[index];
-	    this.set(entry[0], entry[1]);
-	  }
+	    this.clear();
+	    while (++index < length) {
+	        var entry = entries[index];
+	        this.set(entry[0], entry[1]);
+	    }
 	}
 
 	// Add methods to `ListCache`.
@@ -1628,7 +1615,7 @@
 	 * @memberOf Stack
 	 */
 	function stackClear() {
-	  this.__data__ = new _ListCache;
+	  this.__data__ = new _ListCache();
 	  this.size = 0;
 	}
 
@@ -1689,10 +1676,10 @@
 	var _coreJsData = coreJsData;
 
 	/** Used to detect methods masquerading as native. */
-	var maskSrcKey = (function() {
+	var maskSrcKey = function () {
 	  var uid = /[^.]+$/.exec(_coreJsData && _coreJsData.keys && _coreJsData.keys.IE_PROTO || '');
-	  return uid ? ('Symbol(src)_1.' + uid) : '';
-	}());
+	  return uid ? 'Symbol(src)_1.' + uid : '';
+	}();
 
 	/**
 	 * Checks if `func` has its source masked.
@@ -1702,7 +1689,7 @@
 	 * @returns {boolean} Returns `true` if `func` is masked, else `false`.
 	 */
 	function isMasked(func) {
-	  return !!maskSrcKey && (maskSrcKey in func);
+	  return !!maskSrcKey && maskSrcKey in func;
 	}
 
 	var _isMasked = isMasked;
@@ -1726,7 +1713,7 @@
 	      return funcToString.call(func);
 	    } catch (e) {}
 	    try {
-	      return (func + '');
+	      return func + '';
 	    } catch (e) {}
 	  }
 	  return '';
@@ -1754,10 +1741,7 @@
 	var hasOwnProperty$4 = objectProto$6.hasOwnProperty;
 
 	/** Used to detect if a method is native. */
-	var reIsNative = RegExp('^' +
-	  funcToString$1.call(hasOwnProperty$4).replace(reRegExpChar, '\\$&')
-	  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
-	);
+	var reIsNative = RegExp('^' + funcToString$1.call(hasOwnProperty$4).replace(reRegExpChar, '\\$&').replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$');
 
 	/**
 	 * The base implementation of `_.isNative` without bad shim checks.
@@ -1894,7 +1878,7 @@
 	 */
 	function hashHas(key) {
 	  var data = this.__data__;
-	  return _nativeCreate ? (data[key] !== undefined) : hasOwnProperty$6.call(data, key);
+	  return _nativeCreate ? data[key] !== undefined : hasOwnProperty$6.call(data, key);
 	}
 
 	var _hashHas = hashHas;
@@ -1915,7 +1899,7 @@
 	function hashSet(key, value) {
 	  var data = this.__data__;
 	  this.size += this.has(key) ? 0 : 1;
-	  data[key] = (_nativeCreate && value === undefined) ? HASH_UNDEFINED$1 : value;
+	  data[key] = _nativeCreate && value === undefined ? HASH_UNDEFINED$1 : value;
 	  return this;
 	}
 
@@ -1929,14 +1913,14 @@
 	 * @param {Array} [entries] The key-value pairs to cache.
 	 */
 	function Hash(entries) {
-	  var index = -1,
-	      length = entries == null ? 0 : entries.length;
+	    var index = -1,
+	        length = entries == null ? 0 : entries.length;
 
-	  this.clear();
-	  while (++index < length) {
-	    var entry = entries[index];
-	    this.set(entry[0], entry[1]);
-	  }
+	    this.clear();
+	    while (++index < length) {
+	        var entry = entries[index];
+	        this.set(entry[0], entry[1]);
+	    }
 	}
 
 	// Add methods to `Hash`.
@@ -1958,13 +1942,15 @@
 	function mapCacheClear() {
 	  this.size = 0;
 	  this.__data__ = {
-	    'hash': new _Hash,
-	    'map': new (_Map || _ListCache),
-	    'string': new _Hash
+	    'hash': new _Hash(),
+	    'map': new (_Map || _ListCache)(),
+	    'string': new _Hash()
 	  };
 	}
 
 	var _mapCacheClear = mapCacheClear;
+
+	var _typeof$6 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 	/**
 	 * Checks if `value` is suitable for use as unique object key.
@@ -1974,10 +1960,8 @@
 	 * @returns {boolean} Returns `true` if `value` is suitable, else `false`.
 	 */
 	function isKeyable(value) {
-	  var type = typeof value;
-	  return (type == 'string' || type == 'number' || type == 'symbol' || type == 'boolean')
-	    ? (value !== '__proto__')
-	    : (value === null);
+	  var type = typeof value === 'undefined' ? 'undefined' : _typeof$6(value);
+	  return type == 'string' || type == 'number' || type == 'symbol' || type == 'boolean' ? value !== '__proto__' : value === null;
 	}
 
 	var _isKeyable = isKeyable;
@@ -1992,9 +1976,7 @@
 	 */
 	function getMapData(map, key) {
 	  var data = map.__data__;
-	  return _isKeyable(key)
-	    ? data[typeof key == 'string' ? 'string' : 'hash']
-	    : data.map;
+	  return _isKeyable(key) ? data[typeof key == 'string' ? 'string' : 'hash'] : data.map;
 	}
 
 	var _getMapData = getMapData;
@@ -2075,14 +2057,14 @@
 	 * @param {Array} [entries] The key-value pairs to cache.
 	 */
 	function MapCache(entries) {
-	  var index = -1,
-	      length = entries == null ? 0 : entries.length;
+	    var index = -1,
+	        length = entries == null ? 0 : entries.length;
 
-	  this.clear();
-	  while (++index < length) {
-	    var entry = entries[index];
-	    this.set(entry[0], entry[1]);
-	  }
+	    this.clear();
+	    while (++index < length) {
+	        var entry = entries[index];
+	        this.set(entry[0], entry[1]);
+	    }
 	}
 
 	// Add methods to `MapCache`.
@@ -2111,7 +2093,7 @@
 	  var data = this.__data__;
 	  if (data instanceof _ListCache) {
 	    var pairs = data.__data__;
-	    if (!_Map || (pairs.length < LARGE_ARRAY_SIZE - 1)) {
+	    if (!_Map || pairs.length < LARGE_ARRAY_SIZE - 1) {
 	      pairs.push([key, value]);
 	      this.size = ++data.size;
 	      return this;
@@ -2146,13 +2128,13 @@
 
 	var _Stack = Stack;
 
-	var defineProperty = (function() {
+	var defineProperty = function () {
 	  try {
 	    var func = _getNative(Object, 'defineProperty');
 	    func({}, '', {});
 	    return func;
 	  } catch (e) {}
-	}());
+	}();
 
 	var _defineProperty = defineProperty;
 
@@ -2190,8 +2172,7 @@
 	 * @param {*} value The value to assign.
 	 */
 	function assignMergeValue(object, key, value) {
-	  if ((value !== undefined && !eq_1(object[key], value)) ||
-	      (value === undefined && !(key in object))) {
+	  if (value !== undefined && !eq_1(object[key], value) || value === undefined && !(key in object)) {
 	    _baseAssignValue(object, key, value);
 	  }
 	}
@@ -2206,7 +2187,7 @@
 	 * @returns {Function} Returns the new base function.
 	 */
 	function createBaseFor(fromRight) {
-	  return function(object, iteratee, keysFunc) {
+	  return function (object, iteratee, keysFunc) {
 	    var index = -1,
 	        iterable = Object(object),
 	        props = keysFunc(object),
@@ -2240,11 +2221,15 @@
 	var _baseFor = baseFor;
 
 	var _cloneBuffer = createCommonjsModule(function (module, exports) {
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+
+
 	/** Detect free variable `exports`. */
-	var freeExports = exports && !exports.nodeType && exports;
+	var freeExports = (_typeof(exports)) == 'object' && exports && !exports.nodeType && exports;
 
 	/** Detect free variable `module`. */
-	var freeModule = freeExports && 'object' == 'object' && module && !module.nodeType && module;
+	var freeModule = freeExports && (_typeof(module)) == 'object' && module && !module.nodeType && module;
 
 	/** Detect the popular CommonJS extension `module.exports`. */
 	var moduleExports = freeModule && freeModule.exports === freeExports;
@@ -2342,9 +2327,9 @@
 	 * @param {Object} proto The object to inherit from.
 	 * @returns {Object} Returns the new object.
 	 */
-	var baseCreate = (function() {
+	var baseCreate = function () {
 	  function object() {}
-	  return function(proto) {
+	  return function (proto) {
 	    if (!isObject_1(proto)) {
 	      return {};
 	    }
@@ -2352,11 +2337,11 @@
 	      return objectCreate(proto);
 	    }
 	    object.prototype = proto;
-	    var result = new object;
+	    var result = new object();
 	    object.prototype = undefined;
 	    return result;
 	  };
-	}());
+	}();
 
 	var _baseCreate = baseCreate;
 
@@ -2373,9 +2358,7 @@
 	 * @returns {Object} Returns the initialized clone.
 	 */
 	function initCloneObject(object) {
-	  return (typeof object.constructor == 'function' && !_isPrototype(object))
-	    ? _baseCreate(_getPrototype(object))
-	    : {};
+	    return typeof object.constructor == 'function' && !_isPrototype(object) ? _baseCreate(_getPrototype(object)) : {};
 	}
 
 	var _initCloneObject = initCloneObject;
@@ -2464,8 +2447,7 @@
 	    return true;
 	  }
 	  var Ctor = hasOwnProperty$7.call(proto, 'constructor') && proto.constructor;
-	  return typeof Ctor == 'function' && Ctor instanceof Ctor &&
-	    funcToString$2.call(Ctor) == objectCtorString;
+	  return typeof Ctor == 'function' && Ctor instanceof Ctor && funcToString$2.call(Ctor) == objectCtorString;
 	}
 
 	var isPlainObject_1 = isPlainObject;
@@ -2479,9 +2461,7 @@
 	 * @returns {*} Returns the property value.
 	 */
 	function safeGet(object, key) {
-	  return key == '__proto__'
-	    ? undefined
-	    : object[key];
+	  return key == '__proto__' ? undefined : object[key];
 	}
 
 	var _safeGet = safeGet;
@@ -2504,8 +2484,7 @@
 	 */
 	function assignValue(object, key, value) {
 	  var objValue = object[key];
-	  if (!(hasOwnProperty$8.call(object, key) && eq_1(objValue, value)) ||
-	      (value === undefined && !(key in object))) {
+	  if (!(hasOwnProperty$8.call(object, key) && eq_1(objValue, value)) || value === undefined && !(key in object)) {
 	    _baseAssignValue(object, key, value);
 	  }
 	}
@@ -2532,9 +2511,7 @@
 	  while (++index < length) {
 	    var key = props[index];
 
-	    var newValue = customizer
-	      ? customizer(object[key], source[key], key, object, source)
-	      : undefined;
+	    var newValue = customizer ? customizer(object[key], source[key], key, object, source) : undefined;
 
 	    if (newValue === undefined) {
 	      newValue = source[key];
@@ -2684,9 +2661,7 @@
 	    _assignMergeValue(object, key, stacked);
 	    return;
 	  }
-	  var newValue = customizer
-	    ? customizer(objValue, srcValue, (key + ''), object, source, stack)
-	    : undefined;
+	  var newValue = customizer ? customizer(objValue, srcValue, key + '', object, source, stack) : undefined;
 
 	  var isCommon = newValue === undefined;
 
@@ -2699,32 +2674,25 @@
 	    if (isArr || isBuff || isTyped) {
 	      if (isArray_1(objValue)) {
 	        newValue = objValue;
-	      }
-	      else if (isArrayLikeObject_1(objValue)) {
+	      } else if (isArrayLikeObject_1(objValue)) {
 	        newValue = _copyArray(objValue);
-	      }
-	      else if (isBuff) {
+	      } else if (isBuff) {
 	        isCommon = false;
 	        newValue = _cloneBuffer(srcValue, true);
-	      }
-	      else if (isTyped) {
+	      } else if (isTyped) {
 	        isCommon = false;
 	        newValue = _cloneTypedArray(srcValue, true);
-	      }
-	      else {
+	      } else {
 	        newValue = [];
 	      }
-	    }
-	    else if (isPlainObject_1(srcValue) || isArguments_1(srcValue)) {
+	    } else if (isPlainObject_1(srcValue) || isArguments_1(srcValue)) {
 	      newValue = objValue;
 	      if (isArguments_1(objValue)) {
 	        newValue = toPlainObject_1(objValue);
-	      }
-	      else if (!isObject_1(objValue) || (srcIndex && isFunction_1(objValue))) {
+	      } else if (!isObject_1(objValue) || srcIndex && isFunction_1(objValue)) {
 	        newValue = _initCloneObject(srcValue);
 	      }
-	    }
-	    else {
+	    } else {
 	      isCommon = false;
 	    }
 	  }
@@ -2754,15 +2722,12 @@
 	  if (object === source) {
 	    return;
 	  }
-	  _baseFor(source, function(srcValue, key) {
+	  _baseFor(source, function (srcValue, key) {
 	    if (isObject_1(srcValue)) {
-	      stack || (stack = new _Stack);
+	      stack || (stack = new _Stack());
 	      _baseMergeDeep(object, source, key, srcIndex, baseMerge, customizer, stack);
-	    }
-	    else {
-	      var newValue = customizer
-	        ? customizer(_safeGet(object, key), srcValue, (key + ''), object, source, stack)
-	        : undefined;
+	    } else {
+	      var newValue = customizer ? customizer(_safeGet(object, key), srcValue, key + '', object, source, stack) : undefined;
 
 	      if (newValue === undefined) {
 	        newValue = srcValue;
@@ -2808,10 +2773,14 @@
 	 */
 	function apply(func, thisArg, args) {
 	  switch (args.length) {
-	    case 0: return func.call(thisArg);
-	    case 1: return func.call(thisArg, args[0]);
-	    case 2: return func.call(thisArg, args[0], args[1]);
-	    case 3: return func.call(thisArg, args[0], args[1], args[2]);
+	    case 0:
+	      return func.call(thisArg);
+	    case 1:
+	      return func.call(thisArg, args[0]);
+	    case 2:
+	      return func.call(thisArg, args[0], args[1]);
+	    case 3:
+	      return func.call(thisArg, args[0], args[1], args[2]);
 	  }
 	  return func.apply(thisArg, args);
 	}
@@ -2831,8 +2800,8 @@
 	 * @returns {Function} Returns the new function.
 	 */
 	function overRest(func, start, transform) {
-	  start = nativeMax(start === undefined ? (func.length - 1) : start, 0);
-	  return function() {
+	  start = nativeMax(start === undefined ? func.length - 1 : start, 0);
+	  return function () {
 	    var args = arguments,
 	        index = -1,
 	        length = nativeMax(args.length - start, 0),
@@ -2873,7 +2842,7 @@
 	 * // => true
 	 */
 	function constant(value) {
-	  return function() {
+	  return function () {
 	    return value;
 	  };
 	}
@@ -2888,7 +2857,7 @@
 	 * @param {Function} string The `toString` result.
 	 * @returns {Function} Returns `func`.
 	 */
-	var baseSetToString = !_defineProperty ? identity_1 : function(func, string) {
+	var baseSetToString = !_defineProperty ? identity_1 : function (func, string) {
 	  return _defineProperty(func, 'toString', {
 	    'configurable': true,
 	    'enumerable': false,
@@ -2919,7 +2888,7 @@
 	  var count = 0,
 	      lastCalled = 0;
 
-	  return function() {
+	  return function () {
 	    var stamp = nativeNow(),
 	        remaining = HOT_SPAN - (stamp - lastCalled);
 
@@ -2963,6 +2932,10 @@
 
 	var _baseRest = baseRest;
 
+	var _typeof$7 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+
+
 	/**
 	 * Checks if the given arguments are from an iteratee call.
 	 *
@@ -2977,11 +2950,8 @@
 	  if (!isObject_1(object)) {
 	    return false;
 	  }
-	  var type = typeof index;
-	  if (type == 'number'
-	        ? (isArrayLike_1(object) && _isIndex(index, object.length))
-	        : (type == 'string' && index in object)
-	      ) {
+	  var type = typeof index === 'undefined' ? 'undefined' : _typeof$7(index);
+	  if (type == 'number' ? isArrayLike_1(object) && _isIndex(index, object.length) : type == 'string' && index in object) {
 	    return eq_1(object[index], value);
 	  }
 	  return false;
@@ -2997,15 +2967,13 @@
 	 * @returns {Function} Returns the new assigner function.
 	 */
 	function createAssigner(assigner) {
-	  return _baseRest(function(object, sources) {
+	  return _baseRest(function (object, sources) {
 	    var index = -1,
 	        length = sources.length,
 	        customizer = length > 1 ? sources[length - 1] : undefined,
 	        guard = length > 2 ? sources[2] : undefined;
 
-	    customizer = (assigner.length > 3 && typeof customizer == 'function')
-	      ? (length--, customizer)
-	      : undefined;
+	    customizer = assigner.length > 3 && typeof customizer == 'function' ? (length--, customizer) : undefined;
 
 	    if (guard && _isIterateeCall(sources[0], sources[1], guard)) {
 	      customizer = length < 3 ? undefined : customizer;
@@ -3055,31 +3023,121 @@
 	 * _.merge(object, other);
 	 * // => { 'a': [{ 'b': 2, 'c': 3 }, { 'd': 4, 'e': 5 }] }
 	 */
-	var merge = _createAssigner(function(object, source, srcIndex) {
+	var merge = _createAssigner(function (object, source, srcIndex) {
 	  _baseMerge(object, source, srcIndex);
 	});
 
 	var merge_1 = merge;
 
 	var bundle = createCommonjsModule(function (module) {
-	module.exports=function(e){function t(i){if(a[i])return a[i].exports;var n=a[i]={exports:{},id:i,loaded:!1};return e[i].call(n.exports,n,n.exports,t),n.loaded=!0,n.exports}var a={};return t.m=e,t.c=a,t.p="",t(0)}([function(e,t,a){e.exports=a(1);},function(e,t,a){function i(e){return e&&e.__esModule?e:{default:e}}function n(e){return (0, h.default)(e)?e:[e]}function l(e){return "[object Date]"===Object.prototype.toString.call(e)}function r(e){if(null===e||"object"!==("undefined"==typeof e?"undefined":c(e))||l(e))return e;if((0, h.default)(e))return e.map(r);var t={};return (0, k.default)(e).forEach(function(a){t[(0, y.default)(a)]=r(e[a]);}),t}function u(e,t){var a=t.camelizeKeys,i=t.camelizeTypeValues,n={};return (0, k.default)(e).forEach(function(t){var l=e[t],u=a?(0, y.default)(t):t;n[u]={},"undefined"!=typeof l.data&&((0, h.default)(l.data)?n[u].data=l.data.map(function(e){return {id:e.id,type:i?(0, y.default)(e.type):e.type}}):(0, z.default)(l.data)?n[u].data=l.data:n[u].data={id:l.data.id,type:i?(0, y.default)(l.data.type):l.data.type},"undefined"!=typeof l.meta&&(n[u].meta=r(l.meta))),l.links&&(n[u].links=a?r(l.links):l.links);}),n}function o(e,t){var a=t.camelizeKeys,i=t.camelizeTypeValues,l={};return n(e).forEach(function(e){var t=a?(0, y.default)(e.type):e.type;l[t]=l[t]||{},l[t][e.id]=l[t][e.id]||{id:e.id},l[t][e.id].type=i?(0, y.default)(e.type):e.type,a?(l[t][e.id].attributes={},(0, k.default)(e.attributes).forEach(function(a){l[t][e.id].attributes[(0, y.default)(a)]=r(e.attributes[a]);})):l[t][e.id].attributes=e.attributes,e.links&&(l[t][e.id].links={},(0, k.default)(e.links).forEach(function(i){var n=a?(0, y.default)(i):i;l[t][e.id].links[n]=e.links[i];})),e.relationships&&(l[t][e.id].relationships=u(e.relationships,{camelizeKeys:a,camelizeTypeValues:i})),e.meta&&(a?(l[t][e.id].meta={},(0, k.default)(e.meta).forEach(function(a){l[t][e.id].meta[(0, y.default)(a)]=r(e.meta[a]);})):l[t][e.id].meta=e.meta);}),l}function d(e){return e.replace(/\?.*$/,"")}function f(e,t,a){var i=a.camelizeKeys,l=a.camelizeTypeValues,r=a.filterEndpoint,o={};o.meta={};var f=void 0;if(r)o.meta[t]={},f=o.meta[t];else{var s=d(t);o.meta[s]={},o.meta[s][t.slice(s.length)]={},f=o.meta[s][t.slice(s.length)];}if(f.data={},e.data){var c=[];n(e.data).forEach(function(e){var t={id:e.id,type:l?(0, y.default)(e.type):e.type};e.relationships&&(t.relationships=u(e.relationships,{camelizeKeys:i,camelizeTypeValues:l})),c.push(t);}),f.data=c;}return e.links&&(f.links=e.links,o.meta[d(t)].links=e.links),e.meta&&(f.meta=e.meta),o}function s(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},a={},i=t.endpoint,n=t.filterEndpoint,l=t.camelizeKeys,r=t.camelizeTypeValues;if("undefined"==typeof n&&(n=!0),"undefined"==typeof l&&(l=!0),"undefined"==typeof r&&(r=!0),e.data&&(0, E.default)(a,o(e.data,{camelizeKeys:l,camelizeTypeValues:r})),e.included&&(0, E.default)(a,o(e.included,{camelizeKeys:l,camelizeTypeValues:r})),i){var u=n?d(i):i;(0, E.default)(a,f(e,u,{camelizeKeys:l,camelizeTypeValues:r,filterEndpoint:n}));}return a}Object.defineProperty(t,"__esModule",{value:!0});var c="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e};t.default=s;var p=a(2),y=i(p),m=a(3),h=i(m),v=a(4),z=i(v),b=a(5),k=i(b),x=a(6),E=i(x);},function(e,t){e.exports=camelCase_1;},function(e,t){e.exports=isArray_1;},function(e,t){e.exports=isNull_1;},function(e,t){e.exports=keys_1;},function(e,t){e.exports=merge_1;}]);
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+	module.exports = function (e) {
+	  function t(i) {
+	    if (a[i]) return a[i].exports;var n = a[i] = { exports: {}, id: i, loaded: !1 };return e[i].call(n.exports, n, n.exports, t), n.loaded = !0, n.exports;
+	  }var a = {};return t.m = e, t.c = a, t.p = "", t(0);
+	}([function (e, t, a) {
+	  e.exports = a(1);
+	}, function (e, t, a) {
+	  function i(e) {
+	    return e && e.__esModule ? e : { default: e };
+	  }function n(e) {
+	    return (0, h.default)(e) ? e : [e];
+	  }function l(e) {
+	    return "[object Date]" === Object.prototype.toString.call(e);
+	  }function r(e) {
+	    if (null === e || "object" !== ("undefined" == typeof e ? "undefined" : c(e)) || l(e)) return e;if ((0, h.default)(e)) return e.map(r);var t = {};return (0, k.default)(e).forEach(function (a) {
+	      t[(0, y.default)(a)] = r(e[a]);
+	    }), t;
+	  }function u(e, t) {
+	    var a = t.camelizeKeys,
+	        i = t.camelizeTypeValues,
+	        n = {};return (0, k.default)(e).forEach(function (t) {
+	      var l = e[t],
+	          u = a ? (0, y.default)(t) : t;n[u] = {}, "undefined" != typeof l.data && ((0, h.default)(l.data) ? n[u].data = l.data.map(function (e) {
+	        return { id: e.id, type: i ? (0, y.default)(e.type) : e.type };
+	      }) : (0, z.default)(l.data) ? n[u].data = l.data : n[u].data = { id: l.data.id, type: i ? (0, y.default)(l.data.type) : l.data.type }, "undefined" != typeof l.meta && (n[u].meta = r(l.meta))), l.links && (n[u].links = a ? r(l.links) : l.links);
+	    }), n;
+	  }function o(e, t) {
+	    var a = t.camelizeKeys,
+	        i = t.camelizeTypeValues,
+	        l = {};return n(e).forEach(function (e) {
+	      var t = a ? (0, y.default)(e.type) : e.type;l[t] = l[t] || {}, l[t][e.id] = l[t][e.id] || { id: e.id }, l[t][e.id].type = i ? (0, y.default)(e.type) : e.type, a ? (l[t][e.id].attributes = {}, (0, k.default)(e.attributes).forEach(function (a) {
+	        l[t][e.id].attributes[(0, y.default)(a)] = r(e.attributes[a]);
+	      })) : l[t][e.id].attributes = e.attributes, e.links && (l[t][e.id].links = {}, (0, k.default)(e.links).forEach(function (i) {
+	        var n = a ? (0, y.default)(i) : i;l[t][e.id].links[n] = e.links[i];
+	      })), e.relationships && (l[t][e.id].relationships = u(e.relationships, { camelizeKeys: a, camelizeTypeValues: i })), e.meta && (a ? (l[t][e.id].meta = {}, (0, k.default)(e.meta).forEach(function (a) {
+	        l[t][e.id].meta[(0, y.default)(a)] = r(e.meta[a]);
+	      })) : l[t][e.id].meta = e.meta);
+	    }), l;
+	  }function d(e) {
+	    return e.replace(/\?.*$/, "");
+	  }function f(e, t, a) {
+	    var i = a.camelizeKeys,
+	        l = a.camelizeTypeValues,
+	        r = a.filterEndpoint,
+	        o = {};o.meta = {};var f = void 0;if (r) o.meta[t] = {}, f = o.meta[t];else {
+	      var s = d(t);o.meta[s] = {}, o.meta[s][t.slice(s.length)] = {}, f = o.meta[s][t.slice(s.length)];
+	    }if (f.data = {}, e.data) {
+	      var c = [];n(e.data).forEach(function (e) {
+	        var t = { id: e.id, type: l ? (0, y.default)(e.type) : e.type };e.relationships && (t.relationships = u(e.relationships, { camelizeKeys: i, camelizeTypeValues: l })), c.push(t);
+	      }), f.data = c;
+	    }return e.links && (f.links = e.links, o.meta[d(t)].links = e.links), e.meta && (f.meta = e.meta), o;
+	  }function s(e) {
+	    var t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {},
+	        a = {},
+	        i = t.endpoint,
+	        n = t.filterEndpoint,
+	        l = t.camelizeKeys,
+	        r = t.camelizeTypeValues;if ("undefined" == typeof n && (n = !0), "undefined" == typeof l && (l = !0), "undefined" == typeof r && (r = !0), e.data && (0, E.default)(a, o(e.data, { camelizeKeys: l, camelizeTypeValues: r })), e.included && (0, E.default)(a, o(e.included, { camelizeKeys: l, camelizeTypeValues: r })), i) {
+	      var u = n ? d(i) : i;(0, E.default)(a, f(e, u, { camelizeKeys: l, camelizeTypeValues: r, filterEndpoint: n }));
+	    }return a;
+	  }Object.defineProperty(t, "__esModule", { value: !0 });var c = "function" == typeof Symbol && "symbol" == _typeof(Symbol.iterator) ? function (e) {
+	    return typeof e === "undefined" ? "undefined" : _typeof(e);
+	  } : function (e) {
+	    return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e === "undefined" ? "undefined" : _typeof(e);
+	  };t.default = s;var p = a(2),
+	      y = i(p),
+	      m = a(3),
+	      h = i(m),
+	      v = a(4),
+	      z = i(v),
+	      b = a(5),
+	      k = i(b),
+	      x = a(6),
+	      E = i(x);
+	}, function (e, t) {
+	  e.exports = camelCase_1;
+	}, function (e, t) {
+	  e.exports = isArray_1;
+	}, function (e, t) {
+	  e.exports = isNull_1;
+	}, function (e, t) {
+	  e.exports = keys_1;
+	}, function (e, t) {
+	  e.exports = merge_1;
+	}]);
 	});
 
 	var jsonApiNormalize = unwrapExports(bundle);
 
-	const isGraphQl = payload => {
-	  return (
-	    payload["data"] && payload["data"][0] && "__typename" in payload["data"][0]
-	  );
+	var _typeof$8 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+	var isGraphQl = function isGraphQl(payload) {
+	  return payload["data"] && payload["data"][0] && "__typename" in payload["data"][0];
 	};
 
-	const toJsonApiSpec = (resourceType, resourcesById) => {
-	  return Object.entries(
-	    resourcesById
-	  ).reduce((formattedResourcesById, [id, resource]) => {
+	var toJsonApiSpec = function toJsonApiSpec(resourceType, resourcesById) {
+	  return Object.entries(resourcesById).reduce(function (formattedResourcesById, _ref) {
+	    var _ref2 = _slicedToArray(_ref, 2),
+	        id = _ref2[0],
+	        resource = _ref2[1];
+
 	    formattedResourcesById[id] = {
 	      type: resourceType,
-	      id,
+	      id: id,
 	      attributes: _removeRelationships(resource),
 	      links: null,
 	      relationships: _buildRelationships(resource)
@@ -3089,79 +3147,134 @@
 	  }, {});
 	};
 
-	const _buildRelationships = resource => {
-	  return Object.entries(resource).reduce((newObject, [key, value]) => {
+	var _buildRelationships = function _buildRelationships(resource) {
+	  return Object.entries(resource).reduce(function (newObject, _ref3) {
+	    var _ref4 = _slicedToArray(_ref3, 2),
+	        key = _ref4[0],
+	        value = _ref4[1];
+
 	    if (value && Array.isArray(value)) {
 	      if (!newObject[key]) {
-	        newObject[key] = {data: []};
+	        newObject[key] = { data: [] };
 	      }
 
-	      newObject[key].data = value.map(id => ({type: key, id}));
+	      newObject[key].data = value.map(function (id) {
+	        return { type: key, id: id };
+	      });
 	    }
+
+	    if (value && (typeof value === "undefined" ? "undefined" : _typeof$8(value)) === "object") ;
 	    return newObject;
 	  }, {});
 	};
 
-	const _removeRelationships = resource => {
-	  return Object.entries(resource).reduce((newObject, [key, value]) => {
-	    if (
-	      !(value && Array.isArray(value)) ||
-	      !(value && typeof value === "object")
-	    ) {
+	var _removeRelationships = function _removeRelationships(resource) {
+	  return Object.entries(resource).reduce(function (newObject, _ref5) {
+	    var _ref6 = _slicedToArray(_ref5, 2),
+	        key = _ref6[0],
+	        value = _ref6[1];
+
+	    if (!(value && Array.isArray(value)) || !(value && (typeof value === "undefined" ? "undefined" : _typeof$8(value)) === "object")) {
 	      newObject[key] = value;
 	    }
 	    return newObject;
 	  }, {});
 	};
 
-	const graphQLNormalizr = new graphqlNormalizr.GraphQLNormalizr();
-	const graphQlNormalize = graphQLNormalizr.normalize;
+	var _slicedToArray$1 = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-	class Actions {
-	  static config({adapter, mutator}) {
-	    return new Actions(adapter, mutator);
-	  }
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	  constructor(adapter, mutator) {
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var graphQLNormalizr = new graphqlNormalizr.GraphQLNormalizr();
+	var graphQlNormalize = graphQLNormalizr.normalize;
+
+	var Actions = function () {
+	  _createClass(Actions, null, [{
+	    key: "config",
+	    value: function config(_ref) {
+	      var adapter = _ref.adapter,
+	          mutator = _ref.mutator;
+
+	      return new Actions(adapter, mutator);
+	    }
+	  }]);
+
+	  function Actions(adapter, mutator) {
+	    _classCallCheck(this, Actions);
+
 	    this.actions = adapter.actions;
 	    this.mutator = mutator;
 	  }
 
-	  updateResources(payload) {
-	    Object.entries(
-	      isGraphQl(payload) ? graphQlNormalize(payload) : jsonApiNormalize(payload)
-	    ).forEach(([resourceType, resourcesById]) => {
-	      const rById = isGraphQl(payload)
-	        ? toJsonApiSpec(resourceType, resourcesById)
-	        : resourcesById;
+	  _createClass(Actions, [{
+	    key: "updateResources",
+	    value: function updateResources(payload) {
+	      var _this = this;
 
-	      this.actions.updateResources(this.mutator, resourceType, rById);
+	      // Create insert order index
+	      var index = isGraphQl(payload) ? _createIndexForGraphQl(payload) : _createIndexForJsonApi(payload);
+
+	      Object.entries(isGraphQl(payload) ? graphQlNormalize(payload) : jsonApiNormalize(payload)).forEach(function (_ref2) {
+	        var _ref3 = _slicedToArray$1(_ref2, 2),
+	            resourceType = _ref3[0],
+	            resourcesById = _ref3[1];
+
+	        var rById = isGraphQl(payload) ? toJsonApiSpec(resourceType, resourcesById) : resourcesById;
+
+	        _this.actions.updateResources(_this.mutator, resourceType, rById, index);
+	      });
+	    }
+	  }, {
+	    key: "updateResource",
+	    value: function updateResource(resource) {
+	      this.actions.updateResource(this.mutator, resource);
+	    }
+	  }, {
+	    key: "removeResources",
+	    value: function removeResources(resources) {
+	      this.actions.removeResources(this.mutator, resources);
+	    }
+	  }, {
+	    key: "removeResource",
+	    value: function removeResource(resource) {
+	      this.actions.removeResource(this.mutator, resource);
+	    }
+	  }, {
+	    key: "clearResources",
+	    value: function clearResources(resourceTypes) {
+	      this.actions.clearResources(this.mutator, resourceTypes);
+	    }
+	  }]);
+
+	  return Actions;
+	}();
+
+
+	function _createIndexForJsonApi(payload) {
+	  var index = [];
+	  if (payload.data) {
+	    var data = Array.isArray(payload.data) ? payload.data : [payload.data];
+	    index = data.map(function (item) {
+	      return item.id;
 	    });
 	  }
+	  return index;
+	}
 
-	  updateResource(resource) {
-	    this.actions.updateResource(this.mutator, resource);
-	  }
-
-	  removeResources(resources) {
-	    this.actions.removeResources(this.mutator, resources);
-	  }
-
-	  removeResource(resource) {
-	    this.actions.removeResource(this.mutator, resource);
-	  }
-
-	  clearResources(resourceTypes) {
-	    this.actions.clearResources(this.mutator, resourceTypes);
-	  }
+	function _createIndexForGraphQl(payload) {
+	  return [];
 	}
 
 	var pluralize = createCommonjsModule(function (module, exports) {
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 	/* global define */
 
 	(function (root, pluralize) {
 	  /* istanbul ignore else */
-	  if (typeof commonjsRequire === 'function' && 'object' === 'object' && 'object' === 'object') {
+	  if (typeof commonjsRequire === 'function' && (_typeof(exports)) === 'object' && (_typeof(module)) === 'object') {
 	    // Node.
 	    module.exports = pluralize();
 	  } else {
@@ -3183,7 +3296,7 @@
 	   * @param  {(RegExp|string)} rule
 	   * @return {RegExp}
 	   */
-	  function sanitizeRule (rule) {
+	  function sanitizeRule(rule) {
 	    if (typeof rule === 'string') {
 	      return new RegExp('^' + rule + '$', 'i');
 	    }
@@ -3199,7 +3312,7 @@
 	   * @param  {string}   token
 	   * @return {Function}
 	   */
-	  function restoreCase (word, token) {
+	  function restoreCase(word, token) {
 	    // Tokens are an exact match.
 	    if (word === token) return token;
 
@@ -3222,7 +3335,7 @@
 	   * @param  {Array}  args
 	   * @return {string}
 	   */
-	  function interpolate (str, args) {
+	  function interpolate(str, args) {
 	    return str.replace(/\$(\d{1,2})/g, function (match, index) {
 	      return args[index] || '';
 	    });
@@ -3235,7 +3348,7 @@
 	   * @param  {Array}  rule
 	   * @return {string}
 	   */
-	  function replace (word, rule) {
+	  function replace(word, rule) {
 	    return word.replace(rule[0], function (match, index) {
 	      var result = interpolate(rule[1], arguments);
 
@@ -3255,7 +3368,7 @@
 	   * @param  {Array}    rules
 	   * @return {string}
 	   */
-	  function sanitizeWord (token, word, rules) {
+	  function sanitizeWord(token, word, rules) {
 	    // Empty string or doesn't need fixing.
 	    if (!token.length || uncountables.hasOwnProperty(token)) {
 	      return word;
@@ -3281,7 +3394,7 @@
 	   * @param  {Array}    rules
 	   * @return {Function}
 	   */
-	  function replaceWord (replaceMap, keepMap, rules) {
+	  function replaceWord(replaceMap, keepMap, rules) {
 	    return function (word) {
 	      // Get the correct token and case restoration functions.
 	      var token = word.toLowerCase();
@@ -3304,7 +3417,7 @@
 	  /**
 	   * Check if a word is part of the map.
 	   */
-	  function checkWord (replaceMap, keepMap, rules, bool) {
+	  function checkWord(replaceMap, keepMap, rules, bool) {
 	    return function (word) {
 	      var token = word.toLowerCase();
 
@@ -3323,9 +3436,8 @@
 	   * @param  {boolean} inclusive
 	   * @return {string}
 	   */
-	  function pluralize (word, count, inclusive) {
-	    var pluralized = count === 1
-	      ? pluralize.singular(word) : pluralize.plural(word);
+	  function pluralize(word, count, inclusive) {
+	    var pluralized = count === 1 ? pluralize.singular(word) : pluralize.plural(word);
 
 	    return (inclusive ? count + ' ' : '') + pluralized;
 	  }
@@ -3335,36 +3447,28 @@
 	   *
 	   * @type {Function}
 	   */
-	  pluralize.plural = replaceWord(
-	    irregularSingles, irregularPlurals, pluralRules
-	  );
+	  pluralize.plural = replaceWord(irregularSingles, irregularPlurals, pluralRules);
 
 	  /**
 	   * Check if a word is plural.
 	   *
 	   * @type {Function}
 	   */
-	  pluralize.isPlural = checkWord(
-	    irregularSingles, irregularPlurals, pluralRules
-	  );
+	  pluralize.isPlural = checkWord(irregularSingles, irregularPlurals, pluralRules);
 
 	  /**
 	   * Singularize a word.
 	   *
 	   * @type {Function}
 	   */
-	  pluralize.singular = replaceWord(
-	    irregularPlurals, irregularSingles, singularRules
-	  );
+	  pluralize.singular = replaceWord(irregularPlurals, irregularSingles, singularRules);
 
 	  /**
 	   * Check if a word is singular.
 	   *
 	   * @type {Function}
 	   */
-	  pluralize.isSingular = checkWord(
-	    irregularPlurals, irregularSingles, singularRules
-	  );
+	  pluralize.isSingular = checkWord(irregularPlurals, irregularSingles, singularRules);
 
 	  /**
 	   * Add a pluralization rule to the collection.
@@ -3420,123 +3524,30 @@
 	   * Irregular rules.
 	   */
 	  [
-	    // Pronouns.
-	    ['I', 'we'],
-	    ['me', 'us'],
-	    ['he', 'they'],
-	    ['she', 'they'],
-	    ['them', 'them'],
-	    ['myself', 'ourselves'],
-	    ['yourself', 'yourselves'],
-	    ['itself', 'themselves'],
-	    ['herself', 'themselves'],
-	    ['himself', 'themselves'],
-	    ['themself', 'themselves'],
-	    ['is', 'are'],
-	    ['was', 'were'],
-	    ['has', 'have'],
-	    ['this', 'these'],
-	    ['that', 'those'],
-	    // Words ending in with a consonant and `o`.
-	    ['echo', 'echoes'],
-	    ['dingo', 'dingoes'],
-	    ['volcano', 'volcanoes'],
-	    ['tornado', 'tornadoes'],
-	    ['torpedo', 'torpedoes'],
-	    // Ends with `us`.
-	    ['genus', 'genera'],
-	    ['viscus', 'viscera'],
-	    // Ends with `ma`.
-	    ['stigma', 'stigmata'],
-	    ['stoma', 'stomata'],
-	    ['dogma', 'dogmata'],
-	    ['lemma', 'lemmata'],
-	    ['schema', 'schemata'],
-	    ['anathema', 'anathemata'],
-	    // Other irregular rules.
-	    ['ox', 'oxen'],
-	    ['axe', 'axes'],
-	    ['die', 'dice'],
-	    ['yes', 'yeses'],
-	    ['foot', 'feet'],
-	    ['eave', 'eaves'],
-	    ['goose', 'geese'],
-	    ['tooth', 'teeth'],
-	    ['quiz', 'quizzes'],
-	    ['human', 'humans'],
-	    ['proof', 'proofs'],
-	    ['carve', 'carves'],
-	    ['valve', 'valves'],
-	    ['looey', 'looies'],
-	    ['thief', 'thieves'],
-	    ['groove', 'grooves'],
-	    ['pickaxe', 'pickaxes'],
-	    ['whiskey', 'whiskies']
-	  ].forEach(function (rule) {
+	  // Pronouns.
+	  ['I', 'we'], ['me', 'us'], ['he', 'they'], ['she', 'they'], ['them', 'them'], ['myself', 'ourselves'], ['yourself', 'yourselves'], ['itself', 'themselves'], ['herself', 'themselves'], ['himself', 'themselves'], ['themself', 'themselves'], ['is', 'are'], ['was', 'were'], ['has', 'have'], ['this', 'these'], ['that', 'those'],
+	  // Words ending in with a consonant and `o`.
+	  ['echo', 'echoes'], ['dingo', 'dingoes'], ['volcano', 'volcanoes'], ['tornado', 'tornadoes'], ['torpedo', 'torpedoes'],
+	  // Ends with `us`.
+	  ['genus', 'genera'], ['viscus', 'viscera'],
+	  // Ends with `ma`.
+	  ['stigma', 'stigmata'], ['stoma', 'stomata'], ['dogma', 'dogmata'], ['lemma', 'lemmata'], ['schema', 'schemata'], ['anathema', 'anathemata'],
+	  // Other irregular rules.
+	  ['ox', 'oxen'], ['axe', 'axes'], ['die', 'dice'], ['yes', 'yeses'], ['foot', 'feet'], ['eave', 'eaves'], ['goose', 'geese'], ['tooth', 'teeth'], ['quiz', 'quizzes'], ['human', 'humans'], ['proof', 'proofs'], ['carve', 'carves'], ['valve', 'valves'], ['looey', 'looies'], ['thief', 'thieves'], ['groove', 'grooves'], ['pickaxe', 'pickaxes'], ['whiskey', 'whiskies']].forEach(function (rule) {
 	    return pluralize.addIrregularRule(rule[0], rule[1]);
 	  });
 
 	  /**
 	   * Pluralization rules.
 	   */
-	  [
-	    [/s?$/i, 's'],
-	    [/[^\u0000-\u007F]$/i, '$0'],
-	    [/([^aeiou]ese)$/i, '$1'],
-	    [/(ax|test)is$/i, '$1es'],
-	    [/(alias|[^aou]us|tlas|gas|ris)$/i, '$1es'],
-	    [/(e[mn]u)s?$/i, '$1s'],
-	    [/([^l]ias|[aeiou]las|[emjzr]as|[iu]am)$/i, '$1'],
-	    [/(alumn|syllab|octop|vir|radi|nucle|fung|cact|stimul|termin|bacill|foc|uter|loc|strat)(?:us|i)$/i, '$1i'],
-	    [/(alumn|alg|vertebr)(?:a|ae)$/i, '$1ae'],
-	    [/(seraph|cherub)(?:im)?$/i, '$1im'],
-	    [/(her|at|gr)o$/i, '$1oes'],
-	    [/(agend|addend|millenni|dat|extrem|bacteri|desiderat|strat|candelabr|errat|ov|symposi|curricul|automat|quor)(?:a|um)$/i, '$1a'],
-	    [/(apheli|hyperbat|periheli|asyndet|noumen|phenomen|criteri|organ|prolegomen|hedr|automat)(?:a|on)$/i, '$1a'],
-	    [/sis$/i, 'ses'],
-	    [/(?:(kni|wi|li)fe|(ar|l|ea|eo|oa|hoo)f)$/i, '$1$2ves'],
-	    [/([^aeiouy]|qu)y$/i, '$1ies'],
-	    [/([^ch][ieo][ln])ey$/i, '$1ies'],
-	    [/(x|ch|ss|sh|zz)$/i, '$1es'],
-	    [/(matr|cod|mur|sil|vert|ind|append)(?:ix|ex)$/i, '$1ices'],
-	    [/(m|l)(?:ice|ouse)$/i, '$1ice'],
-	    [/(pe)(?:rson|ople)$/i, '$1ople'],
-	    [/(child)(?:ren)?$/i, '$1ren'],
-	    [/eaux$/i, '$0'],
-	    [/m[ae]n$/i, 'men'],
-	    ['thou', 'you']
-	  ].forEach(function (rule) {
+	  [[/s?$/i, 's'], [/[^\u0000-\u007F]$/i, '$0'], [/([^aeiou]ese)$/i, '$1'], [/(ax|test)is$/i, '$1es'], [/(alias|[^aou]us|tlas|gas|ris)$/i, '$1es'], [/(e[mn]u)s?$/i, '$1s'], [/([^l]ias|[aeiou]las|[emjzr]as|[iu]am)$/i, '$1'], [/(alumn|syllab|octop|vir|radi|nucle|fung|cact|stimul|termin|bacill|foc|uter|loc|strat)(?:us|i)$/i, '$1i'], [/(alumn|alg|vertebr)(?:a|ae)$/i, '$1ae'], [/(seraph|cherub)(?:im)?$/i, '$1im'], [/(her|at|gr)o$/i, '$1oes'], [/(agend|addend|millenni|dat|extrem|bacteri|desiderat|strat|candelabr|errat|ov|symposi|curricul|automat|quor)(?:a|um)$/i, '$1a'], [/(apheli|hyperbat|periheli|asyndet|noumen|phenomen|criteri|organ|prolegomen|hedr|automat)(?:a|on)$/i, '$1a'], [/sis$/i, 'ses'], [/(?:(kni|wi|li)fe|(ar|l|ea|eo|oa|hoo)f)$/i, '$1$2ves'], [/([^aeiouy]|qu)y$/i, '$1ies'], [/([^ch][ieo][ln])ey$/i, '$1ies'], [/(x|ch|ss|sh|zz)$/i, '$1es'], [/(matr|cod|mur|sil|vert|ind|append)(?:ix|ex)$/i, '$1ices'], [/(m|l)(?:ice|ouse)$/i, '$1ice'], [/(pe)(?:rson|ople)$/i, '$1ople'], [/(child)(?:ren)?$/i, '$1ren'], [/eaux$/i, '$0'], [/m[ae]n$/i, 'men'], ['thou', 'you']].forEach(function (rule) {
 	    return pluralize.addPluralRule(rule[0], rule[1]);
 	  });
 
 	  /**
 	   * Singularization rules.
 	   */
-	  [
-	    [/s$/i, ''],
-	    [/(ss)$/i, '$1'],
-	    [/(wi|kni|(?:after|half|high|low|mid|non|night|[^\w]|^)li)ves$/i, '$1fe'],
-	    [/(ar|(?:wo|[ae])l|[eo][ao])ves$/i, '$1f'],
-	    [/ies$/i, 'y'],
-	    [/\b([pl]|zomb|(?:neck|cross)?t|coll|faer|food|gen|goon|group|lass|talk|goal|cut)ies$/i, '$1ie'],
-	    [/\b(mon|smil)ies$/i, '$1ey'],
-	    [/(m|l)ice$/i, '$1ouse'],
-	    [/(seraph|cherub)im$/i, '$1'],
-	    [/(x|ch|ss|sh|zz|tto|go|cho|alias|[^aou]us|tlas|gas|(?:her|at|gr)o|ris)(?:es)?$/i, '$1'],
-	    [/(analy|ba|diagno|parenthe|progno|synop|the|empha|cri)(?:sis|ses)$/i, '$1sis'],
-	    [/(movie|twelve|abuse|e[mn]u)s$/i, '$1'],
-	    [/(test)(?:is|es)$/i, '$1is'],
-	    [/(alumn|syllab|octop|vir|radi|nucle|fung|cact|stimul|termin|bacill|foc|uter|loc|strat)(?:us|i)$/i, '$1us'],
-	    [/(agend|addend|millenni|dat|extrem|bacteri|desiderat|strat|candelabr|errat|ov|symposi|curricul|quor)a$/i, '$1um'],
-	    [/(apheli|hyperbat|periheli|asyndet|noumen|phenomen|criteri|organ|prolegomen|hedr|automat)a$/i, '$1on'],
-	    [/(alumn|alg|vertebr)ae$/i, '$1a'],
-	    [/(cod|mur|sil|vert|ind)ices$/i, '$1ex'],
-	    [/(matr|append)ices$/i, '$1ix'],
-	    [/(pe)(rson|ople)$/i, '$1rson'],
-	    [/(child)ren$/i, '$1'],
-	    [/(eau)x?$/i, '$1'],
-	    [/men$/i, 'man']
-	  ].forEach(function (rule) {
+	  [[/s$/i, ''], [/(ss)$/i, '$1'], [/(wi|kni|(?:after|half|high|low|mid|non|night|[^\w]|^)li)ves$/i, '$1fe'], [/(ar|(?:wo|[ae])l|[eo][ao])ves$/i, '$1f'], [/ies$/i, 'y'], [/\b([pl]|zomb|(?:neck|cross)?t|coll|faer|food|gen|goon|group|lass|talk|goal|cut)ies$/i, '$1ie'], [/\b(mon|smil)ies$/i, '$1ey'], [/(m|l)ice$/i, '$1ouse'], [/(seraph|cherub)im$/i, '$1'], [/(x|ch|ss|sh|zz|tto|go|cho|alias|[^aou]us|tlas|gas|(?:her|at|gr)o|ris)(?:es)?$/i, '$1'], [/(analy|ba|diagno|parenthe|progno|synop|the|empha|cri)(?:sis|ses)$/i, '$1sis'], [/(movie|twelve|abuse|e[mn]u)s$/i, '$1'], [/(test)(?:is|es)$/i, '$1is'], [/(alumn|syllab|octop|vir|radi|nucle|fung|cact|stimul|termin|bacill|foc|uter|loc|strat)(?:us|i)$/i, '$1us'], [/(agend|addend|millenni|dat|extrem|bacteri|desiderat|strat|candelabr|errat|ov|symposi|curricul|quor)a$/i, '$1um'], [/(apheli|hyperbat|periheli|asyndet|noumen|phenomen|criteri|organ|prolegomen|hedr|automat)a$/i, '$1on'], [/(alumn|alg|vertebr)ae$/i, '$1a'], [/(cod|mur|sil|vert|ind)ices$/i, '$1ex'], [/(matr|append)ices$/i, '$1ix'], [/(pe)(rson|ople)$/i, '$1rson'], [/(child)ren$/i, '$1'], [/(eau)x?$/i, '$1'], [/men$/i, 'man']].forEach(function (rule) {
 	    return pluralize.addSingularRule(rule[0], rule[1]);
 	  });
 
@@ -3544,108 +3555,41 @@
 	   * Uncountable rules.
 	   */
 	  [
-	    // Singular words with no plurals.
-	    'adulthood',
-	    'advice',
-	    'agenda',
-	    'aid',
-	    'alcohol',
-	    'ammo',
-	    'anime',
-	    'athletics',
-	    'audio',
-	    'bison',
-	    'blood',
-	    'bream',
-	    'buffalo',
-	    'butter',
-	    'carp',
-	    'cash',
-	    'chassis',
-	    'chess',
-	    'clothing',
-	    'cod',
-	    'commerce',
-	    'cooperation',
-	    'corps',
-	    'debris',
-	    'diabetes',
-	    'digestion',
-	    'elk',
-	    'energy',
-	    'equipment',
-	    'excretion',
-	    'expertise',
-	    'flounder',
-	    'fun',
-	    'gallows',
-	    'garbage',
-	    'graffiti',
-	    'headquarters',
-	    'health',
-	    'herpes',
-	    'highjinks',
-	    'homework',
-	    'housework',
-	    'information',
-	    'jeans',
-	    'justice',
-	    'kudos',
-	    'labour',
-	    'literature',
-	    'machinery',
-	    'mackerel',
-	    'mail',
-	    'media',
-	    'mews',
-	    'moose',
-	    'music',
-	    'manga',
-	    'news',
-	    'pike',
-	    'plankton',
-	    'pliers',
-	    'pollution',
-	    'premises',
-	    'rain',
-	    'research',
-	    'rice',
-	    'salmon',
-	    'scissors',
-	    'series',
-	    'sewage',
-	    'shambles',
-	    'shrimp',
-	    'species',
-	    'staff',
-	    'swine',
-	    'tennis',
-	    'traffic',
-	    'transporation',
-	    'trout',
-	    'tuna',
-	    'wealth',
-	    'welfare',
-	    'whiting',
-	    'wildebeest',
-	    'wildlife',
-	    'you',
-	    // Regexes.
-	    /[^aeiou]ese$/i, // "chinese", "japanese"
-	    /deer$/i, // "deer", "reindeer"
-	    /fish$/i, // "fish", "blowfish", "angelfish"
-	    /measles$/i,
-	    /o[iu]s$/i, // "carnivorous"
-	    /pox$/i, // "chickpox", "smallpox"
-	    /sheep$/i
-	  ].forEach(pluralize.addUncountableRule);
+	  // Singular words with no plurals.
+	  'adulthood', 'advice', 'agenda', 'aid', 'alcohol', 'ammo', 'anime', 'athletics', 'audio', 'bison', 'blood', 'bream', 'buffalo', 'butter', 'carp', 'cash', 'chassis', 'chess', 'clothing', 'cod', 'commerce', 'cooperation', 'corps', 'debris', 'diabetes', 'digestion', 'elk', 'energy', 'equipment', 'excretion', 'expertise', 'flounder', 'fun', 'gallows', 'garbage', 'graffiti', 'headquarters', 'health', 'herpes', 'highjinks', 'homework', 'housework', 'information', 'jeans', 'justice', 'kudos', 'labour', 'literature', 'machinery', 'mackerel', 'mail', 'media', 'mews', 'moose', 'music', 'manga', 'news', 'pike', 'plankton', 'pliers', 'pollution', 'premises', 'rain', 'research', 'rice', 'salmon', 'scissors', 'series', 'sewage', 'shambles', 'shrimp', 'species', 'staff', 'swine', 'tennis', 'traffic', 'transporation', 'trout', 'tuna', 'wealth', 'welfare', 'whiting', 'wildebeest', 'wildlife', 'you',
+	  // Regexes.
+	  /[^aeiou]ese$/i, // "chinese", "japanese"
+	  /deer$/i, // "deer", "reindeer"
+	  /fish$/i, // "fish", "blowfish", "angelfish"
+	  /measles$/i, /o[iu]s$/i, // "carnivorous"
+	  /pox$/i, // "chickpox", "smallpox"
+	  /sheep$/i].forEach(pluralize.addUncountableRule);
 
 	  return pluralize;
 	});
 	});
 
-	class Query {
-	  constructor(klass, resourceName, resources, hasMany = [], belongsTo = []) {
+	var _typeof$9 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+	var _slicedToArray$2 = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass$1 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+	function _classCallCheck$1(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Query = function () {
+	  function Query(klass, resourceName, resources) {
+	    var hasMany = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
+	    var belongsTo = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : [];
+
+	    _classCallCheck$1(this, Query);
+
 	    this.klass = klass;
 	    this.resourceName = resourceName;
 	    this.resources = resources;
@@ -3656,269 +3600,371 @@
 	    this._setCurrentResources();
 	  }
 
-	  find(id) {
-	    const {
-	      resources,
-	      resourceName,
-	      klass,
-	      _convertToModel,
-	      hasMany,
-	      belongsTo
-	    } = this;
-	    const {attributes} = resources[resourceName] && resources[resourceName][id];
-	    return _convertToModel(
-	      klass,
-	      resources,
-	      {id, ...attributes},
-	      hasMany,
-	      belongsTo
-	    );
-	  }
+	  _createClass$1(Query, [{
+	    key: "find",
+	    value: function find(id) {
+	      var resources = this.resources,
+	          resourceName = this.resourceName,
+	          klass = this.klass,
+	          _convertToModel = this._convertToModel,
+	          hasMany = this.hasMany,
+	          belongsTo = this.belongsTo;
 
-	  first() {
-	    const {resources, resourceName} = this;
-	    const _resources = resources[resourceName];
-	    return _resources && _resources[Object.keys(_resources)[0]];
-	  }
+	      var _ref = resources[resourceName] && resources[resourceName][id],
+	          attributes = _ref.attributes;
 
-	  all() {
-	    return this;
-	  }
+	      return _convertToModel(klass, resources, _extends({ id: id }, attributes), hasMany, belongsTo);
+	    }
+	  }, {
+	    key: "first",
+	    value: function first() {
+	      var resources = this.resources,
+	          resourceName = this.resourceName;
 
-	  where(params) {
-	    this._filterAndSetCurrentResourcesByParams(params);
-	    return this;
-	  }
+	      var _resources = resources[resourceName];
+	      var _index = resources.index[resourceName];
+	      return _resources && _index && _resources[_index[0]];
+	    }
+	  }, {
+	    key: "last",
+	    value: function last() {
+	      var resources = this.resources,
+	          resourceName = this.resourceName;
 
-	  whereRelated(relationship, params) {
-	    const {resourceName} = this;
+	      var _resources = resources[resourceName];
+	      var _index = resources.index[resourceName];
+	      return _resources && _index && _resources[_index[_index.length - 1]];
+	    }
+	  }, {
+	    key: "all",
+	    value: function all() {
+	      return this;
+	    }
+	  }, {
+	    key: "where",
+	    value: function where(params) {
+	      this._filterAndSetCurrentResourcesByParams(params);
+	      return this;
+	    }
+	  }, {
+	    key: "whereRelated",
+	    value: function whereRelated(relationship, params) {
+	      var resourceName = this.resourceName;
 
-	    this.currentResources = relationship
-	      .query(this.resources)
-	      .where(params)
-	      .includes([resourceName])
-	      .toObjects()
-	      .reduce((newResource, relatedResource) => {
-	        const relation = relatedResource[resourceName];
-	        relation.forEach(({type, id, ...attributes}) => {
-	          newResource[id] = {type, id, attributes};
+
+	      this.currentResources = relationship.query(this.resources).where(params).includes([resourceName]).toObjects().reduce(function (newResource, relatedResource) {
+	        var relation = relatedResource[resourceName];
+	        relation.forEach(function (_ref2) {
+	          var type = _ref2.type,
+	              id = _ref2.id,
+	              attributes = _objectWithoutProperties(_ref2, ["type", "id"]);
+
+	          newResource[id] = { type: type, id: id, attributes: attributes };
 	        });
 	        return newResource;
 	      }, {});
-	    return this;
-	  }
+	      return this;
+	    }
+	  }, {
+	    key: "includes",
+	    value: function includes(relationshipTypes) {
+	      this.currentIncludes = relationshipTypes;
+	      return this;
+	    }
+	  }, {
+	    key: "toModels",
+	    value: function toModels() {
+	      if (!this.currentResources) return [];
+	      return this._reduceCurrentResources("models");
+	    }
+	  }, {
+	    key: "toObjects",
+	    value: function toObjects() {
+	      if (!this.currentResources) return [];
+	      return this._reduceCurrentResources("objects");
+	    }
 
-	  includes(relationshipTypes) {
-	    this.currentIncludes = relationshipTypes;
-	    return this;
-	  }
+	    // Private
 
-	  toModels() {
-	    if (!this.currentResources) return [];
-	    return this._reduceCurrentResources("models");
-	  }
+	  }, {
+	    key: "_sortByIndex",
+	    value: function _sortByIndex(resource1, resource2, resources, resourceName) {
+	      var index = resources.index[resourceName];
+	      return index.indexOf(resource1.id) - index.indexOf(resource2.id);
+	    }
+	  }, {
+	    key: "_reduceCurrentResources",
+	    value: function _reduceCurrentResources(reducerType) {
+	      var _this = this;
 
-	  toObjects() {
-	    if (!this.currentResources) return [];
-	    return this._reduceCurrentResources("objects");
-	  }
+	      // TODO: needs to be refactored
+	      var conversion = reducerType === "models" ? this._convertToModel : this._convertToObject;
+	      var currentIncludes = this.currentIncludes,
+	          currentResources = this.currentResources,
+	          resources = this.resources,
+	          resourceName = this.resourceName,
+	          _flattenRelationships = this._flattenRelationships,
+	          hasMany = this.hasMany,
+	          belongsTo = this.belongsTo;
 
-	  // Private
 
-	  _sortByIndex(resource1, resource2) {
-	    return resource1.__index - resource2.__index;
-	  }
+	      return Object.values(currentResources).sort(function (resource1, resource2) {
+	        return _this._sortByIndex(resource1, resource2, resources, resourceName);
+	      }).map(function (_ref3) {
+	        var id = _ref3.id,
+	            attributes = _ref3.attributes,
+	            relationships = _ref3.relationships,
+	            types = _ref3.types,
+	            links = _ref3.links;
 
-	  _reduceCurrentResources(reducerType) {
-	    // TODO: needs to be refactored
-	    const conversion = reducerType === "models"
-	      ? this._convertToModel
-	      : this._convertToObject;
-	    const {
-	      currentIncludes,
-	      currentResources,
-	      resources,
-	      _flattenRelationships,
-	      hasMany,
-	      belongsTo
-	    } = this;
-
-	    return Object.values(currentResources)
-	      .sort(this._sortByIndex)
-	      .map(({id, attributes, relationships, types, links}) => {
-	        const newFormattedResource = conversion(
-	          this.klass,
-	          resources,
-	          {
-	            id,
-	            ...attributes
-	          },
-	          hasMany,
-	          belongsTo
-	        );
+	        var newFormattedResource = conversion(_this.klass, resources, _extends({
+	          id: id
+	        }, attributes), hasMany, belongsTo);
 
 	        if (!currentIncludes.length) return newFormattedResource;
-	        return conversion(
-	          this.klass,
-	          resources,
-	          {
-	            ...newFormattedResource,
-	            ..._flattenRelationships(
-	              relationships
-	            ).reduce((nextRelationshipObjects, {id, type}) => {
-	              if (!currentIncludes.includes(type))
-	                return nextRelationshipObjects;
-	              if (!(type in nextRelationshipObjects)) {
-	                nextRelationshipObjects[type] = [];
-	              }
+	        return conversion(_this.klass, resources, _extends({}, newFormattedResource, _flattenRelationships(relationships).reduce(function (nextRelationshipObjects, _ref4) {
+	          var id = _ref4.id,
+	              type = _ref4.type;
 
-	              if (!resources[type]) return nextRelationshipObjects;
-	              const relationData = resources[type][id];
-	              if (!relationData) return nextRelationshipObjects;
-	              const relationClass = this.hasMany.find(klass => {
-	                return pluralize(klass.name.toLowerCase()) === type;
-	              });
+	          var relationClass = _this.hasMany.find(function (klass) {
+	            return klass.pluralName() === type;
+	          });
 
-	              nextRelationshipObjects[type].push(
-	                conversion(relationClass, resources, {
-	                  id,
-	                  ...relationData.attributes
-	                })
-	              );
+	          if (relationClass) {
+	            return _this._handleHasManyIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes);
+	          }
 
-	              return nextRelationshipObjects;
-	            }, {})
-	          },
-	          hasMany,
-	          belongsTo
-	        );
+	          relationClass = _this.belongsTo.find(function (klass) {
+	            return klass.pluralName() === type;
+	          });
+
+	          if (relationClass) {
+	            return _this._handleBelongsToIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes);
+	          }
+
+	          return nextRelationshipObjects;
+	        }, {})), hasMany, belongsTo);
 	      });
-	  }
-
-	  _convertToModel(klass, resources, resource, hasMany, belongsTo) {
-	    return new klass(resources, resource, hasMany, belongsTo);
-	  }
-
-	  _convertToObject(klass, resources, resource, hasMany, belongsTo) {
-	    return resource;
-	  }
-
-	  _flattenRelationships(relationships) {
-	    return Object.values(relationships).reduce((nextRelationships, {data}) => {
-	      return [...nextRelationships, ...data];
-	    }, []);
-	  }
-
-	  _setCurrentResources() {
-	    if (this._isEmpty(this.currentResources) && this.resources) {
-	      this.currentResources = this.resources[this.resourceName];
 	    }
-	  }
+	  }, {
+	    key: "_handleHasManyIncludes",
+	    value: function _handleHasManyIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes) {
+	      var singularType = relationClass.singularName();
+	      if (!currentIncludes.includes(type) && !currentIncludes.includes(type)) return nextRelationshipObjects;
 
-	  _filterAndSetCurrentResourcesByParams(params) {
-	    const resourcesByID = Object.entries(
-	      this.currentResources
-	    ).reduce((newResource, [id, resource]) => {
-	      this._filterResourceByParams(params, newResource, resource, id);
-	      return newResource;
-	    }, {});
-	    this.currentResources = resourcesByID;
-	  }
-
-	  _filterResourceByParams(params, newResource, resource, id) {
-	    Object.entries(params).forEach(([key, value]) => {
-	      if (key === "id" && resource.id === value) {
-	        newResource[id] = resource;
-	      } else if (resource.attributes[key] === value) {
-	        newResource[id] = resource;
+	      if (!(type in nextRelationshipObjects)) {
+	        nextRelationshipObjects[type] = [];
 	      }
-	    });
-	  }
 
-	  _isEmpty(obj) {
-	    if (
-	      obj === null ||
-	      obj === undefined ||
-	      Array.isArray(obj) ||
-	      typeof obj !== "object"
-	    ) {
-	      return true;
+	      if (!resources[type]) return nextRelationshipObjects;
+	      var relationData = resources[type][id];
+	      if (!relationData) return nextRelationshipObjects;
+
+	      if (relationClass) {
+	        nextRelationshipObjects[type].push(conversion(relationClass, resources, _extends({
+	          id: id
+	        }, relationData.attributes)));
+	      }
+
+	      return nextRelationshipObjects;
 	    }
-	    return Object.getOwnPropertyNames(obj).length === 0 ? true : false;
-	  }
-	}
+	  }, {
+	    key: "_handleBelongsToIncludes",
+	    value: function _handleBelongsToIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes) {
+	      var singularType = relationClass.singularName();
+	      if (!currentIncludes.includes(type) && !currentIncludes.includes(singularType)) return nextRelationshipObjects;
 
-	class BaseModel {
-	  static query(resources) {
-	    return new Query(
-	      this,
-	      pluralize(this.name.toLowerCase()),
-	      resources,
-	      this.hasMany,
-	      this.belongsTo
-	    );
-	  }
+	      if (!(singularType in nextRelationshipObjects)) {
+	        nextRelationshipObjects[singularType] = null;
+	      }
 
-	  constructor(resources, attributes, hasMany = [], belongsTo = []) {
-	    Object.entries(attributes).forEach(([key, value]) => {
-	      this[key] = value;
+	      if (!resources[type]) return nextRelationshipObjects;
+	      var relationData = resources[type][id];
+	      if (!relationData) return nextRelationshipObjects;
+
+	      if (relationClass) {
+	        nextRelationshipObjects[singularType] = conversion(relationClass, resources, _extends({
+	          id: id
+	        }, relationData.attributes));
+	      }
+
+	      return nextRelationshipObjects;
+	    }
+	  }, {
+	    key: "_convertToModel",
+	    value: function _convertToModel(klass, resources, resource, hasMany, belongsTo) {
+	      return new klass(resources, resource, hasMany, belongsTo);
+	    }
+	  }, {
+	    key: "_convertToObject",
+	    value: function _convertToObject(klass, resources, resource, hasMany, belongsTo) {
+	      return resource;
+	    }
+	  }, {
+	    key: "_flattenRelationships",
+	    value: function _flattenRelationships(relationships) {
+	      if (!relationships) {
+	        return [];
+	      }
+	      return Object.values(relationships).reduce(function (nextRelationships, _ref5) {
+	        var data = _ref5.data;
+
+	        if (!nextRelationships || !data) {
+	          return [];
+	        }
+
+	        if (Array.isArray(data)) {
+	          return [].concat(_toConsumableArray(nextRelationships), _toConsumableArray(data));
+	        }
+
+	        return [].concat(_toConsumableArray(nextRelationships), [data]);
+	      }, []);
+	    }
+	  }, {
+	    key: "_setCurrentResources",
+	    value: function _setCurrentResources() {
+	      if (this._isEmpty(this.currentResources) && this.resources) {
+	        this.currentResources = this.resources[this.resourceName];
+	      }
+	    }
+	  }, {
+	    key: "_filterAndSetCurrentResourcesByParams",
+	    value: function _filterAndSetCurrentResourcesByParams(params) {
+	      var _this2 = this;
+
+	      var resourcesByID = Object.entries(this.currentResources).reduce(function (newResource, _ref6) {
+	        var _ref7 = _slicedToArray$2(_ref6, 2),
+	            id = _ref7[0],
+	            resource = _ref7[1];
+
+	        _this2._filterResourceByParams(params, newResource, resource, id);
+	        return newResource;
+	      }, {});
+	      this.currentResources = resourcesByID;
+	    }
+	  }, {
+	    key: "_filterResourceByParams",
+	    value: function _filterResourceByParams(params, newResource, resource, id) {
+	      Object.entries(params).forEach(function (_ref8) {
+	        var _ref9 = _slicedToArray$2(_ref8, 2),
+	            key = _ref9[0],
+	            value = _ref9[1];
+
+	        if (key === "id" && resource.id === value) {
+	          newResource[id] = resource;
+	        } else if (resource.attributes[key] === value) {
+	          newResource[id] = resource;
+	        }
+	      });
+	    }
+	  }, {
+	    key: "_isEmpty",
+	    value: function _isEmpty(obj) {
+	      if (obj === null || obj === undefined || Array.isArray(obj) || (typeof obj === "undefined" ? "undefined" : _typeof$9(obj)) !== "object") {
+	        return true;
+	      }
+	      return Object.getOwnPropertyNames(obj).length === 0 ? true : false;
+	    }
+	  }]);
+
+	  return Query;
+	}();
+
+	var lowerCaseFirst = function lowerCaseFirst(string) {
+	  return string.charAt(0).toLowerCase() + string.slice(1);
+	};
+
+	var _extends$1 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _slicedToArray$3 = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+	var _createClass$2 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _defineProperty$1(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+	function _classCallCheck$2(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var BaseModel = function () {
+	  _createClass$2(BaseModel, null, [{
+	    key: "query",
+	    value: function query(resources) {
+	      return new Query(this, this.pluralName(), resources, this.hasMany, this.belongsTo);
+	    }
+	  }, {
+	    key: "pluralName",
+	    value: function pluralName() {
+	      return this.plural ? this.plural : lowerCaseFirst(pluralize(this.name));
+	    }
+	  }, {
+	    key: "singularName",
+	    value: function singularName() {
+	      return this.singular ? this.singular : lowerCaseFirst(pluralize(this.name, 1));
+	    }
+	  }]);
+
+	  function BaseModel(resources, attributes) {
+	    var _this = this;
+
+	    var hasMany = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+	    var belongsTo = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
+
+	    _classCallCheck$2(this, BaseModel);
+
+	    Object.entries(attributes).forEach(function (_ref) {
+	      var _ref2 = _slicedToArray$3(_ref, 2),
+	          key = _ref2[0],
+	          value = _ref2[1];
+
+	      _this[key] = value;
 	    });
 
 	    if (hasMany.forEach) {
-	      hasMany.forEach(relationship =>
-	        this._buildHasManyQuery(this, resources, relationship)
-	      );
+	      hasMany.forEach(function (relationship) {
+	        return _this._buildHasManyQuery(_this, resources, relationship);
+	      });
 	    }
 
 	    if (belongsTo.forEach) {
-	      belongsTo.forEach(relationship => {
-	        const relationshipKey = relationship.name.toLowerCase();
-	        this[relationshipKey] = () => {
-	          // needs to return the related model
-	        };
+	      belongsTo.forEach(function (relationship) {
+	        var relationshipKey = relationship.singularName();
+	        if (!_this[relationshipKey]) {
+	          _this[relationshipKey] = function () {
+	            //return relationship.query(resources).toModels();
+	          };
+	        }
 	      });
 	    }
 	  }
 
-	  _filterResources(resource, resources, relationship, relationshipKey) {
-	    const currentResourceKey = pluralize(
-	      resource.constructor.name.toLowerCase()
-	    );
-	    const resourceClass = resource.constructor;
-	    const relationshipClass = relationship;
-	    return {
-	      ...resources,
-	      [currentResourceKey]: resources[currentResourceKey][resource.id],
-	      [relationshipKey]: relationshipClass
-	        .query(resources)
-	        .whereRelated(resourceClass, {
-	          id: resource.id
-	        }).currentResources
-	    };
-	  }
+	  _createClass$2(BaseModel, [{
+	    key: "_filterResources",
+	    value: function _filterResources(resource, resources, relationship, relationshipKey) {
+	      var _extends2;
 
-	  _buildHasManyQuery(resource, resources, relationship) {
-	    const relationshipKey = pluralize(relationship.name.toLowerCase());
-	    if (!resource[relationshipKey]) {
-	      resource[relationshipKey] = () => {
-	        const newResouces = resource._filterResources(
-	          resource,
-	          resources,
-	          relationship,
-	          relationshipKey
-	        );
+	      var currentResourceKey = resource.constructor.pluralName();
 
-	        return new Query(
-	          relationship,
-	          relationshipKey,
-	          newResouces,
-	          relationship.hasMany,
-	          relationship.belongsTo
-	        );
-	      };
+	      var resourceClass = resource.constructor;
+	      var relationshipClass = relationship;
+	      return _extends$1({}, resources, (_extends2 = {}, _defineProperty$1(_extends2, currentResourceKey, resources[currentResourceKey][resource.id]), _defineProperty$1(_extends2, relationshipKey, relationshipClass.query(resources).whereRelated(resourceClass, {
+	        id: resource.id
+	      }).currentResources), _extends2));
 	    }
-	  }
-	}
+	  }, {
+	    key: "_buildHasManyQuery",
+	    value: function _buildHasManyQuery(resource, resources, relationship) {
+	      var relationshipKey = relationship.pluralName();
+	      if (!resource[relationshipKey]) {
+	        resource[relationshipKey] = function () {
+	          var newResouces = resource._filterResources(resource, resources, relationship, relationshipKey);
+
+	          return new Query(relationship, relationshipKey, newResouces, relationship.hasMany, relationship.belongsTo);
+	        };
+	      }
+	    }
+	  }]);
+
+	  return BaseModel;
+	}();
 
 	exports.Actions = Actions;
 	exports.BaseModel = BaseModel;

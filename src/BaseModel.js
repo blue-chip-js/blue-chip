@@ -1,15 +1,26 @@
 import pluralize from "pluralize";
 import Query from "./Query";
+import {lowerCaseFirst} from "./utils";
 
 export default class BaseModel {
   static query(resources) {
     return new Query(
       this,
-      pluralize(this.name.toLowerCase()),
+      this.pluralName(),
       resources,
       this.hasMany,
       this.belongsTo
     );
+  }
+
+  static pluralName() {
+    return this.plural ? this.plural : lowerCaseFirst(pluralize(this.name));
+  }
+
+  static singularName() {
+    return this.singular
+      ? this.singular
+      : lowerCaseFirst(pluralize(this.name, 1));
   }
 
   constructor(resources, attributes, hasMany = [], belongsTo = []) {
@@ -25,18 +36,19 @@ export default class BaseModel {
 
     if (belongsTo.forEach) {
       belongsTo.forEach(relationship => {
-        const relationshipKey = relationship.name.toLowerCase();
-        this[relationshipKey] = () => {
-          // needs to return the related model
-        };
+        const relationshipKey = relationship.singularName();
+        if (!this[relationshipKey]) {
+          this[relationshipKey] = () => {
+            //return relationship.query(resources).toModels();
+          };
+        }
       });
     }
   }
 
   _filterResources(resource, resources, relationship, relationshipKey) {
-    const currentResourceKey = pluralize(
-      resource.constructor.name.toLowerCase()
-    );
+    const currentResourceKey = resource.constructor.pluralName();
+
     const resourceClass = resource.constructor;
     const relationshipClass = relationship;
     return {
@@ -51,7 +63,7 @@ export default class BaseModel {
   }
 
   _buildHasManyQuery(resource, resources, relationship) {
-    const relationshipKey = pluralize(relationship.name.toLowerCase());
+    const relationshipKey = relationship.pluralName();
     if (!resource[relationshipKey]) {
       resource[relationshipKey] = () => {
         const newResouces = resource._filterResources(

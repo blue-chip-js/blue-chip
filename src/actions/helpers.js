@@ -8,19 +8,20 @@ export const isGraphQl = payload => {
 };
 
 export const toJsonApiSpec = (resourceType, resourcesById) => {
-  return Object.entries(
-    resourcesById
-  ).reduce((formattedResourcesById, [id, resource]) => {
-    formattedResourcesById[id] = {
-      type: resourceType,
-      id,
-      attributes: _removeRelationships(resource),
-      links: null,
-      relationships: _buildRelationships(resource)
-    };
+  return Object.entries(resourcesById).reduce(
+    (formattedResourcesById, [id, resource]) => {
+      formattedResourcesById[id] = {
+        type: resourceType,
+        id,
+        attributes: _removeRelationships(resource),
+        links: null,
+        relationships: _buildRelationships(resource)
+      };
 
-    return formattedResourcesById;
-  }, {});
+      return formattedResourcesById;
+    },
+    {}
+  );
 };
 
 const _buildRelationships = resource => {

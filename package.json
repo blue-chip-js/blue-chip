@@ -1,6 +1,6 @@
 {
   "name": "@blue-chip/core",
-  "version": "0.2.1",
+  "version": "0.2.3",
   "description": "BlueChip accepts payloads from GraphQL or JsonAPI servers, normalizes them into your store and provides an ORM like syntax for retrieving the data for use.",
   "main": "dist/bundle.cjs.js",
   "module": "dist/bundle.esm.js",
@@ -31,10 +31,13 @@
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
     "babel-preset-stage-0": "^6.24.1",
+    "babel-plugin-external-helpers": "6.22.0",
     "coveralls": "^3.0.2",
     "rollup": "^0.62.0",
+    "rollup-plugin-babel": "^3.0.7",
     "rollup-plugin-commonjs": "^9.1.3",
-    "rollup-plugin-node-resolve": "^3.3.0"
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0"
   },
   "jest": {
     "testPathIgnorePatterns": [

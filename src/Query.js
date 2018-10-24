@@ -1,5 +1,3 @@
-import pluralize from "pluralize";
-
 export default class Query {
   constructor(klass, resourceName, resources, hasMany = [], belongsTo = []) {
     this.klass = klass;
@@ -34,7 +32,15 @@ export default class Query {
   first() {
     const {resources, resourceName} = this;
     const _resources = resources[resourceName];
-    return _resources && _resources[Object.keys(_resources)[0]];
+    const _index = resources.index[resourceName];
+    return _resources && _index && _resources[_index[0]];
+  }
+
+  last() {
+    const {resources, resourceName} = this;
+    const _resources = resources[resourceName];
+    const _index = resources.index[resourceName];
+    return _resources && _index && _resources[_index[_index.length - 1]];
   }
 
   all() {
@@ -81,26 +87,29 @@ export default class Query {
 
   // Private
 
-  _sortByIndex(resource1, resource2) {
-    return resource1.__index - resource2.__index;
+  _sortByIndex(resource1, resource2, resources, resourceName) {
+    const index = resources.index[resourceName];
+    return index.indexOf(resource1.id) - index.indexOf(resource2.id);
   }
 
   _reduceCurrentResources(reducerType) {
     // TODO: needs to be refactored
-    const conversion = reducerType === "models"
-      ? this._convertToModel
-      : this._convertToObject;
+    const conversion =
+      reducerType === "models" ? this._convertToModel : this._convertToObject;
     const {
       currentIncludes,
       currentResources,
       resources,
+      resourceName,
       _flattenRelationships,
       hasMany,
       belongsTo
     } = this;
 
     return Object.values(currentResources)
-      .sort(this._sortByIndex)
+      .sort((resource1, resource2) =>
+        this._sortByIndex(resource1, resource2, resources, resourceName)
+      )
       .map(({id, attributes, relationships, types, links}) => {
         const newFormattedResource = conversion(
           this.klass,
@@ -119,36 +128,120 @@ export default class Query {
           resources,
           {
             ...newFormattedResource,
-            ..._flattenRelationships(
-              relationships
-            ).reduce((nextRelationshipObjects, {id, type}) => {
-              if (!currentIncludes.includes(type))
+            ..._flattenRelationships(relationships).reduce(
+              (nextRelationshipObjects, {id, type}) => {
+                let relationClass = this.hasMany.find(klass => {
+                  return klass.pluralName() === type;
+                });
+
+                if (relationClass) {
+                  return this._handleHasManyIncludes(
+                    resources,
+                    id,
+                    type,
+                    nextRelationshipObjects,
+                    conversion,
+                    relationClass,
+                    currentIncludes
+                  );
+                }
+
+                relationClass = this.belongsTo.find(klass => {
+                  return klass.pluralName() === type;
+                });
+
+                if (relationClass) {
+                  return this._handleBelongsToIncludes(
+                    resources,
+                    id,
+                    type,
+                    nextRelationshipObjects,
+                    conversion,
+                    relationClass,
+                    currentIncludes
+                  );
+                }
+
                 return nextRelationshipObjects;
-              if (!(type in nextRelationshipObjects)) {
-                nextRelationshipObjects[type] = [];
-              }
-
-              if (!resources[type]) return nextRelationshipObjects;
-              const relationData = resources[type][id];
-              if (!relationData) return nextRelationshipObjects;
-              const relationClass = this.hasMany.find(klass => {
-                return pluralize(klass.name.toLowerCase()) === type;
-              });
-
-              nextRelationshipObjects[type].push(
-                conversion(relationClass, resources, {
-                  id,
-                  ...relationData.attributes
-                })
-              );
-
-              return nextRelationshipObjects;
-            }, {})
+              },
+              {}
+            )
           },
           hasMany,
           belongsTo
         );
       });
+  }
+
+  _handleHasManyIncludes(
+    resources,
+    id,
+    type,
+    nextRelationshipObjects,
+    conversion,
+    relationClass,
+    currentIncludes
+  ) {
+    const singularType = relationClass.singularName();
+    if (!currentIncludes.includes(type) && !currentIncludes.includes(type))
+      return nextRelationshipObjects;
+
+    if (!(type in nextRelationshipObjects)) {
+      nextRelationshipObjects[type] = [];
+    }
+
+    if (!resources[type]) return nextRelationshipObjects;
+    const relationData = resources[type][id];
+    if (!relationData) return nextRelationshipObjects;
+
+    if (relationClass) {
+      nextRelationshipObjects[type].push(
+        conversion(relationClass, resources, {
+          id,
+          ...relationData.attributes
+        })
+      );
+    }
+
+    return nextRelationshipObjects;
+  }
+
+  _handleBelongsToIncludes(
+    resources,
+    id,
+    type,
+    nextRelationshipObjects,
+    conversion,
+    relationClass,
+    currentIncludes
+  ) {
+    const singularType = relationClass.singularName();
+    if (
+      !currentIncludes.includes(type) &&
+      !currentIncludes.includes(singularType)
+    )
+      return nextRelationshipObjects;
+
+    if (!(singularType in nextRelationshipObjects)) {
+      nextRelationshipObjects[singularType] = null;
+    }
+
+    if (!resources[type]) return nextRelationshipObjects;
+    const relationData = resources[type][id];
+    if (!relationData) return nextRelationshipObjects;
+
+    if (relationClass) {
+      nextRelationshipObjects[singularType] = conversion(
+        relationClass,
+        resources,
+        {
+          id,
+          ...relationData.attributes
+        }
+      );
+    }
+
+    return nextRelationshipObjects;
   }
 
   _convertToModel(klass, resources, resource, hasMany, belongsTo) {
@@ -160,8 +253,19 @@ export default class Query {
   }
 
   _flattenRelationships(relationships) {
+    if (!relationships) {
+      return [];
+    }
     return Object.values(relationships).reduce((nextRelationships, {data}) => {
-      return [...nextRelationships, ...data];
+      if (!nextRelationships || !data) {
+        return [];
+      }
+
+      if (Array.isArray(data)) {
+        return [...nextRelationships, ...data];
+      }
+
+      return [...nextRelationships, data];
     }, []);
   }
 
@@ -172,12 +276,13 @@ export default class Query {
   }
 
   _filterAndSetCurrentResourcesByParams(params) {
-    const resourcesByID = Object.entries(
-      this.currentResources
-    ).reduce((newResource, [id, resource]) => {
-      this._filterResourceByParams(params, newResource, resource, id);
-      return newResource;
-    }, {});
+    const resourcesByID = Object.entries(this.currentResources).reduce(
+      (newResource, [id, resource]) => {
+        this._filterResourceByParams(params, newResource, resource, id);
+        return newResource;
+      },
+      {}
+    );
     this.currentResources = resourcesByID;
   }
 

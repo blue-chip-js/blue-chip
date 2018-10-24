@@ -1,8 +1,11 @@
 export default {
+  index: {
+    checklists: [3,1,2],
+    tasks: [1,2,3,4,5,6],
+  },
   checklists: {
     1: {
       id: 1,
-      __index: 1,
       type: "checklists",
       attributes: {name: "Onboarding Rest"},
       links: {self: "http://example.com/checklists/1"},
@@ -12,7 +15,6 @@ export default {
     },
     2: {
       id: 2,
-      __index: 0,
       type: "checklists",
       attributes: {name: "Project Audit Rest"},
       links: {self: "http://example.com/checklists/2"},
@@ -22,7 +24,6 @@ export default {
     },
     3: {
       id: 3,
-      __index: 2,
       type: "checklists",
       attributes: {name: "QA Checklist Rest"},
       links: {self: "http://example.com/checklists/3"},
@@ -34,45 +35,57 @@ export default {
   tasks: {
     1: {
       id: 1,
-      __index: 0,
       type: "tasks",
       attributes: {description: "Onboarding REST 1"},
-      links: {self: "http://example.com/tasks/1"}
+      links: {self: "http://example.com/tasks/1"},
+      relationships: {
+        checklist: {data: {id: 1, type: "checklists"}}
+      }
     },
     2: {
       id: 2,
-      __index: 1,
       type: "tasks",
       attributes: {description: "Onboarding REST 2"},
-      links: {self: "http://example.com/tasks/2"}
+      links: {self: "http://example.com/tasks/2"},
+      relationships: {
+        checklist: {data: {id: 1, type: "checklists"}}
+      }
     },
     3: {
       id: 3,
-      __index: 3,
       type: "tasks",
       attributes: {description: "Project Audit Rest 3"},
-      links: {self: "http://example.com/tasks/3"}
+      links: {self: "http://example.com/tasks/3"},
+      relationships: {
+        checklist: {data: {id: 2, type: "checklists"}}
+      }
     },
     4: {
       id: 4,
-      __index: 2,
       type: "tasks",
       attributes: {description: "Project Audit Rest 4"},
-      links: {self: "http://example.com/tasks/4"}
+      links: {self: "http://example.com/tasks/4"},
+      relationships: {
+        checklist: {data: {id: 2, type: "checklists"}}
+      }
     },
     5: {
       id: 5,
-      __index: 4,
       type: "tasks",
       attributes: {description: "QA Checklist Rest 5"},
-      links: {self: "http://example.com/tasks/5"}
+      links: {self: "http://example.com/tasks/5"},
+      relationships: {
+        checklist: {data: {id: 3, type: "checklists"}}
+      }
     },
     6: {
       id: 6,
-      __index: 5,
       type: "tasks",
       attributes: {description: "QA Checklist Rest 6"},
-      links: {self: "http://example.com/tasks/6"}
+      links: {self: "http://example.com/tasks/6"},
+      relationships: {
+        checklist: {data: {id: 3, type: "checklists"}}
+      }
     }
   }
 };
