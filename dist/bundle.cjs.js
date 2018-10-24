@@ -179,7 +179,9 @@ class Query {
       .includes([resourceName])
       .toObjects()
       .reduce((newResource, relatedResource) => {
-        const relation = relatedResource[resourceName];
+        const relation = relatedResource[resourceName] || [
+          relatedResource[this.klass.singularName()]
+        ];
         relation.forEach(({type, id, ...attributes}) => {
           newResource[id] = {type, id, attributes};
         });
@@ -468,7 +470,14 @@ class BaseModel {
         const relationshipKey = relationship.singularName();
         if (!this[relationshipKey]) {
           this[relationshipKey] = () => {
-            //return relationship.query(resources).toModels();
+            const ParentClass = relationship;
+            const ChildClass = this.constructor;
+
+            ParentClass.query(resources)
+              .whereRelated(ChildClass, {
+                id: this.id
+              })
+              .toModels()[0];
           };
         }
       });

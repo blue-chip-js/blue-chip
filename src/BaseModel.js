@@ -39,7 +39,14 @@ export default class BaseModel {
         const relationshipKey = relationship.singularName();
         if (!this[relationshipKey]) {
           this[relationshipKey] = () => {
-            //return relationship.query(resources).toModels();
+            const ParentClass = relationship;
+            const ChildClass = this.constructor;
+
+            ParentClass.query(resources)
+              .whereRelated(ChildClass, {
+                id: this.id
+              })
+              .toModels()[0];
           };
         }
       });

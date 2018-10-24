@@ -3649,11 +3649,13 @@
 	  }, {
 	    key: "whereRelated",
 	    value: function whereRelated(relationship, params) {
+	      var _this = this;
+
 	      var resourceName = this.resourceName;
 
 
 	      this.currentResources = relationship.query(this.resources).where(params).includes([resourceName]).toObjects().reduce(function (newResource, relatedResource) {
-	        var relation = relatedResource[resourceName];
+	        var relation = relatedResource[resourceName] || [relatedResource[_this.klass.singularName()]];
 	        relation.forEach(function (_ref2) {
 	          var type = _ref2.type,
 	              id = _ref2.id,
@@ -3695,7 +3697,7 @@
 	  }, {
 	    key: "_reduceCurrentResources",
 	    value: function _reduceCurrentResources(reducerType) {
-	      var _this = this;
+	      var _this2 = this;
 
 	      // TODO: needs to be refactored
 	      var conversion = reducerType === "models" ? this._convertToModel : this._convertToObject;
@@ -3709,7 +3711,7 @@
 
 
 	      return Object.values(currentResources).sort(function (resource1, resource2) {
-	        return _this._sortByIndex(resource1, resource2, resources, resourceName);
+	        return _this2._sortByIndex(resource1, resource2, resources, resourceName);
 	      }).map(function (_ref3) {
 	        var id = _ref3.id,
 	            attributes = _ref3.attributes,
@@ -3717,29 +3719,29 @@
 	            types = _ref3.types,
 	            links = _ref3.links;
 
-	        var newFormattedResource = conversion(_this.klass, resources, _extends({
+	        var newFormattedResource = conversion(_this2.klass, resources, _extends({
 	          id: id
 	        }, attributes), hasMany, belongsTo);
 
 	        if (!currentIncludes.length) return newFormattedResource;
-	        return conversion(_this.klass, resources, _extends({}, newFormattedResource, _flattenRelationships(relationships).reduce(function (nextRelationshipObjects, _ref4) {
+	        return conversion(_this2.klass, resources, _extends({}, newFormattedResource, _flattenRelationships(relationships).reduce(function (nextRelationshipObjects, _ref4) {
 	          var id = _ref4.id,
 	              type = _ref4.type;
 
-	          var relationClass = _this.hasMany.find(function (klass) {
+	          var relationClass = _this2.hasMany.find(function (klass) {
 	            return klass.pluralName() === type;
 	          });
 
 	          if (relationClass) {
-	            return _this._handleHasManyIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes);
+	            return _this2._handleHasManyIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes);
 	          }
 
-	          relationClass = _this.belongsTo.find(function (klass) {
+	          relationClass = _this2.belongsTo.find(function (klass) {
 	            return klass.pluralName() === type;
 	          });
 
 	          if (relationClass) {
-	            return _this._handleBelongsToIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes);
+	            return _this2._handleBelongsToIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes);
 	          }
 
 	          return nextRelationshipObjects;
@@ -3830,14 +3832,14 @@
 	  }, {
 	    key: "_filterAndSetCurrentResourcesByParams",
 	    value: function _filterAndSetCurrentResourcesByParams(params) {
-	      var _this2 = this;
+	      var _this3 = this;
 
 	      var resourcesByID = Object.entries(this.currentResources).reduce(function (newResource, _ref6) {
 	        var _ref7 = _slicedToArray$2(_ref6, 2),
 	            id = _ref7[0],
 	            resource = _ref7[1];
 
-	        _this2._filterResourceByParams(params, newResource, resource, id);
+	        _this3._filterResourceByParams(params, newResource, resource, id);
 	        return newResource;
 	      }, {});
 	      this.currentResources = resourcesByID;
@@ -3929,7 +3931,12 @@
 	        var relationshipKey = relationship.singularName();
 	        if (!_this[relationshipKey]) {
 	          _this[relationshipKey] = function () {
-	            //return relationship.query(resources).toModels();
+	            var ParentClass = relationship;
+	            var ChildClass = _this.constructor;
+
+	            ParentClass.query(resources).whereRelated(ChildClass, {
+	              id: _this.id
+	            }).toModels()[0];
 	          };
 	        }
 	      });
