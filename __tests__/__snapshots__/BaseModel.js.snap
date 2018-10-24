@@ -20,6 +20,26 @@ Array [
 ]
 `;
 
+exports[`BaseModel models belongsTo()  1`] = `
+Array [
+  Checklist {
+    "id": 3,
+    "name": "QA Checklist Rest",
+    "tasks": [Function],
+  },
+  Checklist {
+    "id": 1,
+    "name": "Onboarding Rest",
+    "tasks": [Function],
+  },
+  Checklist {
+    "id": 2,
+    "name": "Project Audit Rest",
+    "tasks": [Function],
+  },
+]
+`;
+
 exports[`BaseModel models find() returns a single model 1`] = `
 Checklist {
   "id": 1,
@@ -70,7 +90,60 @@ Array [
 ]
 `;
 
-exports[`BaseModel models includes()  1`] = `
+exports[`BaseModel models includes() belongsTo  1`] = `
+Array [
+  Task {
+    "checklist": Checklist {
+      "id": 1,
+      "name": "Onboarding Rest",
+    },
+    "description": "Onboarding REST 1",
+    "id": 1,
+  },
+  Task {
+    "checklist": Checklist {
+      "id": 1,
+      "name": "Onboarding Rest",
+    },
+    "description": "Onboarding REST 2",
+    "id": 2,
+  },
+  Task {
+    "checklist": Checklist {
+      "id": 2,
+      "name": "Project Audit Rest",
+    },
+    "description": "Project Audit Rest 3",
+    "id": 3,
+  },
+  Task {
+    "checklist": Checklist {
+      "id": 2,
+      "name": "Project Audit Rest",
+    },
+    "description": "Project Audit Rest 4",
+    "id": 4,
+  },
+  Task {
+    "checklist": Checklist {
+      "id": 3,
+      "name": "QA Checklist Rest",
+    },
+    "description": "QA Checklist Rest 5",
+    "id": 5,
+  },
+  Task {
+    "checklist": Checklist {
+      "id": 3,
+      "name": "QA Checklist Rest",
+    },
+    "description": "QA Checklist Rest 6",
+    "id": 6,
+  },
+]
+`;
+
+exports[`BaseModel models includes() hasMany  1`] = `
 Array [
   Checklist {
     "id": 3,

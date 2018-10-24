@@ -69,13 +69,23 @@ describe("BaseModel", () => {
       });
     });
 
-    describe("includes()", () => {
+    describe("includes() hasMany", () => {
       test("", () => {
         const checklists = Checklist.query(resources)
           .all()
           .includes(["tasks"])
           .toModels();
         expect(checklists).toMatchSnapshot();
+      });
+    });
+
+    describe("includes() belongsTo", () => {
+      test("", () => {
+        const tasks = Task.query(resources)
+          .all()
+          .includes(["checklist"])
+          .toModels();
+        expect(tasks).toMatchSnapshot();
       });
     });
 
@@ -89,12 +99,12 @@ describe("BaseModel", () => {
       });
     });
 
-    // describe("belongsTo()", () => {
-    //   test("", () => {
-    //     const checklist = Task.query(resources).checklist().toModels();
-    //     expect(checklists).toMatchSnapshot();
-    //   });
-    // });
+    //  describe("belongsTo()", () => {
+    //    test("", () => {
+    //      const checklist = Task.query(resources).find(1).checklist().toModels();
+    //      expect(checklist).toMatchSnapshot();
+    //    });
+    //  });
   });
   describe("objects", () => {
     describe("all()", () => {

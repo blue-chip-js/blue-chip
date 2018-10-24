@@ -1,6 +1,3 @@
-import pluralize from "pluralize";
-import {lowerCaseFirst} from "./utils";
-
 export default class Query {
   constructor(klass, resourceName, resources, hasMany = [], belongsTo = []) {
     this.klass = klass;
@@ -133,25 +130,21 @@ export default class Query {
             ..._flattenRelationships(
               relationships
             ).reduce((nextRelationshipObjects, {id, type}) => {
-              if (!currentIncludes.includes(type))
-                return nextRelationshipObjects;
-              if (!(type in nextRelationshipObjects)) {
-                nextRelationshipObjects[type] = [];
-              }
-
-              if (!resources[type]) return nextRelationshipObjects;
-              const relationData = resources[type][id];
-              if (!relationData) return nextRelationshipObjects;
-              const relationClass = this.hasMany.find(klass => {
-                return lowerCaseFirst(pluralize(klass.name)) === type;
+              let relationClass = this.hasMany.find(klass => {
+                return klass.pluralName() === type;
               });
 
-              nextRelationshipObjects[type].push(
-                conversion(relationClass, resources, {
-                  id,
-                  ...relationData.attributes
-                })
-              );
+              if (relationClass) {
+                return this._handleHasManyIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes);
+              }
+
+              relationClass = this.belongsTo.find(klass => {
+                return klass.pluralName() === type;
+              });
+
+              if (relationClass) {
+                return this._handleBelongsToIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes);
+              }
 
               return nextRelationshipObjects;
             }, {})
@@ -160,6 +153,56 @@ export default class Query {
           belongsTo
         );
       });
+  }
+
+  _handleHasManyIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes) {
+    const singularType = relationClass.singularName();
+    if (!currentIncludes.includes(type) && !currentIncludes.includes(type))
+      return nextRelationshipObjects;
+
+    if (!(type in nextRelationshipObjects)) {
+      nextRelationshipObjects[type] = [];
+    }
+
+    if (!resources[type]) return nextRelationshipObjects;
+    const relationData = resources[type][id];
+    if (!relationData) return nextRelationshipObjects;
+
+    
+    if (relationClass) {
+      nextRelationshipObjects[type].push(
+        conversion(relationClass, resources, {
+          id,
+          ...relationData.attributes
+        })
+      );
+    }
+
+    return nextRelationshipObjects;
+  }
+
+  _handleBelongsToIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes) {
+    const singularType = relationClass.singularName();
+    if (!currentIncludes.includes(type) && !currentIncludes.includes(singularType))
+      return nextRelationshipObjects;
+
+    if (!(singularType in nextRelationshipObjects)) {
+      nextRelationshipObjects[singularType] = null;
+    }
+
+    if (!resources[type]) return nextRelationshipObjects;
+    const relationData = resources[type][id];
+    if (!relationData) return nextRelationshipObjects;
+
+    if (relationClass) {
+      nextRelationshipObjects[singularType] =
+        conversion(relationClass, resources, {
+          id,
+          ...relationData.attributes
+        });
+    }
+
+    return nextRelationshipObjects;
   }
 
   _convertToModel(klass, resources, resource, hasMany, belongsTo) {
@@ -171,8 +214,19 @@ export default class Query {
   }
 
   _flattenRelationships(relationships) {
+    if (!relationships) {
+      return [];
+    }
     return Object.values(relationships).reduce((nextRelationships, {data}) => {
-      return [...nextRelationships, ...data];
+      if (!nextRelationships || !data) {
+        return [];
+      }
+
+      if (Array.isArray(data)) {
+        return [...nextRelationships, ...data];
+      }
+      
+      return [...nextRelationships, data]
     }, []);
   }
 

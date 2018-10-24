@@ -112,10 +112,6 @@ function _createIndexForGraphQl(payload) {
   return [];
 }
 
-const lowerCaseFirst = string => {
- return string.charAt(0).toLowerCase() + string.slice(1);
-};
-
 class Query {
   constructor(klass, resourceName, resources, hasMany = [], belongsTo = []) {
     this.klass = klass;
@@ -248,25 +244,21 @@ class Query {
             ..._flattenRelationships(
               relationships
             ).reduce((nextRelationshipObjects, {id, type}) => {
-              if (!currentIncludes.includes(type))
-                return nextRelationshipObjects;
-              if (!(type in nextRelationshipObjects)) {
-                nextRelationshipObjects[type] = [];
-              }
-
-              if (!resources[type]) return nextRelationshipObjects;
-              const relationData = resources[type][id];
-              if (!relationData) return nextRelationshipObjects;
-              const relationClass = this.hasMany.find(klass => {
-                return lowerCaseFirst(pluralize(klass.name)) === type;
+              let relationClass = this.hasMany.find(klass => {
+                return klass.pluralName() === type;
               });
 
-              nextRelationshipObjects[type].push(
-                conversion(relationClass, resources, {
-                  id,
-                  ...relationData.attributes
-                })
-              );
+              if (relationClass) {
+                return this._handleHasManyIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes);
+              }
+
+              relationClass = this.belongsTo.find(klass => {
+                return klass.pluralName() === type;
+              });
+
+              if (relationClass) {
+                return this._handleBelongsToIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes);
+              }
 
               return nextRelationshipObjects;
             }, {})
@@ -275,6 +267,56 @@ class Query {
           belongsTo
         );
       });
+  }
+
+  _handleHasManyIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes) {
+    const singularType = relationClass.singularName();
+    if (!currentIncludes.includes(type) && !currentIncludes.includes(type))
+      return nextRelationshipObjects;
+
+    if (!(type in nextRelationshipObjects)) {
+      nextRelationshipObjects[type] = [];
+    }
+
+    if (!resources[type]) return nextRelationshipObjects;
+    const relationData = resources[type][id];
+    if (!relationData) return nextRelationshipObjects;
+
+    
+    if (relationClass) {
+      nextRelationshipObjects[type].push(
+        conversion(relationClass, resources, {
+          id,
+          ...relationData.attributes
+        })
+      );
+    }
+
+    return nextRelationshipObjects;
+  }
+
+  _handleBelongsToIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes) {
+    const singularType = relationClass.singularName();
+    if (!currentIncludes.includes(type) && !currentIncludes.includes(singularType))
+      return nextRelationshipObjects;
+
+    if (!(singularType in nextRelationshipObjects)) {
+      nextRelationshipObjects[singularType] = null;
+    }
+
+    if (!resources[type]) return nextRelationshipObjects;
+    const relationData = resources[type][id];
+    if (!relationData) return nextRelationshipObjects;
+
+    if (relationClass) {
+      nextRelationshipObjects[singularType] =
+        conversion(relationClass, resources, {
+          id,
+          ...relationData.attributes
+        });
+    }
+
+    return nextRelationshipObjects;
   }
 
   _convertToModel(klass, resources, resource, hasMany, belongsTo) {
@@ -286,8 +328,19 @@ class Query {
   }
 
   _flattenRelationships(relationships) {
+    if (!relationships) {
+      return [];
+    }
     return Object.values(relationships).reduce((nextRelationships, {data}) => {
-      return [...nextRelationships, ...data];
+      if (!nextRelationships || !data) {
+        return [];
+      }
+
+      if (Array.isArray(data)) {
+        return [...nextRelationships, ...data];
+      }
+      
+      return [...nextRelationships, data]
     }, []);
   }
 
@@ -330,15 +383,27 @@ class Query {
   }
 }
 
+const lowerCaseFirst = string => {
+ return string.charAt(0).toLowerCase() + string.slice(1);
+};
+
 class BaseModel {
   static query(resources) {
     return new Query(
       this,
-      lowerCaseFirst(pluralize(this.name)),
+      this.pluralName(),
       resources,
       this.hasMany,
       this.belongsTo
     );
+  }
+
+  static pluralName() {
+    return this.plural ? this.plural : lowerCaseFirst(pluralize(this.name));
+  }
+
+  static singularName() {
+    return this.singular ? this.singular : lowerCaseFirst(pluralize(this.name, 1));
   }
 
   constructor(resources, attributes, hasMany = [], belongsTo = []) {
@@ -354,18 +419,20 @@ class BaseModel {
 
     if (belongsTo.forEach) {
       belongsTo.forEach(relationship => {
-        const relationshipKey = lowerCaseFirst(relationship.name);
-        this[relationshipKey] = () => {
-          // needs to return the related model
-        };
+        const relationshipKey = relationship.singularName();
+        if (!this[relationshipKey]) {
+          this[relationshipKey] = () => {
+
+            //return relationship.query(resources).toModels();
+          };
+        }
       });
     }
   }
 
   _filterResources(resource, resources, relationship, relationshipKey) {
-    const currentResourceKey = lowerCaseFirst(pluralize(
-      resource.constructor.name
-    ));
+    const currentResourceKey = resource.constructor.pluralName();
+    
     const resourceClass = resource.constructor;
     const relationshipClass = relationship;
     return {
@@ -380,7 +447,7 @@ class BaseModel {
   }
 
   _buildHasManyQuery(resource, resources, relationship) {
-    const relationshipKey = lowerCaseFirst(pluralize(relationship.name));
+    const relationshipKey = relationship.pluralName();
     if (!resource[relationshipKey]) {
       resource[relationshipKey] = () => {
         const newResouces = resource._filterResources(

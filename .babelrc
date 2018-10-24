@@ -1,18 +1,45 @@
 {
-  "presets": [[
-      "env",
-      {
-        "modules": false,
-        "targets": {
-          "browsers": [
-            "last 2 versions",
-            "not < 1%",
-            "IE 11"
-          ]
-        }
-      }
-    ],
-    "stage-2"
-  ],
-  "plugins": ["transform-es2015-destructuring", "transform-object-rest-spread"]
+  "env": {
+    "prod": {
+      "presets": [[
+          "env",
+          {
+            "modules": false,
+            "targets": {
+              "browsers": [
+                "last 2 versions",
+                "not < 1%",
+                "IE 11"
+              ]
+            }
+          }
+        ],
+        "stage-2"
+      ],
+      "plugins": ["transform-es2015-destructuring", "transform-object-rest-spread"]
+    },
+    "development": {
+      "presets": [[
+          "env",
+          {
+            "modules": false,
+            "targets": {
+              "browsers": [
+                "last 2 versions",
+                "not < 1%",
+                "IE 11"
+              ]
+            }
+          }
+        ],
+        "stage-2"
+      ],
+      "plugins": ["transform-es2015-destructuring", "transform-object-rest-spread"]
+    },
+    "test": {
+      "presets": [
+        "env", "stage-0"
+      ]
+    },
+  }
 }
