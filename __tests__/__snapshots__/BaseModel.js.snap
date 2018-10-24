@@ -20,26 +20,6 @@ Array [
 ]
 `;
 
-exports[`BaseModel models belongsTo()  1`] = `
-Array [
-  Checklist {
-    "id": 3,
-    "name": "QA Checklist Rest",
-    "tasks": [Function],
-  },
-  Checklist {
-    "id": 1,
-    "name": "Onboarding Rest",
-    "tasks": [Function],
-  },
-  Checklist {
-    "id": 2,
-    "name": "Project Audit Rest",
-    "tasks": [Function],
-  },
-]
-`;
-
 exports[`BaseModel models find() returns a single model 1`] = `
 Checklist {
   "id": 1,

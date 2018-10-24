@@ -94,9 +94,8 @@ export default class Query {
 
   _reduceCurrentResources(reducerType) {
     // TODO: needs to be refactored
-    const conversion = reducerType === "models"
-      ? this._convertToModel
-      : this._convertToObject;
+    const conversion =
+      reducerType === "models" ? this._convertToModel : this._convertToObject;
     const {
       currentIncludes,
       currentResources,
@@ -108,7 +107,9 @@ export default class Query {
     } = this;
 
     return Object.values(currentResources)
-      .sort((resource1, resource2) => this._sortByIndex(resource1, resource2, resources, resourceName))
+      .sort((resource1, resource2) =>
+        this._sortByIndex(resource1, resource2, resources, resourceName)
+      )
       .map(({id, attributes, relationships, types, links}) => {
         const newFormattedResource = conversion(
           this.klass,
@@ -127,27 +128,44 @@ export default class Query {
           resources,
           {
             ...newFormattedResource,
-            ..._flattenRelationships(
-              relationships
-            ).reduce((nextRelationshipObjects, {id, type}) => {
-              let relationClass = this.hasMany.find(klass => {
-                return klass.pluralName() === type;
-              });
+            ..._flattenRelationships(relationships).reduce(
+              (nextRelationshipObjects, {id, type}) => {
+                let relationClass = this.hasMany.find(klass => {
+                  return klass.pluralName() === type;
+                });
 
-              if (relationClass) {
-                return this._handleHasManyIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes);
-              }
+                if (relationClass) {
+                  return this._handleHasManyIncludes(
+                    resources,
+                    id,
+                    type,
+                    nextRelationshipObjects,
+                    conversion,
+                    relationClass,
+                    currentIncludes
+                  );
+                }
 
-              relationClass = this.belongsTo.find(klass => {
-                return klass.pluralName() === type;
-              });
+                relationClass = this.belongsTo.find(klass => {
+                  return klass.pluralName() === type;
+                });
 
-              if (relationClass) {
-                return this._handleBelongsToIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes);
-              }
+                if (relationClass) {
+                  return this._handleBelongsToIncludes(
+                    resources,
+                    id,
+                    type,
+                    nextRelationshipObjects,
+                    conversion,
+                    relationClass,
+                    currentIncludes
+                  );
+                }
 
-              return nextRelationshipObjects;
-            }, {})
+                return nextRelationshipObjects;
+              },
+              {}
+            )
           },
           hasMany,
           belongsTo
@@ -155,7 +173,15 @@ export default class Query {
       });
   }
 
-  _handleHasManyIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes) {
+  _handleHasManyIncludes(
+    resources,
+    id,
+    type,
+    nextRelationshipObjects,
+    conversion,
+    relationClass,
+    currentIncludes
+  ) {
     const singularType = relationClass.singularName();
     if (!currentIncludes.includes(type) && !currentIncludes.includes(type))
       return nextRelationshipObjects;
@@ -168,7 +194,6 @@ export default class Query {
     const relationData = resources[type][id];
     if (!relationData) return nextRelationshipObjects;
 
-    
     if (relationClass) {
       nextRelationshipObjects[type].push(
         conversion(relationClass, resources, {
@@ -181,9 +206,20 @@ export default class Query {
     return nextRelationshipObjects;
   }
 
-  _handleBelongsToIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes) {
+  _handleBelongsToIncludes(
+    resources,
+    id,
+    type,
+    nextRelationshipObjects,
+    conversion,
+    relationClass,
+    currentIncludes
+  ) {
     const singularType = relationClass.singularName();
-    if (!currentIncludes.includes(type) && !currentIncludes.includes(singularType))
+    if (
+      !currentIncludes.includes(type) &&
+      !currentIncludes.includes(singularType)
+    )
       return nextRelationshipObjects;
 
     if (!(singularType in nextRelationshipObjects)) {
@@ -195,11 +231,14 @@ export default class Query {
     if (!relationData) return nextRelationshipObjects;
 
     if (relationClass) {
-      nextRelationshipObjects[singularType] =
-        conversion(relationClass, resources, {
+      nextRelationshipObjects[singularType] = conversion(
+        relationClass,
+        resources,
+        {
           id,
           ...relationData.attributes
-        });
+        }
+      );
     }
 
     return nextRelationshipObjects;
@@ -225,8 +264,8 @@ export default class Query {
       if (Array.isArray(data)) {
         return [...nextRelationships, ...data];
       }
-      
-      return [...nextRelationships, data]
+
+      return [...nextRelationships, data];
     }, []);
   }
 
@@ -237,12 +276,13 @@ export default class Query {
   }
 
   _filterAndSetCurrentResourcesByParams(params) {
-    const resourcesByID = Object.entries(
-      this.currentResources
-    ).reduce((newResource, [id, resource]) => {
-      this._filterResourceByParams(params, newResource, resource, id);
-      return newResource;
-    }, {});
+    const resourcesByID = Object.entries(this.currentResources).reduce(
+      (newResource, [id, resource]) => {
+        this._filterResourceByParams(params, newResource, resource, id);
+        return newResource;
+      },
+      {}
+    );
     this.currentResources = resourcesByID;
   }
 

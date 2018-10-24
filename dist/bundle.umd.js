@@ -3251,6 +3251,7 @@
 	  return Actions;
 	}();
 
+
 	function _createIndexForJsonApi(payload) {
 	  var index = [];
 	  if (payload.data) {
@@ -3928,7 +3929,6 @@
 	        var relationshipKey = relationship.singularName();
 	        if (!_this[relationshipKey]) {
 	          _this[relationshipKey] = function () {
-
 	            //return relationship.query(resources).toModels();
 	          };
 	        }

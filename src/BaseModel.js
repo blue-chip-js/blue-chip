@@ -18,7 +18,9 @@ export default class BaseModel {
   }
 
   static singularName() {
-    return this.singular ? this.singular : lowerCaseFirst(pluralize(this.name, 1));
+    return this.singular
+      ? this.singular
+      : lowerCaseFirst(pluralize(this.name, 1));
   }
 
   constructor(resources, attributes, hasMany = [], belongsTo = []) {
@@ -37,7 +39,6 @@ export default class BaseModel {
         const relationshipKey = relationship.singularName();
         if (!this[relationshipKey]) {
           this[relationshipKey] = () => {
-
             //return relationship.query(resources).toModels();
           };
         }
@@ -47,7 +48,7 @@ export default class BaseModel {
 
   _filterResources(resource, resources, relationship, relationshipKey) {
     const currentResourceKey = resource.constructor.pluralName();
-    
+
     const resourceClass = resource.constructor;
     const relationshipClass = relationship;
     return {

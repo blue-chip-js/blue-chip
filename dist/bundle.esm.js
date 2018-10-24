@@ -9,19 +9,20 @@ const isGraphQl = payload => {
 };
 
 const toJsonApiSpec = (resourceType, resourcesById) => {
-  return Object.entries(
-    resourcesById
-  ).reduce((formattedResourcesById, [id, resource]) => {
-    formattedResourcesById[id] = {
-      type: resourceType,
-      id,
-      attributes: _removeRelationships(resource),
-      links: null,
-      relationships: _buildRelationships(resource)
-    };
+  return Object.entries(resourcesById).reduce(
+    (formattedResourcesById, [id, resource]) => {
+      formattedResourcesById[id] = {
+        type: resourceType,
+        id,
+        attributes: _removeRelationships(resource),
+        links: null,
+        relationships: _buildRelationships(resource)
+      };
 
-    return formattedResourcesById;
-  }, {});
+      return formattedResourcesById;
+    },
+    {}
+  );
 };
 
 const _buildRelationships = resource => {
@@ -64,7 +65,9 @@ class Actions {
 
   updateResources(payload) {
     // Create insert order index
-    let index = isGraphQl(payload) ? _createIndexForGraphQl(payload) : _createIndexForJsonApi(payload);
+    let index = isGraphQl(payload)
+      ? _createIndexForGraphQl(payload)
+      : _createIndexForJsonApi(payload);
 
     Object.entries(
       isGraphQl(payload) ? graphQlNormalize(payload) : jsonApiNormalize(payload)
@@ -93,16 +96,17 @@ class Actions {
     this.actions.clearResources(this.mutator, resourceTypes);
   }
 }
-function _createIndexForJsonApi(payload) { 
+
+function _createIndexForJsonApi(payload) {
   let index = [];
   if (payload.data) {
-    const data = Array.isArray(payload.data) ? payload.data : [ payload.data ];
-    index = data.map((item) => item.id);
+    const data = Array.isArray(payload.data) ? payload.data : [payload.data];
+    index = data.map(item => item.id);
   }
   return index;
 }
 
-function _createIndexForGraphQl(payload) { 
+function _createIndexForGraphQl(payload) {
   return [];
 }
 
@@ -202,9 +206,8 @@ class Query {
 
   _reduceCurrentResources(reducerType) {
     // TODO: needs to be refactored
-    const conversion = reducerType === "models"
-      ? this._convertToModel
-      : this._convertToObject;
+    const conversion =
+      reducerType === "models" ? this._convertToModel : this._convertToObject;
     const {
       currentIncludes,
       currentResources,
@@ -216,7 +219,9 @@ class Query {
     } = this;
 
     return Object.values(currentResources)
-      .sort((resource1, resource2) => this._sortByIndex(resource1, resource2, resources, resourceName))
+      .sort((resource1, resource2) =>
+        this._sortByIndex(resource1, resource2, resources, resourceName)
+      )
       .map(({id, attributes, relationships, types, links}) => {
         const newFormattedResource = conversion(
           this.klass,
@@ -235,27 +240,44 @@ class Query {
           resources,
           {
             ...newFormattedResource,
-            ..._flattenRelationships(
-              relationships
-            ).reduce((nextRelationshipObjects, {id, type}) => {
-              let relationClass = this.hasMany.find(klass => {
-                return klass.pluralName() === type;
-              });
+            ..._flattenRelationships(relationships).reduce(
+              (nextRelationshipObjects, {id, type}) => {
+                let relationClass = this.hasMany.find(klass => {
+                  return klass.pluralName() === type;
+                });
 
-              if (relationClass) {
-                return this._handleHasManyIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes);
-              }
+                if (relationClass) {
+                  return this._handleHasManyIncludes(
+                    resources,
+                    id,
+                    type,
+                    nextRelationshipObjects,
+                    conversion,
+                    relationClass,
+                    currentIncludes
+                  );
+                }
 
-              relationClass = this.belongsTo.find(klass => {
-                return klass.pluralName() === type;
-              });
+                relationClass = this.belongsTo.find(klass => {
+                  return klass.pluralName() === type;
+                });
 
-              if (relationClass) {
-                return this._handleBelongsToIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes);
-              }
+                if (relationClass) {
+                  return this._handleBelongsToIncludes(
+                    resources,
+                    id,
+                    type,
+                    nextRelationshipObjects,
+                    conversion,
+                    relationClass,
+                    currentIncludes
+                  );
+                }
 
-              return nextRelationshipObjects;
-            }, {})
+                return nextRelationshipObjects;
+              },
+              {}
+            )
           },
           hasMany,
           belongsTo
@@ -263,7 +285,15 @@ class Query {
       });
   }
 
-  _handleHasManyIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes) {
+  _handleHasManyIncludes(
+    resources,
+    id,
+    type,
+    nextRelationshipObjects,
+    conversion,
+    relationClass,
+    currentIncludes
+  ) {
     const singularType = relationClass.singularName();
     if (!currentIncludes.includes(type) && !currentIncludes.includes(type))
       return nextRelationshipObjects;
@@ -276,7 +306,6 @@ class Query {
     const relationData = resources[type][id];
     if (!relationData) return nextRelationshipObjects;
 
-    
     if (relationClass) {
       nextRelationshipObjects[type].push(
         conversion(relationClass, resources, {
@@ -289,9 +318,20 @@ class Query {
     return nextRelationshipObjects;
   }
 
-  _handleBelongsToIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes) {
+  _handleBelongsToIncludes(
+    resources,
+    id,
+    type,
+    nextRelationshipObjects,
+    conversion,
+    relationClass,
+    currentIncludes
+  ) {
     const singularType = relationClass.singularName();
-    if (!currentIncludes.includes(type) && !currentIncludes.includes(singularType))
+    if (
+      !currentIncludes.includes(type) &&
+      !currentIncludes.includes(singularType)
+    )
       return nextRelationshipObjects;
 
     if (!(singularType in nextRelationshipObjects)) {
@@ -303,11 +343,14 @@ class Query {
     if (!relationData) return nextRelationshipObjects;
 
     if (relationClass) {
-      nextRelationshipObjects[singularType] =
-        conversion(relationClass, resources, {
+      nextRelationshipObjects[singularType] = conversion(
+        relationClass,
+        resources,
+        {
           id,
           ...relationData.attributes
-        });
+        }
+      );
     }
 
     return nextRelationshipObjects;
@@ -333,8 +376,8 @@ class Query {
       if (Array.isArray(data)) {
         return [...nextRelationships, ...data];
       }
-      
-      return [...nextRelationships, data]
+
+      return [...nextRelationships, data];
     }, []);
   }
 
@@ -345,12 +388,13 @@ class Query {
   }
 
   _filterAndSetCurrentResourcesByParams(params) {
-    const resourcesByID = Object.entries(
-      this.currentResources
-    ).reduce((newResource, [id, resource]) => {
-      this._filterResourceByParams(params, newResource, resource, id);
-      return newResource;
-    }, {});
+    const resourcesByID = Object.entries(this.currentResources).reduce(
+      (newResource, [id, resource]) => {
+        this._filterResourceByParams(params, newResource, resource, id);
+        return newResource;
+      },
+      {}
+    );
     this.currentResources = resourcesByID;
   }
 
@@ -378,7 +422,7 @@ class Query {
 }
 
 const lowerCaseFirst = string => {
- return string.charAt(0).toLowerCase() + string.slice(1);
+  return string.charAt(0).toLowerCase() + string.slice(1);
 };
 
 class BaseModel {
@@ -397,7 +441,9 @@ class BaseModel {
   }
 
   static singularName() {
-    return this.singular ? this.singular : lowerCaseFirst(pluralize(this.name, 1));
+    return this.singular
+      ? this.singular
+      : lowerCaseFirst(pluralize(this.name, 1));
   }
 
   constructor(resources, attributes, hasMany = [], belongsTo = []) {
@@ -416,7 +462,6 @@ class BaseModel {
         const relationshipKey = relationship.singularName();
         if (!this[relationshipKey]) {
           this[relationshipKey] = () => {
-
             //return relationship.query(resources).toModels();
           };
         }
@@ -426,7 +471,7 @@ class BaseModel {
 
   _filterResources(resource, resources, relationship, relationshipKey) {
     const currentResourceKey = resource.constructor.pluralName();
-    
+
     const resourceClass = resource.constructor;
     const relationshipClass = relationship;
     return {
