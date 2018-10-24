@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Custom singular includes settingOfUse singular for belongs to 1`] = `
+Array [
+  Object {
+    "createdAt": "2018-10-08T18:39:33.000Z",
+    "customers": Array [
+      "0000",
+    ],
+    "id": "667",
+    "lastSessionDate": "2016-10-01T00:00:00.000Z",
+    "myPatient": true,
+    "patientId": "0000",
+    "serialNumbers": Array [
+      "21601009",
+    ],
+    "sessionsCount": 127001,
+    "settingOfUse": Object {
+      "id": "1",
+      "name": "Inpatient",
+    },
+    "steps": 24099980,
+    "upTime": 68599053,
+  },
+]
+`;
