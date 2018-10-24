@@ -1,8 +1,7 @@
 import BaseModel from "../src/BaseModel";
 import Query from "../src/Query";
 
-import resources
-  from "../__testHelpers__/fixtrues/checklistsAndTasksNormalized";
+import resources from "../__testHelpers__/fixtrues/checklistsAndTasksNormalized";
 import {Checklist, Task} from "../__testHelpers__/models";
 
 describe("BaseModel", () => {
@@ -11,19 +10,47 @@ describe("BaseModel", () => {
   });
 
   test("handle undefined resources", () => {
-    expect(Checklist.query().all().toModels()).toEqual([]);
-    expect(Checklist.query(null).all().toModels()).toEqual([]);
-    expect(Checklist.query().all().toObjects()).toEqual([]);
-    expect(Checklist.query(null).all().toObjects()).toEqual([]);
-    expect(Checklist.query({}).all().toObjects()).toEqual([]);
+    expect(
+      Checklist.query()
+        .all()
+        .toModels()
+    ).toEqual([]);
+    expect(
+      Checklist.query(null)
+        .all()
+        .toModels()
+    ).toEqual([]);
+    expect(
+      Checklist.query()
+        .all()
+        .toObjects()
+    ).toEqual([]);
+    expect(
+      Checklist.query(null)
+        .all()
+        .toObjects()
+    ).toEqual([]);
+    expect(
+      Checklist.query({})
+        .all()
+        .toObjects()
+    ).toEqual([]);
     const a = {};
-    expect(Checklist.query(a.b).all().toObjects()).toEqual([]);
+    expect(
+      Checklist.query(a.b)
+        .all()
+        .toObjects()
+    ).toEqual([]);
   });
 
   describe("models", () => {
     describe("all()", () => {
       test("Returns a list of models", () => {
-        expect(Checklist.query(resources).all().toModels()).toMatchSnapshot();
+        expect(
+          Checklist.query(resources)
+            .all()
+            .toModels()
+        ).toMatchSnapshot();
       });
     });
 
@@ -99,17 +126,23 @@ describe("BaseModel", () => {
       });
     });
 
-    //  describe("belongsTo()", () => {
-    //    test("", () => {
-    //      const checklist = Task.query(resources).find(1).checklist().toModels();
-    //      expect(checklist).toMatchSnapshot();
-    //    });
-    //  });
+    describe("belongsTo()", () => {
+      test("", () => {
+        const checklist = Task.query(resources)
+          .find(1)
+          .checklist();
+        expect(checklist).toMatchSnapshot();
+      });
+    });
   });
   describe("objects", () => {
     describe("all()", () => {
       test("", () => {
-        expect(Checklist.query(resources).all().toObjects()).toMatchSnapshot();
+        expect(
+          Checklist.query(resources)
+            .all()
+            .toObjects()
+        ).toMatchSnapshot();
       });
     });
 

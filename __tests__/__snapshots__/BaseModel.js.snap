@@ -20,6 +20,8 @@ Array [
 ]
 `;
 
+exports[`BaseModel models belongsTo()  1`] = `undefined`;
+
 exports[`BaseModel models find() returns a single model 1`] = `
 Checklist {
   "id": 1,
