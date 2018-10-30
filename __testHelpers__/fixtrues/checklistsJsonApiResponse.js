@@ -17,7 +17,7 @@ export default {
             self: "http://example.com/checklists/1/relationships/tasks",
             related: "http://example.com/checklists/1/tasks"
           },
-          data: [{ type: "tasks", id: 1 }, { type: "tasks", id: 2 }]
+          data: [{type: "tasks", id: 1}, {type: "tasks", id: 2}]
         }
       },
       links: {
@@ -36,7 +36,7 @@ export default {
             self: "http://example.com/checklists/2/relationships/tasks",
             related: "http://example.com/checklists/2/tasks"
           },
-          data: [{ type: "tasks", id: 3 }, { type: "tasks", id: 4 }]
+          data: [{type: "tasks", id: 3}, {type: "tasks", id: 4}]
         }
       },
       links: {
@@ -55,7 +55,7 @@ export default {
             self: "http://example.com/checklists/3/relationships/tasks",
             related: "http://example.com/checklists/3/tasks"
           },
-          data: [{ type: "tasks", id: 5 }, { type: "tasks", id: 6 }]
+          data: [{type: "tasks", id: 5}, {type: "tasks", id: 6}]
         }
       },
       links: {
