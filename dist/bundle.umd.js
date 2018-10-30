@@ -3649,23 +3649,58 @@
 	  }, {
 	    key: "whereRelated",
 	    value: function whereRelated(relationship, params) {
-	      var _this = this;
-
 	      var resourceName = this.resourceName;
 
+	      this.hasMany.includes(relationship) ? this._handleHasManyWhereRelated(relationship, params, resourceName) : this._handleBelongsToWhereRelated(relationship, params, resourceName);
+	      return this;
+	    }
+	  }, {
+	    key: "_handleBelongsToWhereRelated",
+	    value: function _handleBelongsToWhereRelated(relationship, params, resourceName) {
+	      var _this = this;
+
+	      var relationshipName = relationship.singularName(); // Just use belongsTo for now
+
+	      var relationIds = this.klass.query(this.resources).includes([relationshipName]).toModels().reduce(function (idArray, model) {
+	        var maybeRelation = model[relationshipName];
+	        var relation = _this._isFunction(relation) ? maybeRelation() : maybeRelation;
+
+	        if (relation && relation.id && !idArray.includes(relation.id)) idArray.push(relation.id);
+	        return idArray;
+	      }, []);
+
+	      var filteredRelationIds = relationship.query(this.resources).includes([resourceName]).where({ id: relationIds }).where(params).toObjects().map(function (r) {
+	        return r.id;
+	      });
+
+	      this.currentResources = Object.entries(this.currentResources).reduce(function (newResources, _ref2) {
+	        var _ref3 = _slicedToArray$2(_ref2, 2),
+	            id = _ref3[0],
+	            resource = _ref3[1];
+
+	        var r = resource.relationships[relationshipName];
+	        if (r && filteredRelationIds.includes(r.data.id)) {
+	          newResources[id] = resource;
+	        }
+	        return newResources;
+	      }, {});
+	    }
+	  }, {
+	    key: "_handleHasManyWhereRelated",
+	    value: function _handleHasManyWhereRelated(relationship, params, resourceName) {
+	      var _this2 = this;
 
 	      this.currentResources = relationship.query(this.resources).where(params).includes([resourceName]).toObjects().reduce(function (newResource, relatedResource) {
-	        var relation = relatedResource[resourceName] || [relatedResource[_this.klass.singularName()]];
-	        relation.forEach(function (_ref2) {
-	          var type = _ref2.type,
-	              id = _ref2.id,
-	              attributes = _objectWithoutProperties(_ref2, ["type", "id"]);
+	        var relation = relatedResource[resourceName] || [relatedResource[_this2.klass.singularName()]];
+	        relation.forEach(function (_ref4) {
+	          var type = _ref4.type,
+	              id = _ref4.id,
+	              attributes = _objectWithoutProperties(_ref4, ["type", "id"]);
 
 	          newResource[id] = { type: type, id: id, attributes: attributes };
 	        });
 	        return newResource;
 	      }, {});
-	      return this;
 	    }
 	  }, {
 	    key: "includes",
@@ -3697,7 +3732,7 @@
 	  }, {
 	    key: "_reduceCurrentResources",
 	    value: function _reduceCurrentResources(reducerType) {
-	      var _this2 = this;
+	      var _this3 = this;
 
 	      // TODO: needs to be refactored
 	      var conversion = reducerType === "models" ? this._convertToModel : this._convertToObject;
@@ -3711,37 +3746,37 @@
 
 
 	      return Object.values(currentResources).sort(function (resource1, resource2) {
-	        return _this2._sortByIndex(resource1, resource2, resources, resourceName);
-	      }).map(function (_ref3) {
-	        var id = _ref3.id,
-	            attributes = _ref3.attributes,
-	            relationships = _ref3.relationships,
-	            types = _ref3.types,
-	            links = _ref3.links;
+	        return _this3._sortByIndex(resource1, resource2, resources, resourceName);
+	      }).map(function (_ref5) {
+	        var id = _ref5.id,
+	            attributes = _ref5.attributes,
+	            relationships = _ref5.relationships,
+	            types = _ref5.types,
+	            links = _ref5.links;
 
-	        var newFormattedResource = conversion(_this2.klass, resources, _extends({
+	        var newFormattedResource = conversion(_this3.klass, resources, _extends({
 	          id: id
 	        }, attributes), hasMany, belongsTo);
 
 	        if (!currentIncludes.length) return newFormattedResource;
-	        return conversion(_this2.klass, resources, _extends({}, newFormattedResource, _flattenRelationships(relationships).reduce(function (nextRelationshipObjects, _ref4) {
-	          var id = _ref4.id,
-	              type = _ref4.type;
+	        return conversion(_this3.klass, resources, _extends({}, newFormattedResource, _flattenRelationships(relationships).reduce(function (nextRelationshipObjects, _ref6) {
+	          var id = _ref6.id,
+	              type = _ref6.type;
 
-	          var relationClass = _this2.hasMany.find(function (klass) {
+	          var relationClass = _this3.hasMany.find(function (klass) {
 	            return klass.pluralName() === type;
 	          });
 
 	          if (relationClass) {
-	            return _this2._handleHasManyIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes);
+	            return _this3._handleHasManyIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes);
 	          }
 
-	          relationClass = _this2.belongsTo.find(function (klass) {
+	          relationClass = _this3.belongsTo.find(function (klass) {
 	            return klass.pluralName() === type;
 	          });
 
 	          if (relationClass) {
-	            return _this2._handleBelongsToIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes);
+	            return _this3._handleBelongsToIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes);
 	          }
 
 	          return nextRelationshipObjects;
@@ -3808,8 +3843,8 @@
 	      if (!relationships) {
 	        return [];
 	      }
-	      return Object.values(relationships).reduce(function (nextRelationships, _ref5) {
-	        var data = _ref5.data;
+	      return Object.values(relationships).reduce(function (nextRelationships, _ref7) {
+	        var data = _ref7.data;
 
 	        if (!nextRelationships || !data) {
 	          return [];
@@ -3832,14 +3867,15 @@
 	  }, {
 	    key: "_filterAndSetCurrentResourcesByParams",
 	    value: function _filterAndSetCurrentResourcesByParams(params) {
-	      var _this3 = this;
+	      var _this4 = this;
 
-	      var resourcesByID = Object.entries(this.currentResources).reduce(function (newResource, _ref6) {
-	        var _ref7 = _slicedToArray$2(_ref6, 2),
-	            id = _ref7[0],
-	            resource = _ref7[1];
+	      if (!this.currentResources) return;
+	      var resourcesByID = Object.entries(this.currentResources).reduce(function (newResource, _ref8) {
+	        var _ref9 = _slicedToArray$2(_ref8, 2),
+	            id = _ref9[0],
+	            resource = _ref9[1];
 
-	        _this3._filterResourceByParams(params, newResource, resource, id);
+	        _this4._filterResourceByParams(params, newResource, resource, id);
 	        return newResource;
 	      }, {});
 	      this.currentResources = resourcesByID;
@@ -3847,15 +3883,23 @@
 	  }, {
 	    key: "_filterResourceByParams",
 	    value: function _filterResourceByParams(params, newResource, resource, id) {
-	      Object.entries(params).forEach(function (_ref8) {
-	        var _ref9 = _slicedToArray$2(_ref8, 2),
-	            key = _ref9[0],
-	            value = _ref9[1];
+	      Object.entries(params).forEach(function (_ref10) {
+	        var _ref11 = _slicedToArray$2(_ref10, 2),
+	            key = _ref11[0],
+	            value = _ref11[1];
 
-	        if (key === "id" && resource.id === value) {
-	          newResource[id] = resource;
-	        } else if (resource.attributes[key] === value) {
-	          newResource[id] = resource;
+	        if (Array.isArray(value)) {
+	          if (key === "id" && value.includes(resource.id)) {
+	            newResource[id] = resource;
+	          } else if (value.includes(resource.attributes[key])) {
+	            newResource[id] = resource;
+	          }
+	        } else {
+	          if (key === "id" && resource.id === value) {
+	            newResource[id] = resource;
+	          } else if (resource.attributes[key] === value) {
+	            newResource[id] = resource;
+	          }
 	        }
 	      });
 	    }
@@ -3866,6 +3910,11 @@
 	        return true;
 	      }
 	      return Object.getOwnPropertyNames(obj).length === 0 ? true : false;
+	    }
+	  }, {
+	    key: "_isFunction",
+	    value: function _isFunction(functionToCheck) {
+	      return functionToCheck && {}.toString.call(functionToCheck) === "[object Function]";
 	    }
 	  }]);
 

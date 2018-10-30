@@ -172,7 +172,51 @@ class Query {
 
   whereRelated(relationship, params) {
     const {resourceName} = this;
+    this.hasMany.includes(relationship)
+      ? this._handleHasManyWhereRelated(relationship, params, resourceName)
+      : this._handleBelongsToWhereRelated(relationship, params, resourceName);
+    return this;
+  }
 
+  _handleBelongsToWhereRelated(relationship, params, resourceName) {
+    const relationshipName = relationship.singularName(); // Just use belongsTo for now
+
+    const relationIds = this.klass
+      .query(this.resources)
+      .includes([relationshipName])
+      .toModels()
+      .reduce((idArray, model) => {
+        const maybeRelation = model[relationshipName];
+        const relation = this._isFunction(relation)
+          ? maybeRelation()
+          : maybeRelation;
+
+        if (relation && relation.id && !idArray.includes(relation.id))
+          idArray.push(relation.id);
+        return idArray;
+      }, []);
+
+    const filteredRelationIds = relationship
+      .query(this.resources)
+      .includes([resourceName])
+      .where({id: relationIds})
+      .where(params)
+      .toObjects()
+      .map(r => r.id);
+
+    this.currentResources = Object.entries(this.currentResources).reduce(
+      (newResources, [id, resource]) => {
+        const r = resource.relationships[relationshipName];
+        if (r && filteredRelationIds.includes(r.data.id)) {
+          newResources[id] = resource;
+        }
+        return newResources;
+      },
+      {}
+    );
+  }
+
+  _handleHasManyWhereRelated(relationship, params, resourceName) {
     this.currentResources = relationship
       .query(this.resources)
       .where(params)
@@ -187,7 +231,6 @@ class Query {
         });
         return newResource;
       }, {});
-    return this;
   }
 
   includes(relationshipTypes) {
@@ -396,6 +439,7 @@ class Query {
   }
 
   _filterAndSetCurrentResourcesByParams(params) {
+    if (!this.currentResources) return;
     const resourcesByID = Object.entries(this.currentResources).reduce(
       (newResource, [id, resource]) => {
         this._filterResourceByParams(params, newResource, resource, id);
@@ -408,10 +452,18 @@ class Query {
 
   _filterResourceByParams(params, newResource, resource, id) {
     Object.entries(params).forEach(([key, value]) => {
-      if (key === "id" && resource.id === value) {
-        newResource[id] = resource;
-      } else if (resource.attributes[key] === value) {
-        newResource[id] = resource;
+      if (Array.isArray(value)) {
+        if (key === "id" && value.includes(resource.id)) {
+          newResource[id] = resource;
+        } else if (value.includes(resource.attributes[key])) {
+          newResource[id] = resource;
+        }
+      } else {
+        if (key === "id" && resource.id === value) {
+          newResource[id] = resource;
+        } else if (resource.attributes[key] === value) {
+          newResource[id] = resource;
+        }
       }
     });
   }
@@ -426,6 +478,13 @@ class Query {
       return true;
     }
     return Object.getOwnPropertyNames(obj).length === 0 ? true : false;
+  }
+
+  _isFunction(functionToCheck) {
+    return (
+      functionToCheck &&
+      {}.toString.call(functionToCheck) === "[object Function]"
+    );
   }
 }
 
