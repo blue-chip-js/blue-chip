@@ -3659,7 +3659,7 @@
 	    value: function _handleBelongsToWhereRelated(relationship, params, resourceName) {
 	      var _this = this;
 
-	      var relationshipName = relationship.singularName(); // Just use belongsTo for now
+	      var relationshipName = relationship.singularName();
 
 	      var relationIds = this.klass.query(this.resources).includes([relationshipName]).toModels().reduce(function (idArray, model) {
 	        var maybeRelation = model[relationshipName];
@@ -3847,7 +3847,7 @@
 	        var data = _ref7.data;
 
 	        if (!nextRelationships || !data) {
-	          return [];
+	          return nextRelationships;
 	        }
 
 	        if (Array.isArray(data)) {

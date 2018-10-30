@@ -179,7 +179,7 @@ class Query {
   }
 
   _handleBelongsToWhereRelated(relationship, params, resourceName) {
-    const relationshipName = relationship.singularName(); // Just use belongsTo for now
+    const relationshipName = relationship.singularName();
 
     const relationIds = this.klass
       .query(this.resources)
@@ -421,7 +421,7 @@ class Query {
     }
     return Object.values(relationships).reduce((nextRelationships, {data}) => {
       if (!nextRelationships || !data) {
-        return [];
+        return nextRelationships;
       }
 
       if (Array.isArray(data)) {
