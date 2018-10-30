@@ -1,30 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Where related tests Single id 1`] = `
-Array [
-  Object {
-    "createdAt": "2018-10-08T18:39:33.000Z",
-    "customers": Array [
-      "0000",
-    ],
-    "id": "667",
-    "lastSessionDate": "2016-10-01T00:00:00.000Z",
-    "myPatient": true,
-    "patientId": "0000",
-    "serialNumbers": Array [
-      "21601009",
-    ],
-    "sessionsCount": 127001,
-    "indication": Object {
-      "id": "1",
-      "name": "SCI",
-    },
-    "steps": 24099980,
-    "upTime": 68599053,
-  },
-]
-`;
-
 exports[`Where related tests Multiple ids 1`] = `
 Array [
   Object {
@@ -33,6 +8,10 @@ Array [
       "0000",
     ],
     "id": "667",
+    "indication": Object {
+      "id": "1",
+      "name": "SCI",
+    },
     "lastSessionDate": "2016-10-01T00:00:00.000Z",
     "myPatient": true,
     "patientId": "0000",
@@ -40,10 +19,6 @@ Array [
       "21601009",
     ],
     "sessionsCount": 127001,
-    "indication": Object {
-      "id": "1",
-      "name": "SCI",
-    },
     "steps": 24099980,
     "upTime": 68599053,
   },
@@ -53,6 +28,10 @@ Array [
       "0001",
     ],
     "id": "668",
+    "indication": Object {
+      "id": "2",
+      "name": "Stroke",
+    },
     "lastSessionDate": "2016-10-01T00:00:00.000Z",
     "myPatient": true,
     "patientId": "0001",
@@ -60,10 +39,33 @@ Array [
       "21601009",
     ],
     "sessionsCount": 127001,
+    "steps": 24099980,
+    "upTime": 68599053,
+  },
+]
+`;
+
+exports[`Where related tests Should return empty array for unintialized relationships queries 1`] = `Array []`;
+
+exports[`Where related tests Single id 1`] = `
+Array [
+  Object {
+    "createdAt": "2018-10-08T18:39:33.000Z",
+    "customers": Array [
+      "0000",
+    ],
+    "id": "667",
     "indication": Object {
-      "id": "2",
-      "name": "Stroke",
+      "id": "1",
+      "name": "SCI",
     },
+    "lastSessionDate": "2016-10-01T00:00:00.000Z",
+    "myPatient": true,
+    "patientId": "0000",
+    "serialNumbers": Array [
+      "21601009",
+    ],
+    "sessionsCount": 127001,
     "steps": 24099980,
     "upTime": 68599053,
   },
