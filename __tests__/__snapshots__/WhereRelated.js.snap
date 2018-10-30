@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Custom singular includes settingOfUse singular for belongs to 1`] = `
+exports[`Where related tests Single id 1`] = `
 Array [
   Object {
     "createdAt": "2018-10-08T18:39:33.000Z",
@@ -15,9 +15,34 @@ Array [
       "21601009",
     ],
     "sessionsCount": 127001,
-    "settingOfUse": Object {
+    "indication": Object {
       "id": "1",
-      "name": "Inpatient",
+      "name": "SCI",
+    },
+    "steps": 24099980,
+    "upTime": 68599053,
+  },
+]
+`;
+
+exports[`Where related tests Multiple ids 1`] = `
+Array [
+  Object {
+    "createdAt": "2018-10-08T18:39:33.000Z",
+    "customers": Array [
+      "0000",
+    ],
+    "id": "667",
+    "lastSessionDate": "2016-10-01T00:00:00.000Z",
+    "myPatient": true,
+    "patientId": "0000",
+    "serialNumbers": Array [
+      "21601009",
+    ],
+    "sessionsCount": 127001,
+    "indication": Object {
+      "id": "1",
+      "name": "SCI",
     },
     "steps": 24099980,
     "upTime": 68599053,
@@ -35,29 +60,9 @@ Array [
       "21601009",
     ],
     "sessionsCount": 127001,
-    "settingOfUse": Object {
+    "indication": Object {
       "id": "2",
-      "name": "Patient",
-    },
-    "steps": 24099980,
-    "upTime": 68599053,
-  },
-  Object {
-    "createdAt": "2018-10-08T18:39:33.000Z",
-    "customers": Array [
-      "0002",
-    ],
-    "id": "669",
-    "lastSessionDate": "2016-10-01T00:00:00.000Z",
-    "myPatient": true,
-    "patientId": "0002",
-    "serialNumbers": Array [
-      "21601009",
-    ],
-    "sessionsCount": 127001,
-    "settingOfUse": Object {
-      "id": "1",
-      "name": "Inpatient",
+      "name": "Stroke",
     },
     "steps": 24099980,
     "upTime": 68599053,

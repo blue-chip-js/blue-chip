@@ -1,8 +1,6 @@
 export default {
   index: {
     patients: ["667","668","669"],
-    settingOfUses: ["1","2"],
-    indications: ["1","2","3"]
   },
   patients: {
     "667": {
@@ -72,33 +70,4 @@ export default {
         }
       }
   },
-  settingOfUses: {
-    "1": {
-      id: "1",
-      type: "settingOfUses",
-      attributes: {name: "Inpatient"}
-    },
-    "2": {
-        id: "2",
-        type: "settingOfUses",
-        attributes: {name: "Patient"}
-    }
-  },
-  indications: {
-    "1": {
-      id: "1",
-      type: "indications",
-      attributes: {name: "SCI"}
-    },
-    "2": {
-        id: "2",
-        type: "indications",
-        attributes: {name: "Stroke"}
-    },
-    "3": {
-        id: "3",
-        type: "indications",
-        attributes: {name: "Something Else"}
-    }
-  }
 };
