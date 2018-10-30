@@ -7,7 +7,6 @@ describe("Blank relationship", () => {
     resources.patients["667"].relationships.settingOfUse.data = null;
     const patients = Patient.query(resources)
       .includes(["indication", "settingOfUse"])
-      .all()
       .toObjects();
     expect(patients).toMatchSnapshot();
   });
