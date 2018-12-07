@@ -96,7 +96,9 @@ To start, choose your state management flavor. This is an example using Redux.
 
 `$ npm i -S @blue-chip/core`
 `$ npm i -S @blue-chip/redux-adapter`
+
 Or
+
 `yarn add @blue-chip/core`
 `yarn add @blue-chip/redux-adapter`
 
