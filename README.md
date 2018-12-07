@@ -94,9 +94,11 @@ You are familiar with and prefer using ORM's when querying and working with data
 ## Getting Started 
 To start, choose your state management flavor. This is an example using Redux.
 
-`$ npm i -S blue-chip`
+`$ npm i -S @blue-chip/core`
+`$ npm i -S @blue-chip/redux-adapter`
 Or
-`yarn add blue-chip`
+`yarn add @blue-chip/core`
+`yarn add @blue-chip/redux-adapter`
 
 ### Adapters
 
