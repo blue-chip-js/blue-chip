@@ -3761,6 +3761,7 @@
 	        if (!currentIncludes.length) return newFormattedResource;
 	        return conversion(_this3.klass, resources, _extends({}, newFormattedResource, _flattenRelationships(relationships).reduce(function (nextRelationshipObjects, _ref6) {
 	          var id = _ref6.id,
+	              name = _ref6.name,
 	              type = _ref6.type;
 
 	          var relationClass = _this3.hasMany.find(function (klass) {
@@ -3768,7 +3769,7 @@
 	          });
 
 	          if (relationClass) {
-	            return _this3._handleHasManyIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes);
+	            return _this3._handleHasManyIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes, name);
 	          }
 
 	          relationClass = _this3.belongsTo.find(function (klass) {
@@ -3776,7 +3777,7 @@
 	          });
 
 	          if (relationClass) {
-	            return _this3._handleBelongsToIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes);
+	            return _this3._handleBelongsToIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes, name);
 	          }
 
 	          return nextRelationshipObjects;
@@ -3785,12 +3786,12 @@
 	    }
 	  }, {
 	    key: "_handleHasManyIncludes",
-	    value: function _handleHasManyIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes) {
+	    value: function _handleHasManyIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes, name) {
 	      var singularType = relationClass.singularName();
-	      if (!currentIncludes.includes(type) && !currentIncludes.includes(type)) return nextRelationshipObjects;
+	      if (!currentIncludes.includes(name)) return nextRelationshipObjects;
 
-	      if (!(type in nextRelationshipObjects)) {
-	        nextRelationshipObjects[type] = [];
+	      if (!(name in nextRelationshipObjects)) {
+	        nextRelationshipObjects[name] = [];
 	      }
 
 	      if (!resources[type]) return nextRelationshipObjects;
@@ -3798,7 +3799,7 @@
 	      if (!relationData) return nextRelationshipObjects;
 
 	      if (relationClass) {
-	        nextRelationshipObjects[type].push(conversion(relationClass, resources, _extends({
+	        nextRelationshipObjects[name].push(conversion(relationClass, resources, _extends({
 	          id: id
 	        }, relationData.attributes)));
 	      }
@@ -3807,12 +3808,12 @@
 	    }
 	  }, {
 	    key: "_handleBelongsToIncludes",
-	    value: function _handleBelongsToIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes) {
+	    value: function _handleBelongsToIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes, name) {
 	      var singularType = relationClass.singularName();
-	      if (!currentIncludes.includes(type) && !currentIncludes.includes(singularType)) return nextRelationshipObjects;
+	      if (!currentIncludes.includes(name)) return nextRelationshipObjects;
 
-	      if (!(singularType in nextRelationshipObjects)) {
-	        nextRelationshipObjects[singularType] = null;
+	      if (!(name in nextRelationshipObjects)) {
+	        nextRelationshipObjects[name] = null;
 	      }
 
 	      if (!resources[type]) return nextRelationshipObjects;
@@ -3820,7 +3821,7 @@
 	      if (!relationData) return nextRelationshipObjects;
 
 	      if (relationClass) {
-	        nextRelationshipObjects[singularType] = conversion(relationClass, resources, _extends({
+	        nextRelationshipObjects[name] = conversion(relationClass, resources, _extends({
 	          id: id
 	        }, relationData.attributes));
 	      }
@@ -3843,18 +3844,24 @@
 	      if (!relationships) {
 	        return [];
 	      }
-	      return Object.values(relationships).reduce(function (nextRelationships, _ref7) {
-	        var data = _ref7.data;
 
-	        if (!nextRelationships || !data) {
+	      return Object.entries(relationships).reduce(function (nextRelationships, _ref7) {
+	        var _ref8 = _slicedToArray$2(_ref7, 2),
+	            name = _ref8[0],
+	            relationshipItem = _ref8[1];
+
+	        if (!nextRelationships || !relationshipItem || !relationshipItem.data) {
 	          return nextRelationships;
 	        }
 
-	        if (Array.isArray(data)) {
-	          return [].concat(_toConsumableArray(nextRelationships), _toConsumableArray(data));
+	        if (Array.isArray(relationshipItem.data)) {
+	          var dataArray = relationshipItem.data.map(function (item) {
+	            return _extends({}, item, { name: name });
+	          });
+	          return [].concat(_toConsumableArray(nextRelationships), _toConsumableArray(dataArray));
 	        }
 
-	        return [].concat(_toConsumableArray(nextRelationships), [data]);
+	        return [].concat(_toConsumableArray(nextRelationships), [_extends({}, relationshipItem.data, { name: name })]);
 	      }, []);
 	    }
 	  }, {
@@ -3870,10 +3877,10 @@
 	      var _this4 = this;
 
 	      if (!this.currentResources) return;
-	      var resourcesByID = Object.entries(this.currentResources).reduce(function (newResource, _ref8) {
-	        var _ref9 = _slicedToArray$2(_ref8, 2),
-	            id = _ref9[0],
-	            resource = _ref9[1];
+	      var resourcesByID = Object.entries(this.currentResources).reduce(function (newResource, _ref9) {
+	        var _ref10 = _slicedToArray$2(_ref9, 2),
+	            id = _ref10[0],
+	            resource = _ref10[1];
 
 	        _this4._filterResourceByParams(params, newResource, resource, id);
 	        return newResource;
@@ -3883,10 +3890,10 @@
 	  }, {
 	    key: "_filterResourceByParams",
 	    value: function _filterResourceByParams(params, newResource, resource, id) {
-	      Object.entries(params).forEach(function (_ref10) {
-	        var _ref11 = _slicedToArray$2(_ref10, 2),
-	            key = _ref11[0],
-	            value = _ref11[1];
+	      Object.entries(params).forEach(function (_ref11) {
+	        var _ref12 = _slicedToArray$2(_ref11, 2),
+	            key = _ref12[0],
+	            value = _ref12[1];
 
 	        if (Array.isArray(value)) {
 	          if (key === "id" && value.includes(resource.id)) {

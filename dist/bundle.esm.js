@@ -286,7 +286,7 @@ class Query {
           {
             ...newFormattedResource,
             ..._flattenRelationships(relationships).reduce(
-              (nextRelationshipObjects, {id, type}) => {
+              (nextRelationshipObjects, {id, name, type}) => {
                 let relationClass = this.hasMany.find(klass => {
                   return klass.pluralName() === type;
                 });
@@ -299,7 +299,8 @@ class Query {
                     nextRelationshipObjects,
                     conversion,
                     relationClass,
-                    currentIncludes
+                    currentIncludes,
+                    name
                   );
                 }
 
@@ -315,7 +316,8 @@ class Query {
                     nextRelationshipObjects,
                     conversion,
                     relationClass,
-                    currentIncludes
+                    currentIncludes,
+                    name
                   );
                 }
 
@@ -337,14 +339,15 @@ class Query {
     nextRelationshipObjects,
     conversion,
     relationClass,
-    currentIncludes
+    currentIncludes,
+    name
   ) {
     const singularType = relationClass.singularName();
-    if (!currentIncludes.includes(type) && !currentIncludes.includes(type))
+    if (!currentIncludes.includes(name))
       return nextRelationshipObjects;
 
-    if (!(type in nextRelationshipObjects)) {
-      nextRelationshipObjects[type] = [];
+    if (!(name in nextRelationshipObjects)) {
+      nextRelationshipObjects[name] = [];
     }
 
     if (!resources[type]) return nextRelationshipObjects;
@@ -352,7 +355,7 @@ class Query {
     if (!relationData) return nextRelationshipObjects;
 
     if (relationClass) {
-      nextRelationshipObjects[type].push(
+      nextRelationshipObjects[name].push(
         conversion(relationClass, resources, {
           id,
           ...relationData.attributes
@@ -370,17 +373,17 @@ class Query {
     nextRelationshipObjects,
     conversion,
     relationClass,
-    currentIncludes
+    currentIncludes,
+    name
   ) {
     const singularType = relationClass.singularName();
     if (
-      !currentIncludes.includes(type) &&
-      !currentIncludes.includes(singularType)
+      !currentIncludes.includes(name)
     )
       return nextRelationshipObjects;
 
-    if (!(singularType in nextRelationshipObjects)) {
-      nextRelationshipObjects[singularType] = null;
+    if (!(name in nextRelationshipObjects)) {
+      nextRelationshipObjects[name] = null;
     }
 
     if (!resources[type]) return nextRelationshipObjects;
@@ -388,7 +391,7 @@ class Query {
     if (!relationData) return nextRelationshipObjects;
 
     if (relationClass) {
-      nextRelationshipObjects[singularType] = conversion(
+      nextRelationshipObjects[name] = conversion(
         relationClass,
         resources,
         {
@@ -413,16 +416,18 @@ class Query {
     if (!relationships) {
       return [];
     }
-    return Object.values(relationships).reduce((nextRelationships, {data}) => {
-      if (!nextRelationships || !data) {
+    
+    return Object.entries(relationships).reduce((nextRelationships, [name, relationshipItem]) => {
+      if (!nextRelationships || !relationshipItem || !relationshipItem.data) {
         return nextRelationships;
       }
 
-      if (Array.isArray(data)) {
-        return [...nextRelationships, ...data];
+      if (Array.isArray(relationshipItem.data)) {
+        const dataArray = relationshipItem.data.map((item) => ({...item, name}));
+        return [...nextRelationships, ...dataArray];
       }
 
-      return [...nextRelationships, data];
+      return [...nextRelationships, {...relationshipItem.data, name}];
     }, []);
   }
 
