@@ -69,15 +69,13 @@ export default class Query {
       .toModels()
       .reduce((idArray, model) => {
         const maybeRelation = model[relationshipName];
-        const relation = this._isFunction(relation)
+        let relation = this._isFunction(relation)
           ? maybeRelation()
           : maybeRelation;
-
         if (relation && relation.id && !idArray.includes(relation.id))
           idArray.push(relation.id);
         return idArray;
       }, []);
-
     const filteredRelationIds = relationship
       .query(this.resources)
       .includes([resourceName])
@@ -86,16 +84,16 @@ export default class Query {
       .toObjects()
       .map(r => r.id);
 
-    this.currentResources = Object.entries(this.currentResources).reduce(
-      (newResources, [id, resource]) => {
-        const r = resource.relationships[relationshipName];
-        if (r && filteredRelationIds.includes(r.data.id)) {
-          newResources[id] = resource;
-        }
-        return newResources;
-      },
-      {}
-    );
+    this.currentResources = Object.entries(
+      this.resources[relationship.pluralName()]
+    ).reduce((newResources, [id, resource]) => {
+      const r =
+        resource.relationships && resource.relationships[relationshipName];
+      if (r && filteredRelationIds.includes(r.data.id)) {
+        newResources[id] = resource;
+      }
+      return newResources;
+    }, {});
   }
 
   _handleHasManyWhereRelated(relationship, params, resourceName) {
@@ -230,26 +228,54 @@ export default class Query {
     currentIncludes,
     name
   ) {
-    const singularType = relationClass.singularName();
-    if (!currentIncludes.includes(name)) return nextRelationshipObjects;
-
+    const directIncludesRalationships = currentIncludes.map(
+      relation => relation.split(".")[0]
+    );
+    if (!directIncludesRalationships.includes(name))
+      return nextRelationshipObjects;
     if (!(name in nextRelationshipObjects)) {
       nextRelationshipObjects[name] = [];
     }
-
     if (!resources[type]) return nextRelationshipObjects;
     const relationData = resources[type][id];
     if (!relationData) return nextRelationshipObjects;
 
+    const nestedResourceName = currentIncludes
+      .filter(relation => relation.split(".")[0] == name)[0]
+      .split(".")[1];
+
     if (relationClass) {
+      let relationModel;
+      if (nestedResourceName) {
+        let nestedClass = relationClass.belongsTo.filter(
+          klass => nestedResourceName === klass.singularName()
+        )[0];
+
+        if (nestedClass) {
+          relationModel = this._convertToModel(
+            relationClass,
+            resources,
+            {
+              id,
+              ...relationData.attributes
+            },
+            relationClass.hasMany,
+            relationClass.belongsTo
+          );
+        }
+      }
+
       nextRelationshipObjects[name].push(
         conversion(relationClass, resources, {
           id,
-          ...relationData.attributes
+          ...relationData.attributes,
+          ...(relationModel &&
+            relationModel[nestedResourceName] && {
+              [nestedResourceName]: relationModel[nestedResourceName]()
+            })
         })
       );
     }
-
     return nextRelationshipObjects;
   }
 
@@ -263,7 +289,6 @@ export default class Query {
     currentIncludes,
     name
   ) {
-    const singularType = relationClass.singularName();
     if (!currentIncludes.includes(name)) return nextRelationshipObjects;
 
     if (!(name in nextRelationshipObjects)) {

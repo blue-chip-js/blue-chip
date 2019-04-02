@@ -1,7 +1,16 @@
 export default {
   index: {
-    checklists: [3,1,2],
-    tasks: [1,2,3,4,5,6],
+    checklists: [3, 1, 2],
+    tasks: [1, 2, 3, 4, 5, 6],
+    users: [1]
+  },
+  users: {
+    1: {
+      id: 1,
+      type: "users",
+      attributes: {name: "Joe"},
+      links: {self: "http://example.com/users/1"}
+    }
   },
   checklists: {
     1: {
@@ -39,7 +48,8 @@ export default {
       attributes: {description: "Onboarding REST 1"},
       links: {self: "http://example.com/tasks/1"},
       relationships: {
-        checklist: {data: {id: 1, type: "checklists"}}
+        checklist: {data: {id: 1, type: "checklists"}},
+        user: {data: {id: 1, type: "users"}}
       }
     },
     2: {
