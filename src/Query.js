@@ -69,13 +69,15 @@ export default class Query {
       .toModels()
       .reduce((idArray, model) => {
         const maybeRelation = model[relationshipName];
-        let relation = this._isFunction(relation)
+        const relation = this._isFunction(relation)
           ? maybeRelation()
           : maybeRelation;
+
         if (relation && relation.id && !idArray.includes(relation.id))
           idArray.push(relation.id);
         return idArray;
       }, []);
+
     const filteredRelationIds = relationship
       .query(this.resources)
       .includes([resourceName])
@@ -84,16 +86,16 @@ export default class Query {
       .toObjects()
       .map(r => r.id);
 
-    this.currentResources = Object.entries(
-      this.resources[relationship.pluralName()]
-    ).reduce((newResources, [id, resource]) => {
-      const r =
-        resource.relationships && resource.relationships[relationshipName];
-      if (r && filteredRelationIds.includes(r.data.id)) {
-        newResources[id] = resource;
-      }
-      return newResources;
-    }, {});
+    this.currentResources = Object.entries(this.currentResources).reduce(
+      (newResources, [id, resource]) => {
+        const r = resource.relationships[relationshipName];
+        if (r && filteredRelationIds.includes(r.data.id)) {
+          newResources[id] = resource;
+        }
+        return newResources;
+      },
+      {}
+    );
   }
 
   _handleHasManyWhereRelated(relationship, params, resourceName) {

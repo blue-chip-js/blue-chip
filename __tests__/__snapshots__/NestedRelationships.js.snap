@@ -9,14 +9,12 @@ Array [
       Object {
         "description": "QA Checklist Rest 5",
         "id": 5,
-        "user": Object {
-          name: "Joe"
-        }
+        "user": undefined,
       },
       Object {
         "description": "QA Checklist Rest 6",
         "id": 6,
-        "user": null
+        "user": undefined,
       },
     ],
   },
@@ -27,12 +25,16 @@ Array [
       Object {
         "description": "Onboarding REST 1",
         "id": 1,
-        "user": null
+        "user": User {
+          "id": 1,
+          "name": "Joe",
+          "task": [Function],
+        },
       },
       Object {
         "description": "Onboarding REST 2",
         "id": 2,
-        "user": null
+        "user": undefined,
       },
     ],
   },
@@ -43,12 +45,12 @@ Array [
       Object {
         "description": "Project Audit Rest 3",
         "id": 3,
-        "user": null
+        "user": undefined,
       },
       Object {
         "description": "Project Audit Rest 4",
         "id": 4,
-        "user": null
+        "user": undefined,
       },
     ],
   },
