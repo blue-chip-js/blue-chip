@@ -1,6 +1,6 @@
 import pluralize from "pluralize";
 import Query from "./Query";
-import {lowerCaseFirst} from "./utils";
+import {lowerCaseFirst, isFunction} from "./utils";
 
 export default class BaseModel {
   static query(resources) {
@@ -41,16 +41,27 @@ export default class BaseModel {
           this[relationshipKey] = () => {
             const ParentClass = relationship;
             const ChildClass = this.constructor;
-
-            ParentClass.query(resources)
-              .whereRelated(ChildClass, {
-                id: this.id
-              })
+            return ParentClass.query(resources)
+              .where({id: [this.id]})
               .toModels()[0];
+
+            // Todo: belongsTo where related doesn't appear to work
+            // return ParentClass.query(resources)
+            //   .whereRelated(ChildClass, {id: this.id})
+            //   .toModels()[0];
           };
         }
       });
     }
+  }
+
+  toObject() {
+    return Object.getOwnPropertyNames(this).reduce((obj, prop) => {
+      if (!isFunction(this[prop])) {
+        obj[prop] = this[prop];
+      }
+      return obj;
+    }, {});
   }
 
   _filterResources(resource, resources, relationship, relationshipKey) {

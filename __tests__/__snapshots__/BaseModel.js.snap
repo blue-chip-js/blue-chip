@@ -20,7 +20,13 @@ Array [
 ]
 `;
 
-exports[`BaseModel models belongsTo()  1`] = `undefined`;
+exports[`BaseModel models belongsTo()  1`] = `
+Checklist {
+  "id": 1,
+  "name": "Onboarding Rest",
+  "tasks": [Function],
+}
+`;
 
 exports[`BaseModel models find() returns a single model 1`] = `
 Checklist {
@@ -63,11 +69,13 @@ Array [
     "checklist": [Function],
     "description": "Onboarding REST 1",
     "id": 1,
+    "user": [Function],
   },
   Task {
     "checklist": [Function],
     "description": "Onboarding REST 2",
     "id": 2,
+    "user": [Function],
   },
 ]
 `;
@@ -81,6 +89,7 @@ Array [
     },
     "description": "Onboarding REST 1",
     "id": 1,
+    "user": [Function],
   },
   Task {
     "checklist": Checklist {
@@ -89,6 +98,7 @@ Array [
     },
     "description": "Onboarding REST 2",
     "id": 2,
+    "user": [Function],
   },
   Task {
     "checklist": Checklist {
@@ -97,6 +107,7 @@ Array [
     },
     "description": "Project Audit Rest 3",
     "id": 3,
+    "user": [Function],
   },
   Task {
     "checklist": Checklist {
@@ -105,6 +116,7 @@ Array [
     },
     "description": "Project Audit Rest 4",
     "id": 4,
+    "user": [Function],
   },
   Task {
     "checklist": Checklist {
@@ -113,6 +125,7 @@ Array [
     },
     "description": "QA Checklist Rest 5",
     "id": 5,
+    "user": [Function],
   },
   Task {
     "checklist": Checklist {
@@ -121,6 +134,7 @@ Array [
     },
     "description": "QA Checklist Rest 6",
     "id": 6,
+    "user": [Function],
   },
 ]
 `;

@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Nested resourse returns a snapshot including users 1`] = `
+Array [
+  Object {
+    "id": 3,
+    "name": "QA Checklist Rest",
+    "tasks": Array [
+      Object {
+        "description": "QA Checklist Rest 5",
+        "id": 5,
+      },
+      Object {
+        "description": "QA Checklist Rest 6",
+        "id": 6,
+      },
+    ],
+  },
+  Object {
+    "id": 1,
+    "name": "Onboarding Rest",
+    "tasks": Array [
+      Object {
+        "description": "Onboarding REST 1",
+        "id": 1,
+        "user": Object {
+          "id": 1,
+          "name": "Joe",
+        },
+      },
+      Object {
+        "description": "Onboarding REST 2",
+        "id": 2,
+      },
+    ],
+  },
+  Object {
+    "id": 2,
+    "name": "Project Audit Rest",
+    "tasks": Array [
+      Object {
+        "description": "Project Audit Rest 3",
+        "id": 3,
+      },
+      Object {
+        "description": "Project Audit Rest 4",
+        "id": 4,
+      },
+    ],
+  },
+]
+`;
