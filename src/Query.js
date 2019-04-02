@@ -105,9 +105,9 @@ export default class Query {
       .includes([resourceName])
       .toObjects()
       .reduce((newResource, relatedResource) => {
-        const relation = relatedResource[resourceName] || [
-          relatedResource[this.klass.singularName()]
-        ];
+        const relation =
+          relatedResource[resourceName] ||
+          [relatedResource[this.klass.singularName()]].filter(Boolean);
         relation.forEach(({type, id, ...attributes}) => {
           newResource[id] = {type, id, attributes};
         });
@@ -231,8 +231,7 @@ export default class Query {
     name
   ) {
     const singularType = relationClass.singularName();
-    if (!currentIncludes.includes(name))
-      return nextRelationshipObjects;
+    if (!currentIncludes.includes(name)) return nextRelationshipObjects;
 
     if (!(name in nextRelationshipObjects)) {
       nextRelationshipObjects[name] = [];
@@ -265,10 +264,7 @@ export default class Query {
     name
   ) {
     const singularType = relationClass.singularName();
-    if (
-      !currentIncludes.includes(name)
-    )
-      return nextRelationshipObjects;
+    if (!currentIncludes.includes(name)) return nextRelationshipObjects;
 
     if (!(name in nextRelationshipObjects)) {
       nextRelationshipObjects[name] = null;
@@ -279,14 +275,10 @@ export default class Query {
     if (!relationData) return nextRelationshipObjects;
 
     if (relationClass) {
-      nextRelationshipObjects[name] = conversion(
-        relationClass,
-        resources,
-        {
-          id,
-          ...relationData.attributes
-        }
-      );
+      nextRelationshipObjects[name] = conversion(relationClass, resources, {
+        id,
+        ...relationData.attributes
+      });
     }
 
     return nextRelationshipObjects;
@@ -304,19 +296,25 @@ export default class Query {
     if (!relationships) {
       return [];
     }
-    
-    return Object.entries(relationships).reduce((nextRelationships, [name, relationshipItem]) => {
-      if (!nextRelationships || !relationshipItem || !relationshipItem.data) {
-        return nextRelationships;
-      }
 
-      if (Array.isArray(relationshipItem.data)) {
-        const dataArray = relationshipItem.data.map((item) => ({...item, name}));
-        return [...nextRelationships, ...dataArray];
-      }
+    return Object.entries(relationships).reduce(
+      (nextRelationships, [name, relationshipItem]) => {
+        if (!nextRelationships || !relationshipItem || !relationshipItem.data) {
+          return nextRelationships;
+        }
 
-      return [...nextRelationships, {...relationshipItem.data, name}];
-    }, []);
+        if (Array.isArray(relationshipItem.data)) {
+          const dataArray = relationshipItem.data.map(item => ({
+            ...item,
+            name
+          }));
+          return [...nextRelationships, ...dataArray];
+        }
+
+        return [...nextRelationships, {...relationshipItem.data, name}];
+      },
+      []
+    );
   }
 
   _setCurrentResources() {
