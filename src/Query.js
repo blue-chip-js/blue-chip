@@ -1,3 +1,4 @@
+import {isFunction} from "./utils";
 export default class Query {
   constructor(klass, resourceName, resources, hasMany = [], belongsTo = []) {
     this.klass = klass;
@@ -69,9 +70,7 @@ export default class Query {
       .toModels()
       .reduce((idArray, model) => {
         const maybeRelation = model[relationshipName];
-        const relation = this._isFunction(relation)
-          ? maybeRelation()
-          : maybeRelation;
+        const relation = isFunction(relation) ? maybeRelation() : maybeRelation;
 
         if (relation && relation.id && !idArray.includes(relation.id))
           idArray.push(relation.id);
@@ -272,8 +271,10 @@ export default class Query {
           id,
           ...relationData.attributes,
           ...(relationModel &&
-            relationModel[nestedResourceName] && {
-              [nestedResourceName]: relationModel[nestedResourceName]()
+            relationModel[nestedResourceName]() && {
+              [nestedResourceName]: relationModel[
+                nestedResourceName
+              ]().toObject()
             })
         })
       );
@@ -390,12 +391,5 @@ export default class Query {
       return true;
     }
     return Object.getOwnPropertyNames(obj).length === 0 ? true : false;
-  }
-
-  _isFunction(functionToCheck) {
-    return (
-      functionToCheck &&
-      {}.toString.call(functionToCheck) === "[object Function]"
-    );
   }
 }

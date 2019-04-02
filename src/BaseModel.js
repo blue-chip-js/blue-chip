@@ -1,6 +1,6 @@
 import pluralize from "pluralize";
 import Query from "./Query";
-import {lowerCaseFirst} from "./utils";
+import {lowerCaseFirst, isFunction} from "./utils";
 
 export default class BaseModel {
   static query(resources) {
@@ -53,6 +53,15 @@ export default class BaseModel {
         }
       });
     }
+  }
+
+  toObject() {
+    return Object.getOwnPropertyNames(this).reduce((obj, prop) => {
+      if (!isFunction(this[prop])) {
+        obj[prop] = this[prop];
+      }
+      return obj;
+    }, {});
   }
 
   _filterResources(resource, resources, relationship, relationshipKey) {
