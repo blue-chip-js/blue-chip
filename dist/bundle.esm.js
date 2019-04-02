@@ -110,6 +110,16 @@ function _createIndexForGraphQl(payload) {
   return [];
 }
 
+const lowerCaseFirst = string => {
+  return string.charAt(0).toLowerCase() + string.slice(1);
+};
+
+function isFunction(functionToCheck) {
+  return (
+    functionToCheck && {}.toString.call(functionToCheck) === "[object Function]"
+  );
+}
+
 class Query {
   constructor(klass, resourceName, resources, hasMany = [], belongsTo = []) {
     this.klass = klass;
@@ -181,9 +191,7 @@ class Query {
       .toModels()
       .reduce((idArray, model) => {
         const maybeRelation = model[relationshipName];
-        const relation = this._isFunction(relation)
-          ? maybeRelation()
-          : maybeRelation;
+        const relation = isFunction(relation) ? maybeRelation() : maybeRelation;
 
         if (relation && relation.id && !idArray.includes(relation.id))
           idArray.push(relation.id);
@@ -342,26 +350,56 @@ class Query {
     currentIncludes,
     name
   ) {
-    const singularType = relationClass.singularName();
-    if (!currentIncludes.includes(name)) return nextRelationshipObjects;
-
+    const directIncludesRalationships = currentIncludes.map(
+      relation => relation.split(".")[0]
+    );
+    if (!directIncludesRalationships.includes(name))
+      return nextRelationshipObjects;
     if (!(name in nextRelationshipObjects)) {
       nextRelationshipObjects[name] = [];
     }
-
     if (!resources[type]) return nextRelationshipObjects;
     const relationData = resources[type][id];
     if (!relationData) return nextRelationshipObjects;
 
+    const nestedResourceName = currentIncludes
+      .filter(relation => relation.split(".")[0] == name)[0]
+      .split(".")[1];
+
     if (relationClass) {
+      let relationModel;
+      if (nestedResourceName) {
+        let nestedClass = relationClass.belongsTo.filter(
+          klass => nestedResourceName === klass.singularName()
+        )[0];
+
+        if (nestedClass) {
+          relationModel = this._convertToModel(
+            relationClass,
+            resources,
+            {
+              id,
+              ...relationData.attributes
+            },
+            relationClass.hasMany,
+            relationClass.belongsTo
+          );
+        }
+      }
+
       nextRelationshipObjects[name].push(
         conversion(relationClass, resources, {
           id,
-          ...relationData.attributes
+          ...relationData.attributes,
+          ...(relationModel &&
+            relationModel[nestedResourceName]() && {
+              [nestedResourceName]: relationModel[
+                nestedResourceName
+              ]().toObject()
+            })
         })
       );
     }
-
     return nextRelationshipObjects;
   }
 
@@ -375,7 +413,6 @@ class Query {
     currentIncludes,
     name
   ) {
-    const singularType = relationClass.singularName();
     if (!currentIncludes.includes(name)) return nextRelationshipObjects;
 
     if (!(name in nextRelationshipObjects)) {
@@ -476,18 +513,7 @@ class Query {
     }
     return Object.getOwnPropertyNames(obj).length === 0 ? true : false;
   }
-
-  _isFunction(functionToCheck) {
-    return (
-      functionToCheck &&
-      {}.toString.call(functionToCheck) === "[object Function]"
-    );
-  }
 }
-
-const lowerCaseFirst = string => {
-  return string.charAt(0).toLowerCase() + string.slice(1);
-};
 
 class BaseModel {
   static query(resources) {
@@ -528,16 +554,27 @@ class BaseModel {
           this[relationshipKey] = () => {
             const ParentClass = relationship;
             const ChildClass = this.constructor;
-
-            ParentClass.query(resources)
-              .whereRelated(ChildClass, {
-                id: this.id
-              })
+            return ParentClass.query(resources)
+              .where({id: [this.id]})
               .toModels()[0];
+
+            // Todo: belongsTo where related doesn't appear to work
+            // return ParentClass.query(resources)
+            //   .whereRelated(ChildClass, {id: this.id})
+            //   .toModels()[0];
           };
         }
       });
     }
+  }
+
+  toObject() {
+    return Object.getOwnPropertyNames(this).reduce((obj, prop) => {
+      if (!isFunction(this[prop])) {
+        obj[prop] = this[prop];
+      }
+      return obj;
+    }, {});
   }
 
   _filterResources(resource, resources, relationship, relationshipKey) {
