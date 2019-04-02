@@ -683,7 +683,7 @@
 	var _asciiWords = asciiWords;
 
 	/** Used to detect strings that need a more robust regexp to match words. */
-	var reHasUnicodeWord = /[a-z][A-Z]|[A-Z]{2,}[a-z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/;
+	var reHasUnicodeWord = /[a-z][A-Z]|[A-Z]{2}[a-z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/;
 
 	/**
 	 * Checks if `string` contains a word composed of Unicode symbols.
@@ -2461,7 +2461,11 @@
 	 * @returns {*} Returns the property value.
 	 */
 	function safeGet(object, key) {
-	  return key == '__proto__' ? undefined : object[key];
+	  if (key == '__proto__') {
+	    return;
+	  }
+
+	  return object[key];
 	}
 
 	var _safeGet = safeGet;
@@ -2689,7 +2693,7 @@
 	      newValue = objValue;
 	      if (isArguments_1(objValue)) {
 	        newValue = toPlainObject_1(objValue);
-	      } else if (!isObject_1(objValue) || srcIndex && isFunction_1(objValue)) {
+	      } else if (!isObject_1(objValue) || isFunction_1(objValue)) {
 	        newValue = _initCloneObject(srcValue);
 	      }
 	    } else {

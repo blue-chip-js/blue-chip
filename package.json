@@ -22,7 +22,6 @@
   "license": "MIT",
   "dependencies": {
     "graphql-normalizr": "github:mfpiccolo/graphql-normalizr#3a931075370692b0b75fd29c33c019b91c576c65",
-    "jest": "^23.1.0",
     "json-api-normalizer": "^0.4.10",
     "pluralize": "^7.0.0"
   },
@@ -33,6 +32,7 @@
     "babel-preset-stage-0": "^6.24.1",
     "babel-plugin-external-helpers": "6.22.0",
     "coveralls": "^3.0.2",
+    "jest": "^23.1.0",
     "merge": ">=1.2.1",
     "rollup": "^0.62.0",
     "rollup-plugin-babel": "^3.0.7",
