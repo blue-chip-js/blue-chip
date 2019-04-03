@@ -61,6 +61,23 @@ export default class Query {
     return this;
   }
 
+  includes(relationshipTypes) {
+    this.currentIncludes = relationshipTypes;
+    return this;
+  }
+
+  toModels() {
+    if (!this.currentResources) return [];
+    return this._reduceCurrentResources("models");
+  }
+
+  toObjects() {
+    if (!this.currentResources) return [];
+    return this._reduceCurrentResources("objects");
+  }
+
+  // Private
+
   _handleBelongsToWhereRelated(relationship, params, resourceName) {
     const relationshipName = relationship.singularName();
 
@@ -114,23 +131,6 @@ export default class Query {
       }, {});
   }
 
-  includes(relationshipTypes) {
-    this.currentIncludes = relationshipTypes;
-    return this;
-  }
-
-  toModels() {
-    if (!this.currentResources) return [];
-    return this._reduceCurrentResources("models");
-  }
-
-  toObjects() {
-    if (!this.currentResources) return [];
-    return this._reduceCurrentResources("objects");
-  }
-
-  // Private
-
   _sortByIndex(resource1, resource2, resources, resourceName) {
     const index = resources.index[resourceName];
     return index.indexOf(resource1.id) - index.indexOf(resource2.id);
@@ -177,7 +177,6 @@ export default class Query {
                 let relationClass = this.hasMany.find(klass => {
                   return klass.pluralName() === type;
                 });
-
                 if (relationClass) {
                   return this._handleHasManyIncludes(
                     resources,
@@ -229,6 +228,7 @@ export default class Query {
     currentIncludes,
     name
   ) {
+    // TODO: _handleHasManyIncludes and _handleBelongsToIncludes are so similar they should be combined
     const directIncludesRalationships = currentIncludes.map(
       relation => relation.split(".")[0]
     );
@@ -241,42 +241,25 @@ export default class Query {
     const relationData = resources[type][id];
     if (!relationData) return nextRelationshipObjects;
 
-    const nestedResourceName = currentIncludes
-      .filter(relation => relation.split(".")[0] == name)[0]
-      .split(".")[1];
-
     if (relationClass) {
-      let relationModel;
-      if (nestedResourceName) {
-        let nestedClass = relationClass.belongsTo.filter(
-          klass => nestedResourceName === klass.singularName()
-        )[0];
-
-        if (nestedClass) {
-          relationModel = this._convertToModel(
-            relationClass,
-            resources,
-            {
-              id,
-              ...relationData.attributes
-            },
-            relationClass.hasMany,
-            relationClass.belongsTo
-          );
-        }
-      }
+      const [relationModel, nestedResourceName] = this._buildRelationModel(
+        currentIncludes,
+        relationClass,
+        id,
+        name,
+        relationData
+      );
 
       nextRelationshipObjects[name].push(
-        conversion(relationClass, resources, {
+        this._convertWithNestedResources(
+          conversion,
+          relationClass,
+          resources,
           id,
-          ...relationData.attributes,
-          ...(relationModel &&
-            relationModel[nestedResourceName]() && {
-              [nestedResourceName]: relationModel[
-                nestedResourceName
-              ]().toObject()
-            })
-        })
+          relationData,
+          relationModel,
+          nestedResourceName
+        )
       );
     }
     return nextRelationshipObjects;
@@ -292,24 +275,86 @@ export default class Query {
     currentIncludes,
     name
   ) {
-    if (!currentIncludes.includes(name)) return nextRelationshipObjects;
-
+    // TODO: _handleHasManyIncludes and _handleBelongsToIncludes are so similar they should be combined
+    const directIncludesRalationships = currentIncludes.map(
+      relation => relation.split(".")[0]
+    );
+    if (!directIncludesRalationships.includes(name))
+      return nextRelationshipObjects;
     if (!(name in nextRelationshipObjects)) {
       nextRelationshipObjects[name] = null;
     }
-
     if (!resources[type]) return nextRelationshipObjects;
     const relationData = resources[type][id];
     if (!relationData) return nextRelationshipObjects;
 
     if (relationClass) {
-      nextRelationshipObjects[name] = conversion(relationClass, resources, {
+      const [relationModel, nestedResourceName] = this._buildRelationModel(
+        currentIncludes,
+        relationClass,
         id,
-        ...relationData.attributes
-      });
+        name,
+        relationData
+      );
+
+      nextRelationshipObjects[name] = this._convertWithNestedResources(
+        conversion,
+        relationClass,
+        resources,
+        id,
+        relationData,
+        relationModel,
+        nestedResourceName
+      );
     }
 
     return nextRelationshipObjects;
+  }
+
+  _convertWithNestedResources(
+    conversion,
+    relationClass,
+    resources,
+    id,
+    relationData,
+    relationModel,
+    nestedResourceName
+  ) {
+    return conversion(relationClass, resources, {
+      id,
+      ...relationData.attributes,
+      ...(relationModel &&
+        relationModel[nestedResourceName]() && {
+          [nestedResourceName]: relationModel[nestedResourceName]().toObject()
+        })
+    });
+  }
+
+  _buildRelationModel(currentIncludes, relationClass, id, name, relationData) {
+    let relationModel;
+    const nestedResourceName = currentIncludes
+      .filter(relation => relation.split(".")[0] == name)[0]
+      .split(".")[1];
+    if (nestedResourceName) {
+      let nestedClass = relationClass.belongsTo.filter(
+        klass => nestedResourceName === klass.singularName()
+      )[0];
+
+      if (nestedClass) {
+        relationModel = this._convertToModel(
+          relationClass,
+          this.resources,
+          {
+            id,
+            ...relationData.attributes
+          },
+          relationClass.hasMany,
+          relationClass.belongsTo
+        );
+      }
+    }
+
+    return [relationModel, nestedResourceName];
   }
 
   _convertToModel(klass, resources, resource, hasMany, belongsTo) {

@@ -1,5 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Nested resourse returns a snapshot including contact 1`] = `
+Array [
+  Object {
+    "d": "f",
+    "id": 1,
+    "vendorContact": Object {
+      "a": "b",
+      "contact": Object {
+        "g": "h",
+        "id": 1,
+      },
+      "id": 1,
+    },
+  },
+]
+`;
+
 exports[`Nested resourse returns a snapshot including users 1`] = `
 Array [
   Object {
