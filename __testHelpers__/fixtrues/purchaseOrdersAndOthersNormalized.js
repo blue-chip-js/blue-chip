@@ -1,49 +1,49 @@
 export default {
   index: {
-    purchaseOrders: [1],
-    contacts: [1],
-    purchaseOrderContacts: [1],
-    vendors: [1],
-    vendorContacts: [1]
+    purchaseOrders: [11],
+    contacts: [12],
+    purchaseOrderContacts: [13],
+    vendors: [14],
+    vendorContacts: [15]
   },
   purchaseOrders: {
-    1: {
-      id: 1,
+    11: {
+      id: 11,
       type: "purchaseOrders",
       attributes: {i: "j"}
     }
   },
   contacts: {
-    1: {
-      id: 1,
+    12: {
+      id: 12,
       type: "contacts",
-      attributes: {g: "h"}
+      attributes: {contactData: "a"}
     }
   },
   purchaseOrderContacts: {
-    1: {
-      id: 1,
+    13: {
+      id: 13,
       type: "purchaseOrderContacts",
-      attributes: {d: "f"},
+      attributes: {pocData: "f"},
       relationships: {
-        vendorContact: {data: {id: 1, type: "vendorContacts"}}
+        vendorContact: {data: {id: 15, type: "vendorContacts"}}
       }
     }
   },
   vendors: {
-    1: {
-      id: 1,
+    14: {
+      id: 14,
       type: "vendors",
       attributes: {b: "c"}
     }
   },
   vendorContacts: {
-    1: {
-      id: 1,
+    15: {
+      id: 15,
       type: "vendorContacts",
-      attributes: {a: "b"},
+      attributes: {vcData: "b"},
       relationships: {
-        contact: {data: {id: 1, type: "contact"}}
+        contact: {data: {id: 12, type: "contact"}}
       }
     }
   }

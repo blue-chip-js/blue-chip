@@ -3,15 +3,15 @@
 exports[`Nested resourse returns a snapshot including contact 1`] = `
 Array [
   Object {
-    "d": "f",
-    "id": 1,
+    "id": 13,
+    "pocData": "f",
     "vendorContact": Object {
-      "a": "b",
       "contact": Object {
-        "g": "h",
-        "id": 1,
+        "contactData": "a",
+        "id": 12,
       },
-      "id": 1,
+      "id": 15,
+      "vcData": "b",
     },
   },
 ]
@@ -41,7 +41,7 @@ Array [
         "description": "Onboarding REST 1",
         "id": 1,
         "user": Object {
-          "id": 1,
+          "id": 8,
           "name": "Joe",
         },
       },

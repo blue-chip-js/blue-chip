@@ -39,16 +39,18 @@ export default class BaseModel {
         const relationshipKey = relationship.singularName();
         if (!this[relationshipKey]) {
           this[relationshipKey] = () => {
-            const ParentClass = relationship;
-            const ChildClass = this.constructor;
-            return ParentClass.query(resources)
-              .where({id: [this.id]})
-              .toModels()[0];
+            const ParentClass = this.constructor;
+            const ChildClass = relationship;
 
-            // Todo: belongsTo where related doesn't appear to work
-            // return ParentClass.query(resources)
-            //   .whereRelated(ChildClass, {id: this.id})
-            //   .toModels()[0];
+            let childId;
+            try {
+              childId =
+                resources[ParentClass.pluralName()][this.id].relationships[
+                  ChildClass.singularName()
+                ].data.id;
+            } catch (e) {}
+
+            return ChildClass.query(resources).find(childId);
           };
         }
       });
