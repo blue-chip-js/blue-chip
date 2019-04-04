@@ -141,7 +141,10 @@ class Query {
       hasMany,
       belongsTo
     } = this;
-    const {attributes} = resources[resourceName] && resources[resourceName][id];
+
+    if (!(resources[resourceName] && resources[resourceName][id])) return;
+
+    const {attributes} = resources[resourceName][id];
     return _convertToModel(
       klass,
       resources,
@@ -270,7 +273,6 @@ class Query {
       hasMany,
       belongsTo
     } = this;
-
     return Object.values(currentResources)
       .sort((resource1, resource2) =>
         this._sortByIndex(resource1, resource2, resources, resourceName)
@@ -456,6 +458,7 @@ class Query {
     const nestedResourceName = currentIncludes
       .filter(relation => relation.split(".")[0] == name)[0]
       .split(".")[1];
+
     if (nestedResourceName) {
       let nestedClass = relationClass.belongsTo.filter(
         klass => nestedResourceName === klass.singularName()
@@ -597,16 +600,18 @@ class BaseModel {
         const relationshipKey = relationship.singularName();
         if (!this[relationshipKey]) {
           this[relationshipKey] = () => {
-            const ParentClass = relationship;
-            const ChildClass = this.constructor;
-            return ParentClass.query(resources)
-              .where({id: [this.id]})
-              .toModels()[0];
+            const ParentClass = this.constructor;
+            const ChildClass = relationship;
 
-            // Todo: belongsTo where related doesn't appear to work
-            // return ParentClass.query(resources)
-            //   .whereRelated(ChildClass, {id: this.id})
-            //   .toModels()[0];
+            let childId;
+            try {
+              childId =
+                resources[ParentClass.pluralName()][this.id].relationships[
+                  ChildClass.singularName()
+                ].data.id;
+            } catch (e) {}
+
+            return ChildClass.query(resources).find(childId);
           };
         }
       });

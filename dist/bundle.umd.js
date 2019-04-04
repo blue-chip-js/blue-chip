@@ -16817,8 +16817,10 @@
 	          hasMany = this.hasMany,
 	          belongsTo = this.belongsTo;
 
-	      var _ref = resources[resourceName] && resources[resourceName][id],
-	          attributes = _ref.attributes;
+
+	      if (!(resources[resourceName] && resources[resourceName][id])) return;
+
+	      var attributes = resources[resourceName][id].attributes;
 
 	      return _convertToModel(klass, resources, _extends$5({ id: id }, attributes), hasMany, belongsTo);
 	    }
@@ -16899,10 +16901,10 @@
 	        return r.id;
 	      });
 
-	      this.currentResources = Object.entries(this.currentResources).reduce(function (newResources, _ref2) {
-	        var _ref3 = _slicedToArray$2(_ref2, 2),
-	            id = _ref3[0],
-	            resource = _ref3[1];
+	      this.currentResources = Object.entries(this.currentResources).reduce(function (newResources, _ref) {
+	        var _ref2 = _slicedToArray$2(_ref, 2),
+	            id = _ref2[0],
+	            resource = _ref2[1];
 
 	        var r = resource.relationships[relationshipName];
 	        if (r && filteredRelationIds.includes(r.data.id)) {
@@ -16918,10 +16920,10 @@
 
 	      this.currentResources = relationship.query(this.resources).where(params).includes([resourceName]).toObjects().reduce(function (newResource, relatedResource) {
 	        var relation = relatedResource[resourceName] || [relatedResource[_this.klass.singularName()]].filter(Boolean);
-	        relation.forEach(function (_ref4) {
-	          var type = _ref4.type,
-	              id = _ref4.id,
-	              attributes = _objectWithoutProperties(_ref4, ["type", "id"]);
+	        relation.forEach(function (_ref3) {
+	          var type = _ref3.type,
+	              id = _ref3.id,
+	              attributes = _objectWithoutProperties(_ref3, ["type", "id"]);
 
 	          newResource[id] = { type: type, id: id, attributes: attributes };
 	        });
@@ -16949,25 +16951,24 @@
 	          hasMany = this.hasMany,
 	          belongsTo = this.belongsTo;
 
-
 	      return Object.values(currentResources).sort(function (resource1, resource2) {
 	        return _this2._sortByIndex(resource1, resource2, resources, resourceName);
-	      }).map(function (_ref5) {
-	        var id = _ref5.id,
-	            attributes = _ref5.attributes,
-	            relationships = _ref5.relationships,
-	            types = _ref5.types,
-	            links = _ref5.links;
+	      }).map(function (_ref4) {
+	        var id = _ref4.id,
+	            attributes = _ref4.attributes,
+	            relationships = _ref4.relationships,
+	            types = _ref4.types,
+	            links = _ref4.links;
 
 	        var newFormattedResource = conversion(_this2.klass, resources, _extends$5({
 	          id: id
 	        }, attributes), hasMany, belongsTo);
 
 	        if (!currentIncludes.length) return newFormattedResource;
-	        return conversion(_this2.klass, resources, _extends$5({}, newFormattedResource, _flattenRelationships(relationships).reduce(function (nextRelationshipObjects, _ref6) {
-	          var id = _ref6.id,
-	              name = _ref6.name,
-	              type = _ref6.type;
+	        return conversion(_this2.klass, resources, _extends$5({}, newFormattedResource, _flattenRelationships(relationships).reduce(function (nextRelationshipObjects, _ref5) {
+	          var id = _ref5.id,
+	              name = _ref5.name,
+	              type = _ref5.type;
 
 	          var relationClass = _this2.hasMany.find(function (klass) {
 	            return klass.pluralName() === type;
@@ -17053,6 +17054,7 @@
 	      var nestedResourceName = currentIncludes.filter(function (relation) {
 	        return relation.split(".")[0] == name;
 	      })[0].split(".")[1];
+
 	      if (nestedResourceName) {
 	        var nestedClass = relationClass.belongsTo.filter(function (klass) {
 	          return nestedResourceName === klass.singularName();
@@ -17084,10 +17086,10 @@
 	        return [];
 	      }
 
-	      return Object.entries(relationships).reduce(function (nextRelationships, _ref8) {
-	        var _ref9 = _slicedToArray$2(_ref8, 2),
-	            name = _ref9[0],
-	            relationshipItem = _ref9[1];
+	      return Object.entries(relationships).reduce(function (nextRelationships, _ref7) {
+	        var _ref8 = _slicedToArray$2(_ref7, 2),
+	            name = _ref8[0],
+	            relationshipItem = _ref8[1];
 
 	        if (!nextRelationships || !relationshipItem || !relationshipItem.data) {
 	          return nextRelationships;
@@ -17118,10 +17120,10 @@
 	      var _this3 = this;
 
 	      if (!this.currentResources) return;
-	      var resourcesByID = Object.entries(this.currentResources).reduce(function (newResource, _ref10) {
-	        var _ref11 = _slicedToArray$2(_ref10, 2),
-	            id = _ref11[0],
-	            resource = _ref11[1];
+	      var resourcesByID = Object.entries(this.currentResources).reduce(function (newResource, _ref9) {
+	        var _ref10 = _slicedToArray$2(_ref9, 2),
+	            id = _ref10[0],
+	            resource = _ref10[1];
 
 	        _this3._filterResourceByParams(params, newResource, resource, id);
 	        return newResource;
@@ -17131,10 +17133,10 @@
 	  }, {
 	    key: "_filterResourceByParams",
 	    value: function _filterResourceByParams(params, newResource, resource, id) {
-	      Object.entries(params).forEach(function (_ref12) {
-	        var _ref13 = _slicedToArray$2(_ref12, 2),
-	            key = _ref13[0],
-	            value = _ref13[1];
+	      Object.entries(params).forEach(function (_ref11) {
+	        var _ref12 = _slicedToArray$2(_ref11, 2),
+	            key = _ref12[0],
+	            value = _ref12[1];
 
 	        if (Array.isArray(value)) {
 	          if (key === "id" && value.includes(resource.id)) {
@@ -17219,14 +17221,15 @@
 	        var relationshipKey = relationship.singularName();
 	        if (!_this[relationshipKey]) {
 	          _this[relationshipKey] = function () {
-	            var ParentClass = relationship;
-	            var ChildClass = _this.constructor;
-	            return ParentClass.query(resources).where({ id: [_this.id] }).toModels()[0];
+	            var ParentClass = _this.constructor;
+	            var ChildClass = relationship;
 
-	            // Todo: belongsTo where related doesn't appear to work
-	            // return ParentClass.query(resources)
-	            //   .whereRelated(ChildClass, {id: this.id})
-	            //   .toModels()[0];
+	            var childId = void 0;
+	            try {
+	              childId = resources[ParentClass.pluralName()][_this.id].relationships[ChildClass.singularName()].data.id;
+	            } catch (e) {}
+
+	            return ChildClass.query(resources).find(childId);
 	          };
 	        }
 	      });

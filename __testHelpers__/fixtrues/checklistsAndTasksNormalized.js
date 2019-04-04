@@ -2,11 +2,11 @@ export default {
   index: {
     checklists: [3, 1, 2],
     tasks: [1, 2, 3, 4, 5, 6],
-    users: [1]
+    users: [8]
   },
   users: {
-    1: {
-      id: 1,
+    8: {
+      id: 8,
       type: "users",
       attributes: {name: "Joe"},
       links: {self: "http://example.com/users/1"}
@@ -49,7 +49,7 @@ export default {
       links: {self: "http://example.com/tasks/1"},
       relationships: {
         checklist: {data: {id: 1, type: "checklists"}},
-        user: {data: {id: 1, type: "users"}}
+        user: {data: {id: 8, type: "users"}}
       }
     },
     2: {

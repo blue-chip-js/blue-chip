@@ -20,7 +20,10 @@ export default class Query {
       hasMany,
       belongsTo
     } = this;
-    const {attributes} = resources[resourceName] && resources[resourceName][id];
+
+    if (!(resources[resourceName] && resources[resourceName][id])) return;
+
+    const {attributes} = resources[resourceName][id];
     return _convertToModel(
       klass,
       resources,
@@ -149,7 +152,6 @@ export default class Query {
       hasMany,
       belongsTo
     } = this;
-
     return Object.values(currentResources)
       .sort((resource1, resource2) =>
         this._sortByIndex(resource1, resource2, resources, resourceName)
@@ -335,6 +337,7 @@ export default class Query {
     const nestedResourceName = currentIncludes
       .filter(relation => relation.split(".")[0] == name)[0]
       .split(".")[1];
+
     if (nestedResourceName) {
       let nestedClass = relationClass.belongsTo.filter(
         klass => nestedResourceName === klass.singularName()
