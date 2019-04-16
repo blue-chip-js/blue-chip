@@ -16860,7 +16860,9 @@
 	    value: function whereRelated(relationship, params) {
 	      var resourceName = this.resourceName;
 
-	      this.hasMany.includes(relationship) ? this._handleHasManyWhereRelated(relationship, params, resourceName) : this._handleBelongsToWhereRelated(relationship, params, resourceName);
+	      var relationships = Object.values(this.currentResources)[0].relationships;
+
+	      relationships && relationships[relationship.singularName()] ? this._handleBelongsToWhereRelated(relationship, params, resourceName) : this._handleHasManyWhereRelated(relationship, params, resourceName);
 	      return this;
 	    }
 	  }, {
@@ -16906,7 +16908,7 @@
 	            id = _ref2[0],
 	            resource = _ref2[1];
 
-	        var r = resource.relationships[relationshipName];
+	        var r = resource.relationships && resource.relationships[relationshipName];
 	        if (r && filteredRelationIds.includes(r.data.id)) {
 	          newResources[id] = resource;
 	        }
@@ -16996,6 +16998,7 @@
 	      var directIncludesRalationships = currentIncludes.map(function (relation) {
 	        return relation.split(".")[0];
 	      });
+
 	      if (!directIncludesRalationships.includes(name)) return nextRelationshipObjects;
 	      if (!(name in nextRelationshipObjects)) {
 	        nextRelationshipObjects[name] = [];
@@ -17003,7 +17006,6 @@
 	      if (!resources[type]) return nextRelationshipObjects;
 	      var relationData = resources[type][id];
 	      if (!relationData) return nextRelationshipObjects;
-
 	      if (relationClass) {
 	        var _buildRelationModel2 = this._buildRelationModel(currentIncludes, relationClass, id, name, relationData),
 	            _buildRelationModel3 = _slicedToArray$2(_buildRelationModel2, 2),
@@ -17043,9 +17045,17 @@
 	  }, {
 	    key: "_convertWithNestedResources",
 	    value: function _convertWithNestedResources(conversion, relationClass, resources, id, relationData, relationModel, nestedResourceName) {
+	      var queryOrModel = relationModel && relationModel[nestedResourceName]();
+	      var conversionKey = void 0;
+	      if (queryOrModel && queryOrModel.toObjects) {
+	        conversionKey = "toObjects";
+	      } else if (queryOrModel && queryOrModel.toObject) {
+	        conversionKey = "toObject";
+	      }
+
 	      return conversion(relationClass, resources, _extends$5({
 	        id: id
-	      }, relationData.attributes, relationModel && relationModel[nestedResourceName]() && _defineProperty$2({}, nestedResourceName, relationModel[nestedResourceName]().toObject())));
+	      }, relationData.attributes, relationModel && relationModel[nestedResourceName]() && _defineProperty$2({}, nestedResourceName, relationModel[nestedResourceName]()[conversionKey]())));
 	    }
 	  }, {
 	    key: "_buildRelationModel",
@@ -17056,9 +17066,16 @@
 	      })[0].split(".")[1];
 
 	      if (nestedResourceName) {
-	        var nestedClass = relationClass.belongsTo.filter(function (klass) {
+	        var nestedClass = void 0;
+	        nestedClass = relationClass.belongsTo.filter(function (klass) {
 	          return nestedResourceName === klass.singularName();
 	        })[0];
+
+	        if (!nestedClass) {
+	          nestedClass = relationClass.hasMany && relationClass.hasMany.filter(function (klass) {
+	            return nestedResourceName === klass.pluralName();
+	          })[0];
+	        }
 
 	        if (nestedClass) {
 	          relationModel = this._convertToModel(relationClass, this.resources, _extends$5({
@@ -17256,8 +17273,7 @@
 	      var currentResourceKey = resource.constructor.pluralName();
 
 	      var resourceClass = resource.constructor;
-	      var relationshipClass = relationship;
-	      return _extends$6({}, resources, (_extends2 = {}, _defineProperty$3(_extends2, currentResourceKey, resources[currentResourceKey][resource.id]), _defineProperty$3(_extends2, relationshipKey, relationshipClass.query(resources).whereRelated(resourceClass, {
+	      return _extends$6({}, resources, (_extends2 = {}, _defineProperty$3(_extends2, currentResourceKey, resources[currentResourceKey][resource.id]), _defineProperty$3(_extends2, relationshipKey, relationship.query(resources).whereRelated(resourceClass, {
 	        id: resource.id
 	      }).currentResources), _extends2));
 	    }
