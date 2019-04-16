@@ -7,7 +7,7 @@ import Vendor from "./Vendor";
 import VendorContact from "./VendorContact";
 import Spec from "./Spec";
 import SpecDetail from "./SpecDetail";
-import Com from "./Com";
+import SpecDetailCom from "./SpecDetailCom";
 
 export {
   Checklist,
@@ -19,5 +19,5 @@ export {
   VendorContact,
   Spec,
   SpecDetail,
-  Com
+  SpecDetailCom
 };

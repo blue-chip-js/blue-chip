@@ -1,6 +1,6 @@
 import BaseModel from "../../src/BaseModel";
 import Spec from "./Spec";
-import Com from "./Com";
+import SpecDetailCom from "./SpecDetailCom";
 
 export default class SpecDetail extends BaseModel {
   static get belongsTo() {
@@ -8,6 +8,6 @@ export default class SpecDetail extends BaseModel {
   }
 
   static get hasMany() {
-    return [Com];
+    return [SpecDetailCom];
   }
 }

@@ -2,7 +2,7 @@ export default {
   index: {
     specs: [11, 12],
     specDetails: [7, 12],
-    coms: [2, 3]
+    specDetailComs: [2, 3]
   },
   specs: {
     11: {
@@ -30,19 +30,19 @@ export default {
       type: "specDetails",
       attributes: {specDetailData: "Should show up"},
       relationships: {
-        coms: {data: {id: 2, type: "coms"}}
+        coms: {data: {id: 2, type: "specDetailComs"}}
       }
     }
   },
-  coms: {
+  specDetailComs: {
     2: {
       id: 2,
-      type: "coms",
+      type: "specDetailComs",
       attributes: {comData: "Should show up"}
     },
     3: {
       id: 3,
-      type: "coms",
+      type: "specDetailComs",
       attributes: {comData: "Should not show up"}
     }
   }
