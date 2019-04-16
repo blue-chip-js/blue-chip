@@ -5,6 +5,9 @@ import PurchaseOrder from "./PurchaseOrder";
 import PurchaseOrderContact from "./PurchaseOrderContact";
 import Vendor from "./Vendor";
 import VendorContact from "./VendorContact";
+import Spec from "./Spec";
+import SpecDetail from "./SpecDetail";
+import Com from "./Com";
 
 export {
   Checklist,
@@ -13,5 +16,8 @@ export {
   PurchaseOrder,
   PurchaseOrderContact,
   Vendor,
-  VendorContact
+  VendorContact,
+  Spec,
+  SpecDetail,
+  Com
 };

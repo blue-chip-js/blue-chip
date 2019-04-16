@@ -70,11 +70,10 @@ export default class BaseModel {
     const currentResourceKey = resource.constructor.pluralName();
 
     const resourceClass = resource.constructor;
-    const relationshipClass = relationship;
     return {
       ...resources,
       [currentResourceKey]: resources[currentResourceKey][resource.id],
-      [relationshipKey]: relationshipClass
+      [relationshipKey]: relationship
         .query(resources)
         .whereRelated(resourceClass, {
           id: resource.id

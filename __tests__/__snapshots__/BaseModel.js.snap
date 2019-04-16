@@ -63,7 +63,7 @@ Object {
 }
 `;
 
-exports[`BaseModel models hasMany() hasMany 1`] = `
+exports[`BaseModel models hasMany() hasMany function 1`] = `
 Array [
   Task {
     "checklist": [Function],
@@ -139,7 +139,7 @@ Array [
 ]
 `;
 
-exports[`BaseModel models includes() hasMany  1`] = `
+exports[`BaseModel models includes() hasMany check for hasMany includes 1`] = `
 Array [
   Checklist {
     "id": 3,

@@ -97,7 +97,7 @@ describe("BaseModel", () => {
     });
 
     describe("includes() hasMany", () => {
-      test("", () => {
+      test("check for hasMany includes", () => {
         const checklists = Checklist.query(resources)
           .all()
           .includes(["tasks"])
@@ -117,12 +117,12 @@ describe("BaseModel", () => {
     });
 
     describe("hasMany()", () => {
-      test("hasMany", () => {
-        const checklists = Checklist.query(resources)
+      test("hasMany function", () => {
+        const tasks = Checklist.query(resources)
           .find(1)
           .tasks()
           .toModels();
-        expect(checklists).toMatchSnapshot();
+        expect(tasks).toMatchSnapshot();
       });
     });
 

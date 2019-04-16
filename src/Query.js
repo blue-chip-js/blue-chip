@@ -58,9 +58,11 @@ export default class Query {
 
   whereRelated(relationship, params) {
     const {resourceName} = this;
-    this.hasMany.includes(relationship)
-      ? this._handleHasManyWhereRelated(relationship, params, resourceName)
-      : this._handleBelongsToWhereRelated(relationship, params, resourceName);
+    const relationships = Object.values(this.currentResources)[0].relationships;
+
+    relationships && relationships[relationship.singularName()]
+      ? this._handleBelongsToWhereRelated(relationship, params, resourceName)
+      : this._handleHasManyWhereRelated(relationship, params, resourceName);
     return this;
   }
 
@@ -107,7 +109,8 @@ export default class Query {
 
     this.currentResources = Object.entries(this.currentResources).reduce(
       (newResources, [id, resource]) => {
-        const r = resource.relationships[relationshipName];
+        const r =
+          resource.relationships && resource.relationships[relationshipName];
         if (r && filteredRelationIds.includes(r.data.id)) {
           newResources[id] = resource;
         }
@@ -234,6 +237,7 @@ export default class Query {
     const directIncludesRalationships = currentIncludes.map(
       relation => relation.split(".")[0]
     );
+
     if (!directIncludesRalationships.includes(name))
       return nextRelationshipObjects;
     if (!(name in nextRelationshipObjects)) {
@@ -242,7 +246,6 @@ export default class Query {
     if (!resources[type]) return nextRelationshipObjects;
     const relationData = resources[type][id];
     if (!relationData) return nextRelationshipObjects;
-
     if (relationClass) {
       const [relationModel, nestedResourceName] = this._buildRelationModel(
         currentIncludes,
@@ -322,12 +325,22 @@ export default class Query {
     relationModel,
     nestedResourceName
   ) {
+    const queryOrModel = relationModel && relationModel[nestedResourceName]();
+    let conversionKey;
+    if (queryOrModel && queryOrModel.toObjects) {
+      conversionKey = "toObjects";
+    } else if (queryOrModel && queryOrModel.toObject) {
+      conversionKey = "toObject";
+    }
+
     return conversion(relationClass, resources, {
       id,
       ...relationData.attributes,
       ...(relationModel &&
         relationModel[nestedResourceName]() && {
-          [nestedResourceName]: relationModel[nestedResourceName]().toObject()
+          [nestedResourceName]: relationModel[nestedResourceName]()[
+            conversionKey
+          ]()
         })
     });
   }
@@ -339,9 +352,18 @@ export default class Query {
       .split(".")[1];
 
     if (nestedResourceName) {
-      let nestedClass = relationClass.belongsTo.filter(
+      let nestedClass;
+      nestedClass = relationClass.belongsTo.filter(
         klass => nestedResourceName === klass.singularName()
       )[0];
+
+      if (!nestedClass) {
+        nestedClass =
+          relationClass.hasMany &&
+          relationClass.hasMany.filter(
+            klass => nestedResourceName === klass.pluralName()
+          )[0];
+      }
 
       if (nestedClass) {
         relationModel = this._convertToModel(
