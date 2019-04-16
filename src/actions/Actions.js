@@ -4,7 +4,7 @@ import {GraphQLNormalizr} from "graphql-normalizr";
 const graphQLNormalizr = new GraphQLNormalizr();
 const graphQlNormalize = graphQLNormalizr.normalize;
 
-import {isGraphQl, toJsonApiSpec} from "./helpers";
+import {isGraphQl, toJsonApiSpec, camelizeKeys} from "./helpers";
 
 export default class Actions {
   static config({adapter, mutator}) {
@@ -34,19 +34,19 @@ export default class Actions {
   }
 
   updateResource(resource) {
-    this.actions.updateResource(this.mutator, resource);
+    this.actions.updateResource(this.mutator, camelizeKeys(resource));
   }
 
   removeResources(resources) {
-    this.actions.removeResources(this.mutator, resources);
+    this.actions.removeResources(this.mutator, camelizeKeys(resources));
   }
 
   removeResource(resource) {
-    this.actions.removeResource(this.mutator, resource);
+    this.actions.removeResource(this.mutator, camelizeKeys(resource));
   }
 
   clearResources(resourceTypes) {
-    this.actions.clearResources(this.mutator, resourceTypes);
+    this.actions.clearResources(this.mutator, camelizeKeys(resourceTypes));
   }
 }
 
