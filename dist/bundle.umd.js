@@ -16710,10 +16710,10 @@
 	  _createClass(Actions, [{
 	    key: "updateResources",
 	    value: function updateResources(payload) {
-	      var _this = this;
-
 	      // Create insert order index
 	      var index = isGraphQl(payload) ? _createIndexForGraphQl(payload) : _createIndexForJsonApi(payload);
+
+	      var resourcesByType = {};
 
 	      Object.entries(isGraphQl(payload) ? graphQlNormalize(payload) : jsonApiNormalize(payload)).forEach(function (_ref2) {
 	        var _ref3 = _slicedToArray$1(_ref2, 2),
@@ -16722,8 +16722,9 @@
 
 	        var rById = isGraphQl(payload) ? toJsonApiSpec(resourceType, resourcesById) : resourcesById;
 
-	        _this.actions.updateResources(_this.mutator, resourceType, rById, index);
+	        resourcesByType[resourceType] = resourcesById;
 	      });
+	      this.actions.updateResources(this.mutator, resourcesByType, index);
 	    }
 	  }, {
 	    key: "updateResource",

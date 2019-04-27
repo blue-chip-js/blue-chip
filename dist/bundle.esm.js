@@ -69,6 +69,8 @@ class Actions {
       ? _createIndexForGraphQl(payload)
       : _createIndexForJsonApi(payload);
 
+    const resourcesByType = {};
+
     Object.entries(
       isGraphQl(payload) ? graphQlNormalize(payload) : jsonApiNormalize(payload)
     ).forEach(([resourceType, resourcesById]) => {
@@ -76,8 +78,9 @@ class Actions {
         ? toJsonApiSpec(resourceType, resourcesById)
         : resourcesById;
 
-      this.actions.updateResources(this.mutator, resourceType, rById, index);
+      resourcesByType[resourceType] = resourcesById;
     });
+    this.actions.updateResources(this.mutator, resourcesByType, index);
   }
 
   updateResource(resource) {
