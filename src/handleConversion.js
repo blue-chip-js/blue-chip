@@ -24,10 +24,10 @@ function _reduceCurrentResources(query, reducerType) {
 }
 
 function _convertResource({id, attributes, relationships, conversion, query}) {
-  const {currentIncludes, resources, hasMany, belongsTo} = query;
+  const {klass, currentIncludes, resources, hasMany, belongsTo} = query;
 
   const newFormattedResource = conversion(
-    query.klass,
+    klass,
     resources,
     {
       id,
@@ -38,44 +38,54 @@ function _convertResource({id, attributes, relationships, conversion, query}) {
   );
 
   if (!currentIncludes.length) return newFormattedResource;
+
+  return _handleResourceConversionWithIncludedRelations({
+    newFormattedResource,
+    conversion,
+    query,
+    resources,
+    relationships
+  });
+}
+
+function _handleResourceConversionWithIncludedRelations({
+  newFormattedResource,
+  conversion,
+  query,
+  relationships
+}) {
+  const {klass, currentIncludes, resources, hasMany, belongsTo} = query;
   return conversion(
-    query.klass,
+    klass,
     resources,
     {
       ...newFormattedResource,
       ..._flattenRelationships(relationships).reduce(
         (nextRelationshipObjects, {id, name, type}) => {
-          let relationClass = query.hasMany.find(klass => {
+          const handleRelationArgs = {
+            resources,
+            id,
+            type,
+            nextRelationshipObjects,
+            conversion,
+            currentIncludes,
+            name
+          };
+
+          // for the case when the relation class is hasMany
+          let relationClass = hasMany.find(klass => {
             return klass.pluralName() === type;
           });
           if (relationClass) {
-            return _handleHasManyIncludes(
-              resources,
-              id,
-              type,
-              nextRelationshipObjects,
-              conversion,
-              relationClass,
-              currentIncludes,
-              name
-            );
+            _handleHasManyIncludes({...handleRelationArgs, relationClass});
           }
 
-          relationClass = query.belongsTo.find(klass => {
+          // for the case when the relation class is belongsTo
+          relationClass = belongsTo.find(klass => {
             return klass.pluralName() === type;
           });
-
           if (relationClass) {
-            return _handleBelongsToIncludes(
-              resources,
-              id,
-              type,
-              nextRelationshipObjects,
-              conversion,
-              relationClass,
-              currentIncludes,
-              name
-            );
+            _handleBelongsToIncludes({...handleRelationArgs, relationClass});
           }
 
           return nextRelationshipObjects;
@@ -88,7 +98,7 @@ function _convertResource({id, attributes, relationships, conversion, query}) {
   );
 }
 
-function _handleHasManyIncludes(
+function _handleHasManyIncludes({
   resources,
   id,
   type,
@@ -97,7 +107,7 @@ function _handleHasManyIncludes(
   relationClass,
   currentIncludes,
   name
-) {
+}) {
   // TODO: _handleHasManyIncludes and _handleBelongsToIncludes are so similar they should be combined
   const directIncludesRalationships = currentIncludes.map(
     relation => relation.split(".")[0]
@@ -136,7 +146,7 @@ function _handleHasManyIncludes(
   return nextRelationshipObjects;
 }
 
-function _handleBelongsToIncludes(
+function _handleBelongsToIncludes({
   resources,
   id,
   type,
@@ -145,7 +155,7 @@ function _handleBelongsToIncludes(
   relationClass,
   currentIncludes,
   name
-) {
+}) {
   // TODO: _handleHasManyIncludes and _handleBelongsToIncludes are so similar they should be combined
   const directIncludesRalationships = currentIncludes.map(
     relation => relation.split(".")[0]
