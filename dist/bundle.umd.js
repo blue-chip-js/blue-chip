@@ -16680,6 +16680,33 @@
 	  }, {});
 	};
 
+	var _extends$5 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	function _defineProperty$2(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+	var camelCase$1 = require("lodash.camelcase");
+
+	var lowerCaseFirst = function lowerCaseFirst(string) {
+	  return string.charAt(0).toLowerCase() + string.slice(1);
+	};
+
+	function isFunction$1(functionToCheck) {
+	  return functionToCheck && {}.toString.call(functionToCheck) === "[object Function]";
+	}
+
+	function camelizeKeys(obj) {
+	  if (Array.isArray(obj)) {
+	    return obj.map(function (v) {
+	      return camelizeKeys(v);
+	    });
+	  } else if (obj !== null && obj.constructor === Object) {
+	    return Object.keys(obj).reduce(function (result, key) {
+	      return _extends$5({}, result, _defineProperty$2({}, camelCase$1(key), camelizeKeys(obj[key])));
+	    }, {});
+	  }
+	  return obj;
+	}
+
 	var _slicedToArray$1 = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -16728,22 +16755,22 @@
 	  }, {
 	    key: "updateResource",
 	    value: function updateResource(resource) {
-	      this.actions.updateResource(this.mutator, resource);
+	      this.actions.updateResource(this.mutator, camelizeKeys(resource));
 	    }
 	  }, {
 	    key: "removeResources",
 	    value: function removeResources(resources) {
-	      this.actions.removeResources(this.mutator, resources);
+	      this.actions.removeResources(this.mutator, camelizeKeys(resources));
 	    }
 	  }, {
 	    key: "removeResource",
 	    value: function removeResource(resource) {
-	      this.actions.removeResource(this.mutator, resource);
+	      this.actions.removeResource(this.mutator, camelizeKeys(resource));
 	    }
 	  }, {
 	    key: "clearResources",
 	    value: function clearResources(resourceTypes) {
-	      this.actions.clearResources(this.mutator, resourceTypes);
+	      this.actions.clearResources(this.mutator, camelizeKeys(resourceTypes));
 	    }
 	  }]);
 
@@ -16766,25 +16793,17 @@
 	  return [];
 	}
 
-	var lowerCaseFirst = function lowerCaseFirst(string) {
-	  return string.charAt(0).toLowerCase() + string.slice(1);
-	};
-
-	function isFunction$1(functionToCheck) {
-	  return functionToCheck && {}.toString.call(functionToCheck) === "[object Function]";
-	}
-
 	var _typeof$f = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 	var _slicedToArray$2 = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-	var _extends$5 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	var _extends$6 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	var _createClass$1 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-	function _defineProperty$2(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	function _defineProperty$3(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
@@ -16822,7 +16841,7 @@
 
 	      var attributes = resources[resourceName][id].attributes;
 
-	      return _convertToModel(klass, resources, _extends$5({ id: id }, attributes), hasMany, belongsTo);
+	      return _convertToModel(klass, resources, _extends$6({ id: id }, attributes), hasMany, belongsTo);
 	    }
 	  }, {
 	    key: "first",
@@ -16960,12 +16979,12 @@
 	            types = _ref4.types,
 	            links = _ref4.links;
 
-	        var newFormattedResource = conversion(_this2.klass, resources, _extends$5({
+	        var newFormattedResource = conversion(_this2.klass, resources, _extends$6({
 	          id: id
 	        }, attributes), hasMany, belongsTo);
 
 	        if (!currentIncludes.length) return newFormattedResource;
-	        return conversion(_this2.klass, resources, _extends$5({}, newFormattedResource, _flattenRelationships(relationships).reduce(function (nextRelationshipObjects, _ref5) {
+	        return conversion(_this2.klass, resources, _extends$6({}, newFormattedResource, _flattenRelationships(relationships).reduce(function (nextRelationshipObjects, _ref5) {
 	          var id = _ref5.id,
 	              name = _ref5.name,
 	              type = _ref5.type;
@@ -17043,9 +17062,9 @@
 	  }, {
 	    key: "_convertWithNestedResources",
 	    value: function _convertWithNestedResources(conversion, relationClass, resources, id, relationData, relationModel, nestedResourceName) {
-	      return conversion(relationClass, resources, _extends$5({
+	      return conversion(relationClass, resources, _extends$6({
 	        id: id
-	      }, relationData.attributes, relationModel && relationModel[nestedResourceName]() && _defineProperty$2({}, nestedResourceName, relationModel[nestedResourceName]().toObject())));
+	      }, relationData.attributes, relationModel && relationModel[nestedResourceName]() && _defineProperty$3({}, nestedResourceName, relationModel[nestedResourceName]().toObject())));
 	    }
 	  }, {
 	    key: "_buildRelationModel",
@@ -17061,7 +17080,7 @@
 	        })[0];
 
 	        if (nestedClass) {
-	          relationModel = this._convertToModel(relationClass, this.resources, _extends$5({
+	          relationModel = this._convertToModel(relationClass, this.resources, _extends$6({
 	            id: id
 	          }, relationData.attributes), relationClass.hasMany, relationClass.belongsTo);
 	        }
@@ -17097,14 +17116,14 @@
 
 	        if (Array.isArray(relationshipItem.data)) {
 	          var dataArray = relationshipItem.data.map(function (item) {
-	            return _extends$5({}, item, {
+	            return _extends$6({}, item, {
 	              name: name
 	            });
 	          });
 	          return [].concat(_toConsumableArray(nextRelationships), _toConsumableArray(dataArray));
 	        }
 
-	        return [].concat(_toConsumableArray(nextRelationships), [_extends$5({}, relationshipItem.data, { name: name })]);
+	        return [].concat(_toConsumableArray(nextRelationships), [_extends$6({}, relationshipItem.data, { name: name })]);
 	      }, []);
 	    }
 	  }, {
@@ -17166,13 +17185,13 @@
 	  return Query;
 	}();
 
-	var _extends$6 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	var _extends$7 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	var _slicedToArray$3 = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 	var _createClass$2 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	function _defineProperty$3(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	function _defineProperty$4(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 	function _classCallCheck$b(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -17257,7 +17276,7 @@
 
 	      var resourceClass = resource.constructor;
 	      var relationshipClass = relationship;
-	      return _extends$6({}, resources, (_extends2 = {}, _defineProperty$3(_extends2, currentResourceKey, resources[currentResourceKey][resource.id]), _defineProperty$3(_extends2, relationshipKey, relationshipClass.query(resources).whereRelated(resourceClass, {
+	      return _extends$7({}, resources, (_extends2 = {}, _defineProperty$4(_extends2, currentResourceKey, resources[currentResourceKey][resource.id]), _defineProperty$4(_extends2, relationshipKey, relationshipClass.query(resources).whereRelated(resourceClass, {
 	        id: resource.id
 	      }).currentResources), _extends2));
 	    }

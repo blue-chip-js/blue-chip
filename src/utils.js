@@ -1,4 +1,4 @@
-import camelCase from "lodash.camelcase";
+var camelCase = require("lodash.camelcase");
 
 export const lowerCaseFirst = string => {
   return string.charAt(0).toLowerCase() + string.slice(1);

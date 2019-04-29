@@ -50,6 +50,33 @@ const _removeRelationships = resource => {
   }, {});
 };
 
+var camelCase = require("lodash.camelcase");
+
+const lowerCaseFirst = string => {
+  return string.charAt(0).toLowerCase() + string.slice(1);
+};
+
+function isFunction(functionToCheck) {
+  return (
+    functionToCheck && {}.toString.call(functionToCheck) === "[object Function]"
+  );
+}
+
+function camelizeKeys(obj) {
+  if (Array.isArray(obj)) {
+    return obj.map(v => camelizeKeys(v));
+  } else if (obj !== null && obj.constructor === Object) {
+    return Object.keys(obj).reduce(
+      (result, key) => ({
+        ...result,
+        [camelCase(key)]: camelizeKeys(obj[key])
+      }),
+      {}
+    );
+  }
+  return obj;
+}
+
 const graphQLNormalizr = new GraphQLNormalizr();
 const graphQlNormalize = graphQLNormalizr.normalize;
 
@@ -81,19 +108,19 @@ class Actions {
   }
 
   updateResource(resource) {
-    this.actions.updateResource(this.mutator, resource);
+    this.actions.updateResource(this.mutator, camelizeKeys(resource));
   }
 
   removeResources(resources) {
-    this.actions.removeResources(this.mutator, resources);
+    this.actions.removeResources(this.mutator, camelizeKeys(resources));
   }
 
   removeResource(resource) {
-    this.actions.removeResource(this.mutator, resource);
+    this.actions.removeResource(this.mutator, camelizeKeys(resource));
   }
 
   clearResources(resourceTypes) {
-    this.actions.clearResources(this.mutator, resourceTypes);
+    this.actions.clearResources(this.mutator, camelizeKeys(resourceTypes));
   }
 }
 
@@ -108,16 +135,6 @@ function _createIndexForJsonApi(payload) {
 
 function _createIndexForGraphQl(payload) {
   return [];
-}
-
-const lowerCaseFirst = string => {
-  return string.charAt(0).toLowerCase() + string.slice(1);
-};
-
-function isFunction(functionToCheck) {
-  return (
-    functionToCheck && {}.toString.call(functionToCheck) === "[object Function]"
-  );
 }
 
 class Query {
