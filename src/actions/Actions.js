@@ -4,7 +4,8 @@ import {GraphQLNormalizr} from "graphql-normalizr";
 const graphQLNormalizr = new GraphQLNormalizr();
 const graphQlNormalize = graphQLNormalizr.normalize;
 
-import {isGraphQl, toJsonApiSpec, camelizeKeys} from "./helpers";
+import {isGraphQl, toJsonApiSpec} from "./helpers";
+import {camelizeKeys} from "../utils";
 
 export default class Actions {
   static config({adapter, mutator}) {
