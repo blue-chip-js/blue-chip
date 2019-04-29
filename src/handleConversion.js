@@ -6,7 +6,6 @@ export default function handleConversion(query, conversionType) {
 }
 
 function _reduceCurrentResources(query, reducerType) {
-  // TODO: needs to be refactored
   const conversion =
     reducerType === "models" ? _convertToModel : _convertToObject;
   const {currentResources, resources, resourceName} = query;
