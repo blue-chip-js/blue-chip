@@ -77,7 +77,11 @@ function _handleResourceConversionWithIncludedRelations({
             return klass.pluralName() === type;
           });
           if (relationClass) {
-            _handleHasManyIncludes({...handleRelationArgs, relationClass});
+            _setRelationShipKeyToValues({
+              ...handleRelationArgs,
+              relationType: "hasMany",
+              relationClass
+            });
           }
 
           // for the case when the relation class is belongsTo
@@ -85,7 +89,11 @@ function _handleResourceConversionWithIncludedRelations({
             return klass.pluralName() === type;
           });
           if (relationClass) {
-            _handleBelongsToIncludes({...handleRelationArgs, relationClass});
+            _setRelationShipKeyToValues({
+              ...handleRelationArgs,
+              relationType: "belongsTo",
+              relationClass
+            });
           }
 
           return nextRelationshipObjects;
@@ -98,7 +106,8 @@ function _handleResourceConversionWithIncludedRelations({
   );
 }
 
-function _handleHasManyIncludes({
+function _setRelationShipKeyToValues({
+  relationType,
   resources,
   id,
   type,
@@ -108,14 +117,17 @@ function _handleHasManyIncludes({
   currentIncludes,
   name
 }) {
-  // TODO: _handleHasManyIncludes and _handleBelongsToIncludes are so similar they should be combined
   const directIncludesRalationships = currentIncludes.map(
     relation => relation.split(".")[0]
   );
   if (!directIncludesRalationships.includes(name))
     return nextRelationshipObjects;
   if (!(name in nextRelationshipObjects)) {
-    nextRelationshipObjects[name] = [];
+    if (relationType === "hasMany") {
+      nextRelationshipObjects[name] = [];
+    } else if (relationType === "belongsTo") {
+      nextRelationshipObjects[name] = null;
+    }
   }
   if (!resources[type]) return nextRelationshipObjects;
   const relationData = resources[type][id];
@@ -131,55 +143,7 @@ function _handleHasManyIncludes({
       relationData
     );
 
-    nextRelationshipObjects[name].push(
-      _convertWithNestedResources(
-        conversion,
-        relationClass,
-        resources,
-        id,
-        relationData,
-        relationModel,
-        nestedResourceName
-      )
-    );
-  }
-  return nextRelationshipObjects;
-}
-
-function _handleBelongsToIncludes({
-  resources,
-  id,
-  type,
-  nextRelationshipObjects,
-  conversion,
-  relationClass,
-  currentIncludes,
-  name
-}) {
-  // TODO: _handleHasManyIncludes and _handleBelongsToIncludes are so similar they should be combined
-  const directIncludesRalationships = currentIncludes.map(
-    relation => relation.split(".")[0]
-  );
-  if (!directIncludesRalationships.includes(name))
-    return nextRelationshipObjects;
-  if (!(name in nextRelationshipObjects)) {
-    nextRelationshipObjects[name] = null;
-  }
-  if (!resources[type]) return nextRelationshipObjects;
-  const relationData = resources[type][id];
-  if (!relationData) return nextRelationshipObjects;
-
-  if (relationClass) {
-    const [relationModel, nestedResourceName] = _buildRelationModel(
-      resources,
-      currentIncludes,
-      relationClass,
-      id,
-      name,
-      relationData
-    );
-
-    nextRelationshipObjects[name] = _convertWithNestedResources(
+    const nestedResources = _convertWithNestedResources(
       conversion,
       relationClass,
       resources,
@@ -188,8 +152,13 @@ function _handleBelongsToIncludes({
       relationModel,
       nestedResourceName
     );
-  }
 
+    if (relationType === "hasMany") {
+      nextRelationshipObjects[name].push(nestedResources);
+    } else if (relationType === "belongsTo") {
+      nextRelationshipObjects[name] = nestedResources;
+    }
+  }
   return nextRelationshipObjects;
 }
 
