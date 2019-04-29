@@ -1,7 +1,7 @@
 import checklistResources from "../__testHelpers__/fixtrues/checklistsAndTasksNormalized";
 import pOResources from "../__testHelpers__/fixtrues/purchaseOrdersAndOthersNormalized";
-import {Checklist} from "../__testHelpers__/models";
-import {PurchaseOrderContact} from "../__testHelpers__/models";
+import specResources from "../__testHelpers__/fixtrues/specsNormalized";
+import {Checklist, PurchaseOrderContact, Spec} from "../__testHelpers__/models";
 
 describe("Nested resourse", () => {
   test("returns a snapshot including users", () => {
@@ -18,4 +18,20 @@ describe("Nested resourse", () => {
       .toObjects();
     expect(purchaseOrderContacts).toMatchSnapshot();
   });
+
+  test("returns a snapshot including coms", () => {
+    const specs = Spec.query(specResources)
+      .where({id: [11]})
+      .includes(["specDetails.coms"])
+      .toObjects();
+    expect(specs).toMatchSnapshot();
+  });
+
+  // test("returns a snapshot including coms with array syntax", () => {
+  //   const specs = Spec.query(specResources)
+  //     .where({id: [11]})
+  //     .includes(["specDetails.[coms]"])
+  //     .toObjects();
+  //   expect(specs).toMatchSnapshot();
+  // });
 });

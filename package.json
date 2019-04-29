@@ -23,6 +23,7 @@
   "dependencies": {
     "graphql-normalizr": "github:mfpiccolo/graphql-normalizr#3a931075370692b0b75fd29c33c019b91c576c65",
     "json-api-normalizer": "^0.4.10",
+    "lodash.get": "^4.4.2",
     "pluralize": "^7.0.0"
   },
   "devDependencies": {

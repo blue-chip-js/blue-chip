@@ -1,5 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Nested resourse returns a snapshot including coms 1`] = `
+Array [
+  Object {
+    "id": 11,
+    "specData": "Should show up",
+    "specDetails": Array [
+      Object {
+        "coms": Array [
+          Object {
+            "comData": "Should show up",
+            "id": 2,
+          },
+        ],
+        "id": 12,
+        "specDetailData": "Should show up",
+      },
+    ],
+  },
+]
+`;
+
 exports[`Nested resourse returns a snapshot including contact 1`] = `
 Array [
   Object {

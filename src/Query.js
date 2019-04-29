@@ -1,5 +1,6 @@
 import {isFunction} from "./utils";
 import handleConversion from "./handleConversion";
+import get from "lodash.get";
 export default class Query {
   constructor(klass, resourceName, resources, hasMany = [], belongsTo = []) {
     this.klass = klass;
@@ -59,9 +60,11 @@ export default class Query {
 
   whereRelated(relationship, params) {
     const {resourceName} = this;
-    this.hasMany.includes(relationship)
-      ? this._handleHasManyWhereRelated(relationship, params, resourceName)
-      : this._handleBelongsToWhereRelated(relationship, params, resourceName);
+    const relationships = Object.values(this.currentResources)[0].relationships;
+
+    relationships && relationships[relationship.singularName()]
+      ? this._handleBelongsToWhereRelated(relationship, params, resourceName)
+      : this._handleHasManyWhereRelated(relationship, params, resourceName);
     return this;
   }
 
@@ -106,7 +109,7 @@ export default class Query {
 
     this.currentResources = Object.entries(this.currentResources).reduce(
       (newResources, [id, resource]) => {
-        const r = resource.relationships[relationshipName];
+        const r = get(resource, `relationships[${relationshipName}]`);
         if (r && filteredRelationIds.includes(r.data.id)) {
           newResources[id] = resource;
         }

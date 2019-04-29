@@ -1,3 +1,5 @@
+import get from "lodash.get";
+
 export default function handleConversion(query, conversionType) {
   if (!query.currentResources) return [];
   return _reduceCurrentResources(query, conversionType);
@@ -134,7 +136,12 @@ function _setRelationShipKeyToValues({
   if (!relationData) return nextRelationshipObjects;
 
   if (relationClass) {
-    const [relationModel, nestedResourceName] = _buildRelationModel(
+    const [
+      relationModel,
+      nestedResourceName,
+      nestedResourceType,
+      nestedResourceIds
+    ] = _buildRelationModel(
       resources,
       currentIncludes,
       relationClass,
@@ -150,7 +157,9 @@ function _setRelationShipKeyToValues({
       id,
       relationData,
       relationModel,
-      nestedResourceName
+      nestedResourceName,
+      nestedResourceType,
+      nestedResourceIds
     );
 
     if (relationType === "hasMany") {
@@ -169,15 +178,36 @@ function _convertWithNestedResources(
   id,
   relationData,
   relationModel,
-  nestedResourceName
+  nestedResourceName,
+  nestedResourceType,
+  nestedResourceIds
 ) {
+  const query =
+    relationModel &&
+    relationModel[nestedResourceType] &&
+    relationModel[nestedResourceType]();
+
+  const model =
+    relationModel &&
+    relationModel[nestedResourceName] &&
+    relationModel[nestedResourceName]();
+
+  let nestedResponse;
+  if (query && query.toObjects) {
+    nestedResponse = query.klass
+      .query(resources)
+      .where({id: nestedResourceIds})
+      .toObjects();
+  } else if (model && model.toObject) {
+    nestedResponse = model.toObject();
+  }
+
   return conversion(relationClass, resources, {
     id,
     ...relationData.attributes,
-    ...(relationModel &&
-      relationModel[nestedResourceName]() && {
-        [nestedResourceName]: relationModel[nestedResourceName]().toObject()
-      })
+    ...(nestedResponse && {
+      [nestedResourceName]: nestedResponse
+    })
   });
 }
 
@@ -189,7 +219,8 @@ function _buildRelationModel(
   name,
   relationData
 ) {
-  let relationModel;
+  let relationModel, nestedResourceType, nestedResourceIds;
+  // TODO: Go more than one leve deep here
   const nestedResourceName = currentIncludes
     .filter(relation => relation.split(".")[0] == name)[0]
     .split(".")[1];
@@ -198,6 +229,32 @@ function _buildRelationModel(
     let nestedClass = relationClass.belongsTo.filter(
       klass => nestedResourceName === klass.singularName()
     )[0];
+
+    if (!nestedClass) {
+      [nestedClass, nestedResourceType, nestedResourceIds] =
+        relationClass.hasMany &&
+        relationClass.hasMany.reduce((nestedClassData, klass) => {
+          let nestedRelationshipData = get(
+            resources,
+            `${relationClass.pluralName()}.${id}.relationships.${nestedResourceName}.data`
+          );
+          nestedResourceType = get(nestedRelationshipData, "[0].type");
+          nestedResourceIds = nestedRelationshipData.reduce((ids, {id}) => {
+            ids.push(id);
+            return ids;
+          }, []);
+
+          if (nestedResourceType === klass.pluralName()) {
+            nestedClassData.push([
+              klass,
+              nestedResourceType,
+              nestedResourceIds
+            ]);
+          }
+
+          return nestedClassData;
+        }, [])[0];
+    }
 
     if (nestedClass) {
       relationModel = _convertToModel(
@@ -213,7 +270,12 @@ function _buildRelationModel(
     }
   }
 
-  return [relationModel, nestedResourceName];
+  return [
+    relationModel,
+    nestedResourceName,
+    nestedResourceType,
+    nestedResourceIds
+  ];
 }
 
 function _flattenRelationships(relationships) {
