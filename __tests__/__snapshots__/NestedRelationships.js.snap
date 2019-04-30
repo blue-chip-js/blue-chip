@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Nested resourse belongsTo, hasMany.[hasMany, hasMany] 1`] = `
+exports[`Nested resourse belongsTo, hasMany.[hasMany, hasMany, belonngsTo] 1`] = `
 Array [
   Object {
     "id": 11,
