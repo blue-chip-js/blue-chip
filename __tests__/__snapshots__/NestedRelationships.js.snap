@@ -25,6 +25,10 @@ exports[`Nested resourse returns a snapshot including coms with array syntax 1`]
 Array [
   Object {
     "id": 11,
+    "specCategory": Object {
+      "id": 7,
+      "specCategoryData": "Should show up",
+    },
     "specData": "Should show up",
     "specDetails": Array [
       Object {

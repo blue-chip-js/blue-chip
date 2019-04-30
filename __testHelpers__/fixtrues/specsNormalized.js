@@ -3,7 +3,8 @@ export default {
     specs: [11, 12],
     specDetails: [7, 12],
     specDetailComs: [2, 3],
-    specDetailRoomTypes: [2, 19, 4]
+    specDetailRoomTypes: [2, 19, 4],
+    specCategories: [7]
   },
   specs: {
     11: {
@@ -11,7 +12,8 @@ export default {
       type: "specs",
       attributes: {specData: "Should show up"},
       relationships: {
-        specDetails: {data: [{id: 12, type: "specDetails"}]}
+        specDetails: {data: [{id: 12, type: "specDetails"}]},
+        specCategory: {data: {id: 7, type: "specCategories"}}
       }
     },
     12: {
@@ -68,6 +70,13 @@ export default {
       id: 4,
       type: "specDetailRoomTypes",
       attributes: {roomTypeData: "Should show up"}
+    }
+  },
+  specCategories: {
+    7: {
+      id: 7,
+      type: "specCategories",
+      attributes: {specCategoryData: "Should show up"}
     }
   }
 };

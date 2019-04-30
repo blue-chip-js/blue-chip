@@ -30,7 +30,7 @@ describe("Nested resourse", () => {
   test("returns a snapshot including coms with array syntax", () => {
     const specs = Spec.query(specResources)
       .where({id: [11]})
-      .includes(["parent", "specCategory", "specDetails.[coms, roomTypes]"])
+      .includes(["specCategory", "specDetails.[coms, roomTypes]"])
       .toObjects();
     expect(specs).toMatchSnapshot();
   });
