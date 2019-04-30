@@ -1,4 +1,4 @@
-import get from "lodash.get";
+var get = require("lodash.get");
 
 export default function handleConversion(query, conversionType) {
   if (!query.currentResources) return [];

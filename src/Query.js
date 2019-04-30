@@ -1,6 +1,6 @@
 import {isFunction} from "./utils";
 import handleConversion from "./handleConversion";
-import get from "lodash.get";
+var get = require("lodash.get");
 export default class Query {
   constructor(klass, resourceName, resources, hasMany = [], belongsTo = []) {
     this.klass = klass;

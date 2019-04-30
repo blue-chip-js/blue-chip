@@ -11,15 +11,14 @@ export default [
       file: pkg.browser,
       format: "umd"
     },
-    plugins: [
-      resolve(),
-      babel(),
-      commonjs()
-    ]
+    plugins: [resolve(), babel(), commonjs()]
   },
   {
     input: "src/index.js",
-    output: [{file: pkg.main, format: "cjs"}, {file: pkg.module, format: "es"}],
+    output: [
+      {file: pkg.main, format: "cjs", globals: {get: "get"}},
+      {file: pkg.module, format: "es", globals: {get: "get"}}
+    ],
     plugins: [resolve()],
     external: ["pluralize", "json-api-normalizer", "graphql-normalizr"]
   }
