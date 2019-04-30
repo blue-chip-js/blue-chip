@@ -160,7 +160,21 @@ function _setRelationShipKeyToValues({
         );
 
         if (relationType === "hasMany") {
-          nextRelationshipObjects[name].push(nestedResources);
+          const objIndex = nextRelationshipObjects[name].findIndex(
+            obj => obj.id == nestedResources.id
+          );
+          if (objIndex < 0) {
+            nextRelationshipObjects[name].push(nestedResources);
+          } else {
+            const objIndex = nextRelationshipObjects[name].findIndex(
+              obj => obj.id == nestedResources.id
+            );
+
+            nextRelationshipObjects[name][objIndex] = {
+              ...nextRelationshipObjects[name][objIndex],
+              ...nestedResources
+            };
+          }
         } else if (relationType === "belongsTo") {
           nextRelationshipObjects[name] = nestedResources;
         }
@@ -237,11 +251,23 @@ function _buildRelationModel(
 
   const nestedResourceData = nestedResourceNames.map(nestedResourceName => {
     if (nestedResourceName) {
+      // sets the nested class if it is a has many relationship
       let nestedClass = relationClass.belongsTo.filter(
         klass => nestedResourceName === klass.singularName()
       )[0];
 
-      if (!nestedClass) {
+      // handles the belongsTo cases
+      if (nestedClass) {
+        const belongsToData = get(
+          resources,
+          `${relationClass.pluralName()}.${id}.relationships.${nestedResourceName}.data`
+        );
+        if (belongsToData) {
+          nestedResourceType = belongsToData.type;
+          nestedResourceIds = [belongsToData.id];
+        }
+      } else {
+        // handles the hasMany cases
         [nestedClass, nestedResourceType, nestedResourceIds] =
           relationClass.hasMany &&
           relationClass.hasMany.reduce((nestedClassData, klass) => {

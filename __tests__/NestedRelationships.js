@@ -30,7 +30,7 @@ describe("Nested resourse", () => {
   test("belongsTo, hasMany.[hasMany, hasMany]", () => {
     const specs = Spec.query(specResources)
       .where({id: [11]})
-      .includes(["specCategory", "specDetails.[coms, roomTypes]"])
+      .includes(["specCategory", "specDetails.[coms, roomTypes, user]"])
       .toObjects();
     expect(specs).toMatchSnapshot();
   });

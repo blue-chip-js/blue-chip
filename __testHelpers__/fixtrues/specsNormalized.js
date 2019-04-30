@@ -4,7 +4,8 @@ export default {
     specDetails: [7, 12],
     specDetailComs: [2, 3],
     specDetailRoomTypes: [2, 19, 4],
-    specCategories: [7]
+    specCategories: [7],
+    users: [5, 9, 3]
   },
   specs: {
     11: {
@@ -39,7 +40,8 @@ export default {
             {id: 4, type: "specDetailRoomTypes"},
             {id: 2, type: "specDetailRoomTypes"}
           ]
-        }
+        },
+        user: {data: {id: 5, type: "users"}}
       }
     }
   },
@@ -77,6 +79,23 @@ export default {
       id: 7,
       type: "specCategories",
       attributes: {specCategoryData: "Should show up"}
+    }
+  },
+  users: {
+    5: {
+      id: 5,
+      type: "users",
+      attributes: {usersData: "Should show up"}
+    },
+    9: {
+      id: 9,
+      type: "users",
+      attributes: {usersData: "Should not show up"}
+    },
+    3: {
+      id: 3,
+      type: "users",
+      attributes: {usersData: "Should not show up"}
     }
   }
 };

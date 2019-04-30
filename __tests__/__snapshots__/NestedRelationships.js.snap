@@ -18,10 +18,6 @@ Array [
           },
         ],
         "id": 12,
-        "specDetailData": "Should show up",
-      },
-      Object {
-        "id": 12,
         "roomTypes": Array [
           Object {
             "id": 2,
@@ -33,6 +29,10 @@ Array [
           },
         ],
         "specDetailData": "Should show up",
+        "user": Object {
+          "id": 5,
+          "usersData": "Should show up",
+        },
       },
     ],
   },
