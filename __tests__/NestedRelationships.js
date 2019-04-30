@@ -4,7 +4,7 @@ import specResources from "../__testHelpers__/fixtrues/specsNormalized";
 import {Checklist, PurchaseOrderContact, Spec} from "../__testHelpers__/models";
 
 describe("Nested resourse", () => {
-  test("returns a snapshot including users", () => {
+  test("includes with hasMany.belongsTo", () => {
     const checklists = Checklist.query(checklistResources)
       .all()
       .includes(["tasks.user"])
@@ -12,14 +12,14 @@ describe("Nested resourse", () => {
     expect(checklists).toMatchSnapshot();
   });
 
-  test("returns a snapshot including contact", () => {
+  test("includes with belongsTo.belongsTo", () => {
     const purchaseOrderContacts = PurchaseOrderContact.query(pOResources)
       .includes(["vendorContact.contact"])
       .toObjects();
     expect(purchaseOrderContacts).toMatchSnapshot();
   });
 
-  test("returns a snapshot including coms", () => {
+  test("includes with hasMany.hasMany", () => {
     const specs = Spec.query(specResources)
       .where({id: [11]})
       .includes(["specDetails.coms"])
@@ -27,7 +27,7 @@ describe("Nested resourse", () => {
     expect(specs).toMatchSnapshot();
   });
 
-  test("returns a snapshot including coms with array syntax", () => {
+  test("belongsTo, hasMany.[hasMany, hasMany]", () => {
     const specs = Spec.query(specResources)
       .where({id: [11]})
       .includes(["specCategory", "specDetails.[coms, roomTypes]"])
