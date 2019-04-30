@@ -21,6 +21,41 @@ Array [
 ]
 `;
 
+exports[`Nested resourse returns a snapshot including coms with array syntax 1`] = `
+Array [
+  Object {
+    "id": 11,
+    "specData": "Should show up",
+    "specDetails": Array [
+      Object {
+        "coms": Array [
+          Object {
+            "comData": "Should show up",
+            "id": 2,
+          },
+        ],
+        "id": 12,
+        "specDetailData": "Should show up",
+      },
+      Object {
+        "id": 12,
+        "roomTypes": Array [
+          Object {
+            "id": 2,
+            "roomTypeData": "Should show up",
+          },
+          Object {
+            "id": 4,
+            "roomTypeData": "Should show up",
+          },
+        ],
+        "specDetailData": "Should show up",
+      },
+    ],
+  },
+]
+`;
+
 exports[`Nested resourse returns a snapshot including contact 1`] = `
 Array [
   Object {

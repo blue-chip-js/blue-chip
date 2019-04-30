@@ -27,11 +27,11 @@ describe("Nested resourse", () => {
     expect(specs).toMatchSnapshot();
   });
 
-  // test("returns a snapshot including coms with array syntax", () => {
-  //   const specs = Spec.query(specResources)
-  //     .where({id: [11]})
-  //     .includes(["specDetails.[coms]"])
-  //     .toObjects();
-  //   expect(specs).toMatchSnapshot();
-  // });
+  test("returns a snapshot including coms with array syntax", () => {
+    const specs = Spec.query(specResources)
+      .where({id: [11]})
+      .includes(["parent", "specCategory", "specDetails.[coms, roomTypes]"])
+      .toObjects();
+    expect(specs).toMatchSnapshot();
+  });
 });

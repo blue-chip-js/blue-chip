@@ -2,7 +2,8 @@ export default {
   index: {
     specs: [11, 12],
     specDetails: [7, 12],
-    specDetailComs: [2, 3]
+    specDetailComs: [2, 3],
+    specDetailRoomTypes: [2, 19, 4]
   },
   specs: {
     11: {
@@ -30,7 +31,13 @@ export default {
       type: "specDetails",
       attributes: {specDetailData: "Should show up"},
       relationships: {
-        coms: {data: [{id: 2, type: "specDetailComs"}]}
+        coms: {data: [{id: 2, type: "specDetailComs"}]},
+        roomTypes: {
+          data: [
+            {id: 4, type: "specDetailRoomTypes"},
+            {id: 2, type: "specDetailRoomTypes"}
+          ]
+        }
       }
     }
   },
@@ -44,6 +51,23 @@ export default {
       id: 3,
       type: "specDetailComs",
       attributes: {comData: "Should not show up"}
+    }
+  },
+  specDetailRoomTypes: {
+    2: {
+      id: 2,
+      type: "specDetailRoomTypes",
+      attributes: {roomTypeData: "Should show up"}
+    },
+    19: {
+      id: 19,
+      type: "specDetailRoomTypes",
+      attributes: {roomTypeData: "Should not show up"}
+    },
+    4: {
+      id: 4,
+      type: "specDetailRoomTypes",
+      attributes: {roomTypeData: "Should show up"}
     }
   }
 };
