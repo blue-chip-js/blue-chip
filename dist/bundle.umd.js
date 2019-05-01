@@ -16775,21 +16775,351 @@
 	  return functionToCheck && {}.toString.call(functionToCheck) === "[object Function]";
 	}
 
-	var _typeof$f = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 	var _slicedToArray$2 = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 	var _extends$5 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var _createClass$1 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 	function _defineProperty$2(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+	var get = require("lodash.get");
+
+	function handleConversion(query, conversionType) {
+	  if (!query.currentResources) return [];
+	  return _reduceCurrentResources(query, conversionType);
+	}
+
+	function _reduceCurrentResources(query, reducerType) {
+	  var conversion = reducerType === "models" ? _convertToModel : _convertToObject;
+	  var currentResources = query.currentResources,
+	      resources = query.resources,
+	      resourceName = query.resourceName;
+
+	  return Object.values(currentResources).sort(function (resource1, resource2) {
+	    return _sortByIndex(resource1, resource2, resources, resourceName);
+	  }).map(function (_ref) {
+	    var id = _ref.id,
+	        attributes = _ref.attributes,
+	        relationships = _ref.relationships,
+	        _types = _ref._types,
+	        _links = _ref._links;
+	    return _convertResource({
+	      id: id,
+	      attributes: attributes,
+	      relationships: relationships,
+	      conversion: conversion,
+	      query: query
+	    });
+	  });
+	}
+
+	function _convertResource(_ref2) {
+	  var id = _ref2.id,
+	      attributes = _ref2.attributes,
+	      relationships = _ref2.relationships,
+	      conversion = _ref2.conversion,
+	      query = _ref2.query;
+	  var klass = query.klass,
+	      currentIncludes = query.currentIncludes,
+	      resources = query.resources,
+	      hasMany = query.hasMany,
+	      belongsTo = query.belongsTo;
+
+
+	  var newFormattedResource = conversion(klass, resources, _extends$5({
+	    id: id
+	  }, attributes), hasMany, belongsTo);
+
+	  if (!currentIncludes.length) return newFormattedResource;
+
+	  return _handleResourceConversionWithIncludedRelations({
+	    newFormattedResource: newFormattedResource,
+	    conversion: conversion,
+	    query: query,
+	    resources: resources,
+	    relationships: relationships
+	  });
+	}
+
+	function _handleResourceConversionWithIncludedRelations(_ref3) {
+	  var newFormattedResource = _ref3.newFormattedResource,
+	      conversion = _ref3.conversion,
+	      query = _ref3.query,
+	      relationships = _ref3.relationships;
+	  var klass = query.klass,
+	      resources = query.resources,
+	      hasMany = query.hasMany,
+	      belongsTo = query.belongsTo;
+
+	  return conversion(klass, resources, _extends$5({}, newFormattedResource, _flattenRelationships(relationships).reduce(function (nextRelationshipObjects, _ref4) {
+	    var id = _ref4.id,
+	        name = _ref4.name,
+	        type = _ref4.type;
+	    return _buildRelationships$1(query, conversion, nextRelationshipObjects, {
+	      id: id,
+	      name: name,
+	      type: type
+	    });
+	  }, {})), hasMany, belongsTo);
+	}
+
+	function _buildRelationships$1(query, conversion, nextRelationshipObjects, _ref5) {
+	  var id = _ref5.id,
+	      name = _ref5.name,
+	      type = _ref5.type;
+	  var klass = query.klass,
+	      currentIncludes = query.currentIncludes,
+	      resources = query.resources,
+	      hasMany = query.hasMany,
+	      belongsTo = query.belongsTo;
+
+	  var handleRelationArgs = {
+	    resources: resources,
+	    id: id,
+	    type: type,
+	    nextRelationshipObjects: nextRelationshipObjects,
+	    conversion: conversion,
+	    currentIncludes: currentIncludes,
+	    name: name
+	  };
+
+	  // for the case when the relation class is hasMany
+	  var relationClass = hasMany.find(function (klass) {
+	    return klass.pluralName() === type;
+	  });
+	  if (relationClass) {
+	    _setRelationShipKeyToValues(_extends$5({}, handleRelationArgs, {
+	      relationType: "hasMany",
+	      relationClass: relationClass
+	    }));
+	  }
+
+	  // for the case when the relation class is belongsTo
+	  relationClass = belongsTo.find(function (klass) {
+	    return klass.pluralName() === type;
+	  });
+	  if (relationClass) {
+	    _setRelationShipKeyToValues(_extends$5({}, handleRelationArgs, {
+	      relationType: "belongsTo",
+	      relationClass: relationClass
+	    }));
+	  }
+
+	  return nextRelationshipObjects;
+	}
+
+	function _setRelationShipKeyToValues(_ref6) {
+	  var relationType = _ref6.relationType,
+	      resources = _ref6.resources,
+	      id = _ref6.id,
+	      type = _ref6.type,
+	      nextRelationshipObjects = _ref6.nextRelationshipObjects,
+	      conversion = _ref6.conversion,
+	      relationClass = _ref6.relationClass,
+	      currentIncludes = _ref6.currentIncludes,
+	      name = _ref6.name;
+
+	  var directIncludesRalationships = currentIncludes.map(function (relation) {
+	    return relation.split(".")[0];
+	  });
+	  if (!directIncludesRalationships.includes(name)) return nextRelationshipObjects;
+	  if (!(name in nextRelationshipObjects)) {
+	    if (relationType === "hasMany") {
+	      nextRelationshipObjects[name] = [];
+	    } else if (relationType === "belongsTo") {
+	      nextRelationshipObjects[name] = null;
+	    }
+	  }
+	  if (!resources[type]) return nextRelationshipObjects;
+	  var relationData = resources[type][id];
+	  if (!relationData) return nextRelationshipObjects;
+
+	  if (relationClass) {
+	    var _buildRelationModel2 = _buildRelationModel(resources, currentIncludes, relationClass, id, type, name, relationData),
+	        _buildRelationModel3 = _slicedToArray$2(_buildRelationModel2, 2),
+	        relationModel = _buildRelationModel3[0],
+	        nestedResourceData = _buildRelationModel3[1];
+
+	    nestedResourceData.forEach(function (_ref7) {
+	      var _ref8 = _slicedToArray$2(_ref7, 3),
+	          nestedResourceName = _ref8[0],
+	          nestedResourceType = _ref8[1],
+	          nestedResourceIds = _ref8[2];
+
+	      var nestedResources = _convertWithNestedResources(conversion, relationClass, resources, id, relationData, relationModel, nestedResourceName, nestedResourceType, nestedResourceIds);
+
+	      if (relationType === "hasMany") {
+	        var objIndex = nextRelationshipObjects[name].findIndex(function (obj) {
+	          return obj.id == nestedResources.id;
+	        });
+	        if (objIndex < 0) {
+	          nextRelationshipObjects[name].push(nestedResources);
+	        } else {
+	          var _objIndex = nextRelationshipObjects[name].findIndex(function (obj) {
+	            return obj.id == nestedResources.id;
+	          });
+	          nextRelationshipObjects[name][_objIndex] = _extends$5({}, nextRelationshipObjects[name][_objIndex], nestedResources);
+	        }
+	      } else if (relationType === "belongsTo") {
+	        nextRelationshipObjects[name] = conversion(relationClass, resources, _extends$5({}, nextRelationshipObjects[name], nestedResources));
+	      }
+	    });
+	  }
+	  return nextRelationshipObjects;
+	}
+
+	function _convertWithNestedResources(conversion, relationClass, resources, id, relationData, relationModel, nestedResourceName, nestedResourceType, nestedResourceIds) {
+	  var query = relationModel && relationModel[nestedResourceType] && relationModel[nestedResourceType]();
+
+	  var model = relationModel && relationModel[nestedResourceName] && relationModel[nestedResourceName]();
+
+	  var nestedResponse = void 0;
+	  if (query && query.toObjects) {
+	    nestedResponse = query.klass.query(resources).where({ id: nestedResourceIds }).toObjects();
+	  } else if (model && model.toObject) {
+	    nestedResponse = model.toObject();
+	  }
+
+	  return conversion(relationClass, resources, _extends$5({
+	    id: id
+	  }, relationData.attributes, nestedResponse && _defineProperty$2({}, nestedResourceName, nestedResponse)));
+	}
+
+	function _buildRelationModel(resources, currentIncludes, relationClass, id, type, name, relationData) {
+	  var relationModel = void 0,
+	      nestedResourceType = void 0,
+	      nestedResourceIds = void 0,
+	      nestedResourceNames = void 0;
+
+	  nestedResourceNames = [];
+	  currentIncludes.filter(function (relation) {
+	    return relation.split(".")[0] == type || relation.split(".")[0] == name;
+	  }).forEach(function (includesName) {
+	    var splitName = includesName.split(".")[1];
+	    if (splitName && splitName.includes("[")) {
+	      var nestedNames = splitName.replace(/[\[\]']+/g, "").split(",").map(function (rn) {
+	        return rn.trim();
+	      });
+	      nestedResourceNames = nestedResourceNames.concat(nestedNames);
+	    } else {
+	      // Yes, even push undefined
+	      nestedResourceNames.push(splitName);
+	    }
+	  });
+
+	  var nestedResourceData = nestedResourceNames.map(function (nestedResourceName) {
+	    nestedResourceType = null;
+	    nestedResourceIds = null;
+	    if (nestedResourceName) {
+	      // sets the nested class if it is a has many relationship
+	      var nestedClass = relationClass.belongsTo.filter(function (klass) {
+	        return nestedResourceName === klass.singularName();
+	      })[0];
+
+	      // handles the belongsTo cases
+	      if (nestedClass) {
+	        var belongsToData = get(resources, relationClass.pluralName() + "." + id + ".relationships." + nestedResourceName + ".data");
+	        if (belongsToData) {
+	          nestedResourceType = belongsToData.type;
+	          nestedResourceIds = [belongsToData.id];
+	        }
+	      } else {
+	        // handles the hasMany cases
+	        var nestedClassDataArray = relationClass.hasMany && relationClass.hasMany.reduce(function (nestedClassData, klass) {
+	          var nestedRelationshipData = get(resources, relationClass.pluralName() + "." + id + ".relationships." + nestedResourceName + ".data");
+	          if (!nestedRelationshipData) {
+	            nestedRelationshipData = [];
+	          }
+
+	          nestedResourceType = get(nestedRelationshipData, "[0].type");
+	          if (nestedResourceType === klass.pluralName()) {
+	            nestedResourceIds = nestedRelationshipData.reduce(function (ids, _ref10) {
+	              var id = _ref10.id;
+
+	              ids.push(id);
+	              return ids;
+	            }, []);
+
+	            nestedClassData.push([klass, nestedResourceType, nestedResourceIds]);
+	          }
+
+	          return nestedClassData;
+	        }, []);
+
+	        if (nestedClassDataArray && nestedClassDataArray.length) {
+	          var _nestedClassDataArray = _slicedToArray$2(nestedClassDataArray[0], 3);
+
+	          nestedClass = _nestedClassDataArray[0];
+	          nestedResourceType = _nestedClassDataArray[1];
+	          nestedResourceIds = _nestedClassDataArray[2];
+	        }
+	      }
+
+	      if (nestedClass) {
+	        relationModel = _convertToModel(relationClass, resources, _extends$5({
+	          id: id
+	        }, relationData.attributes), relationClass.hasMany, relationClass.belongsTo);
+	      }
+	    }
+	    return [nestedResourceName, nestedResourceType, nestedResourceIds];
+	  });
+
+	  return [relationModel, nestedResourceData];
+	}
+
+	function _flattenRelationships(relationships) {
+	  if (!relationships) {
+	    return [];
+	  }
+
+	  return Object.entries(relationships).reduce(function (nextRelationships, _ref11) {
+	    var _ref12 = _slicedToArray$2(_ref11, 2),
+	        name = _ref12[0],
+	        relationshipItem = _ref12[1];
+
+	    if (!nextRelationships || !relationshipItem || !relationshipItem.data) {
+	      return nextRelationships;
+	    }
+
+	    if (Array.isArray(relationshipItem.data)) {
+	      var dataArray = relationshipItem.data.map(function (item) {
+	        return _extends$5({}, item, {
+	          name: name
+	        });
+	      });
+	      return [].concat(_toConsumableArray(nextRelationships), _toConsumableArray(dataArray));
+	    }
+
+	    return [].concat(_toConsumableArray(nextRelationships), [_extends$5({}, relationshipItem.data, { name: name })]);
+	  }, []);
+	}
+
+	function _convertToModel(klass, resources, resource, hasMany, belongsTo) {
+	  return new klass(resources, resource, hasMany, belongsTo);
+	}
+
+	function _convertToObject(klass, resources, resource, hasMany, belongsTo) {
+	  return resource;
+	}
+
+	function _sortByIndex(resource1, resource2, resources, resourceName) {
+	  var index = resources.index[resourceName];
+	  return index.indexOf(resource1.id) - index.indexOf(resource2.id);
+	}
+
+	var _typeof$f = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+	var _slicedToArray$3 = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+	var _extends$6 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass$1 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
 	function _classCallCheck$a(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	var get$1 = require("lodash.get");
 
 	var Query = function () {
 	  function Query(klass, resourceName, resources) {
@@ -16823,7 +17153,7 @@
 
 	      var attributes = resources[resourceName][id].attributes;
 
-	      return _convertToModel(klass, resources, _extends$5({ id: id }, attributes), hasMany, belongsTo);
+	      return _convertToModel(klass, resources, _extends$6({ id: id }, attributes), hasMany, belongsTo);
 	    }
 	  }, {
 	    key: "first",
@@ -16861,7 +17191,9 @@
 	    value: function whereRelated(relationship, params) {
 	      var resourceName = this.resourceName;
 
-	      this.hasMany.includes(relationship) ? this._handleHasManyWhereRelated(relationship, params, resourceName) : this._handleBelongsToWhereRelated(relationship, params, resourceName);
+	      var relationships = Object.values(this.currentResources)[0].relationships;
+
+	      relationships && relationships[relationship.singularName()] ? this._handleBelongsToWhereRelated(relationship, params, resourceName) : this._handleHasManyWhereRelated(relationship, params, resourceName);
 	      return this;
 	    }
 	  }, {
@@ -16873,14 +17205,12 @@
 	  }, {
 	    key: "toModels",
 	    value: function toModels() {
-	      if (!this.currentResources) return [];
-	      return this._reduceCurrentResources("models");
+	      return handleConversion(this, "models");
 	    }
 	  }, {
 	    key: "toObjects",
 	    value: function toObjects() {
-	      if (!this.currentResources) return [];
-	      return this._reduceCurrentResources("objects");
+	      return handleConversion(this, "objects");
 	    }
 
 	    // Private
@@ -16903,11 +17233,11 @@
 	      });
 
 	      this.currentResources = Object.entries(this.currentResources).reduce(function (newResources, _ref) {
-	        var _ref2 = _slicedToArray$2(_ref, 2),
+	        var _ref2 = _slicedToArray$3(_ref, 2),
 	            id = _ref2[0],
 	            resource = _ref2[1];
 
-	        var r = resource.relationships[relationshipName];
+	        var r = get$1(resource, "relationships[" + relationshipName + "]");
 	        if (r && filteredRelationIds.includes(r.data.id)) {
 	          newResources[id] = resource;
 	        }
@@ -16932,181 +17262,9 @@
 	      }, {});
 	    }
 	  }, {
-	    key: "_sortByIndex",
-	    value: function _sortByIndex(resource1, resource2, resources, resourceName) {
-	      var index = resources.index[resourceName];
-	      return index.indexOf(resource1.id) - index.indexOf(resource2.id);
-	    }
-	  }, {
-	    key: "_reduceCurrentResources",
-	    value: function _reduceCurrentResources(reducerType) {
-	      var _this2 = this;
-
-	      // TODO: needs to be refactored
-	      var conversion = reducerType === "models" ? this._convertToModel : this._convertToObject;
-	      var currentIncludes = this.currentIncludes,
-	          currentResources = this.currentResources,
-	          resources = this.resources,
-	          resourceName = this.resourceName,
-	          _flattenRelationships = this._flattenRelationships,
-	          hasMany = this.hasMany,
-	          belongsTo = this.belongsTo;
-
-	      return Object.values(currentResources).sort(function (resource1, resource2) {
-	        return _this2._sortByIndex(resource1, resource2, resources, resourceName);
-	      }).map(function (_ref4) {
-	        var id = _ref4.id,
-	            attributes = _ref4.attributes,
-	            relationships = _ref4.relationships,
-	            types = _ref4.types,
-	            links = _ref4.links;
-
-	        var newFormattedResource = conversion(_this2.klass, resources, _extends$5({
-	          id: id
-	        }, attributes), hasMany, belongsTo);
-
-	        if (!currentIncludes.length) return newFormattedResource;
-	        return conversion(_this2.klass, resources, _extends$5({}, newFormattedResource, _flattenRelationships(relationships).reduce(function (nextRelationshipObjects, _ref5) {
-	          var id = _ref5.id,
-	              name = _ref5.name,
-	              type = _ref5.type;
-
-	          var relationClass = _this2.hasMany.find(function (klass) {
-	            return klass.pluralName() === type;
-	          });
-	          if (relationClass) {
-	            return _this2._handleHasManyIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes, name);
-	          }
-
-	          relationClass = _this2.belongsTo.find(function (klass) {
-	            return klass.pluralName() === type;
-	          });
-
-	          if (relationClass) {
-	            return _this2._handleBelongsToIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes, name);
-	          }
-
-	          return nextRelationshipObjects;
-	        }, {})), hasMany, belongsTo);
-	      });
-	    }
-	  }, {
-	    key: "_handleHasManyIncludes",
-	    value: function _handleHasManyIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes, name) {
-	      // TODO: _handleHasManyIncludes and _handleBelongsToIncludes are so similar they should be combined
-	      var directIncludesRalationships = currentIncludes.map(function (relation) {
-	        return relation.split(".")[0];
-	      });
-	      if (!directIncludesRalationships.includes(name)) return nextRelationshipObjects;
-	      if (!(name in nextRelationshipObjects)) {
-	        nextRelationshipObjects[name] = [];
-	      }
-	      if (!resources[type]) return nextRelationshipObjects;
-	      var relationData = resources[type][id];
-	      if (!relationData) return nextRelationshipObjects;
-
-	      if (relationClass) {
-	        var _buildRelationModel2 = this._buildRelationModel(currentIncludes, relationClass, id, name, relationData),
-	            _buildRelationModel3 = _slicedToArray$2(_buildRelationModel2, 2),
-	            relationModel = _buildRelationModel3[0],
-	            nestedResourceName = _buildRelationModel3[1];
-
-	        nextRelationshipObjects[name].push(this._convertWithNestedResources(conversion, relationClass, resources, id, relationData, relationModel, nestedResourceName));
-	      }
-	      return nextRelationshipObjects;
-	    }
-	  }, {
-	    key: "_handleBelongsToIncludes",
-	    value: function _handleBelongsToIncludes(resources, id, type, nextRelationshipObjects, conversion, relationClass, currentIncludes, name) {
-	      // TODO: _handleHasManyIncludes and _handleBelongsToIncludes are so similar they should be combined
-	      var directIncludesRalationships = currentIncludes.map(function (relation) {
-	        return relation.split(".")[0];
-	      });
-	      if (!directIncludesRalationships.includes(name)) return nextRelationshipObjects;
-	      if (!(name in nextRelationshipObjects)) {
-	        nextRelationshipObjects[name] = null;
-	      }
-	      if (!resources[type]) return nextRelationshipObjects;
-	      var relationData = resources[type][id];
-	      if (!relationData) return nextRelationshipObjects;
-
-	      if (relationClass) {
-	        var _buildRelationModel4 = this._buildRelationModel(currentIncludes, relationClass, id, name, relationData),
-	            _buildRelationModel5 = _slicedToArray$2(_buildRelationModel4, 2),
-	            relationModel = _buildRelationModel5[0],
-	            nestedResourceName = _buildRelationModel5[1];
-
-	        nextRelationshipObjects[name] = this._convertWithNestedResources(conversion, relationClass, resources, id, relationData, relationModel, nestedResourceName);
-	      }
-
-	      return nextRelationshipObjects;
-	    }
-	  }, {
-	    key: "_convertWithNestedResources",
-	    value: function _convertWithNestedResources(conversion, relationClass, resources, id, relationData, relationModel, nestedResourceName) {
-	      return conversion(relationClass, resources, _extends$5({
-	        id: id
-	      }, relationData.attributes, relationModel && relationModel[nestedResourceName]() && _defineProperty$2({}, nestedResourceName, relationModel[nestedResourceName]().toObject())));
-	    }
-	  }, {
-	    key: "_buildRelationModel",
-	    value: function _buildRelationModel(currentIncludes, relationClass, id, name, relationData) {
-	      var relationModel = void 0;
-	      var nestedResourceName = currentIncludes.filter(function (relation) {
-	        return relation.split(".")[0] == name;
-	      })[0].split(".")[1];
-
-	      if (nestedResourceName) {
-	        var nestedClass = relationClass.belongsTo.filter(function (klass) {
-	          return nestedResourceName === klass.singularName();
-	        })[0];
-
-	        if (nestedClass) {
-	          relationModel = this._convertToModel(relationClass, this.resources, _extends$5({
-	            id: id
-	          }, relationData.attributes), relationClass.hasMany, relationClass.belongsTo);
-	        }
-	      }
-
-	      return [relationModel, nestedResourceName];
-	    }
-	  }, {
 	    key: "_convertToModel",
 	    value: function _convertToModel(klass, resources, resource, hasMany, belongsTo) {
 	      return new klass(resources, resource, hasMany, belongsTo);
-	    }
-	  }, {
-	    key: "_convertToObject",
-	    value: function _convertToObject(klass, resources, resource, hasMany, belongsTo) {
-	      return resource;
-	    }
-	  }, {
-	    key: "_flattenRelationships",
-	    value: function _flattenRelationships(relationships) {
-	      if (!relationships) {
-	        return [];
-	      }
-
-	      return Object.entries(relationships).reduce(function (nextRelationships, _ref7) {
-	        var _ref8 = _slicedToArray$2(_ref7, 2),
-	            name = _ref8[0],
-	            relationshipItem = _ref8[1];
-
-	        if (!nextRelationships || !relationshipItem || !relationshipItem.data) {
-	          return nextRelationships;
-	        }
-
-	        if (Array.isArray(relationshipItem.data)) {
-	          var dataArray = relationshipItem.data.map(function (item) {
-	            return _extends$5({}, item, {
-	              name: name
-	            });
-	          });
-	          return [].concat(_toConsumableArray(nextRelationships), _toConsumableArray(dataArray));
-	        }
-
-	        return [].concat(_toConsumableArray(nextRelationships), [_extends$5({}, relationshipItem.data, { name: name })]);
-	      }, []);
 	    }
 	  }, {
 	    key: "_setCurrentResources",
@@ -17118,15 +17276,15 @@
 	  }, {
 	    key: "_filterAndSetCurrentResourcesByParams",
 	    value: function _filterAndSetCurrentResourcesByParams(params) {
-	      var _this3 = this;
+	      var _this2 = this;
 
 	      if (!this.currentResources) return;
-	      var resourcesByID = Object.entries(this.currentResources).reduce(function (newResource, _ref9) {
-	        var _ref10 = _slicedToArray$2(_ref9, 2),
-	            id = _ref10[0],
-	            resource = _ref10[1];
+	      var resourcesByID = Object.entries(this.currentResources).reduce(function (newResource, _ref4) {
+	        var _ref5 = _slicedToArray$3(_ref4, 2),
+	            id = _ref5[0],
+	            resource = _ref5[1];
 
-	        _this3._filterResourceByParams(params, newResource, resource, id);
+	        _this2._filterResourceByParams(params, newResource, resource, id);
 	        return newResource;
 	      }, {});
 	      this.currentResources = resourcesByID;
@@ -17134,10 +17292,10 @@
 	  }, {
 	    key: "_filterResourceByParams",
 	    value: function _filterResourceByParams(params, newResource, resource, id) {
-	      Object.entries(params).forEach(function (_ref11) {
-	        var _ref12 = _slicedToArray$2(_ref11, 2),
-	            key = _ref12[0],
-	            value = _ref12[1];
+	      Object.entries(params).forEach(function (_ref6) {
+	        var _ref7 = _slicedToArray$3(_ref6, 2),
+	            key = _ref7[0],
+	            value = _ref7[1];
 
 	        if (Array.isArray(value)) {
 	          if (key === "id" && value.includes(resource.id)) {
@@ -17167,9 +17325,9 @@
 	  return Query;
 	}();
 
-	var _extends$6 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	var _extends$7 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var _slicedToArray$3 = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+	var _slicedToArray$4 = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 	var _createClass$2 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -17204,7 +17362,7 @@
 	    _classCallCheck$b(this, BaseModel);
 
 	    Object.entries(attributes).forEach(function (_ref) {
-	      var _ref2 = _slicedToArray$3(_ref, 2),
+	      var _ref2 = _slicedToArray$4(_ref, 2),
 	          key = _ref2[0],
 	          value = _ref2[1];
 
@@ -17258,7 +17416,7 @@
 
 	      var resourceClass = resource.constructor;
 	      var relationshipClass = relationship;
-	      return _extends$6({}, resources, (_extends2 = {}, _defineProperty$3(_extends2, currentResourceKey, resources[currentResourceKey][resource.id]), _defineProperty$3(_extends2, relationshipKey, relationshipClass.query(resources).whereRelated(resourceClass, {
+	      return _extends$7({}, resources, (_extends2 = {}, _defineProperty$3(_extends2, currentResourceKey, resources[currentResourceKey][resource.id]), _defineProperty$3(_extends2, relationshipKey, relationshipClass.query(resources).whereRelated(resourceClass, {
 	        id: resource.id
 	      }).currentResources), _extends2));
 	    }
