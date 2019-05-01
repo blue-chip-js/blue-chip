@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Nested resourse belongsTo, hasMany.[hasMany, hasMany, belonngsTo] 1`] = `
+exports[`Nested resources belongsTo, hasMany.[hasMany, belongsTo, hasMany], mixed order 1`] = `
 Array [
   Object {
     "id": 11,
@@ -53,7 +53,60 @@ Array [
 ]
 `;
 
-exports[`Nested resourse belongsTo.[belongsTo, belongsTo] 1`] = `
+exports[`Nested resources belongsTo, hasMany.[hasMany, hasMany, belongsTo] 1`] = `
+Array [
+  Object {
+    "id": 11,
+    "specCategory": Object {
+      "id": 7,
+      "specCategoryData": "Should show up",
+    },
+    "specData": "Should show up",
+    "specDetails": Array [
+      Object {
+        "coms": Array [
+          Object {
+            "comData": "Should show up",
+            "id": 2,
+          },
+        ],
+        "id": 12,
+        "roomTypes": Array [
+          Object {
+            "id": 2,
+            "roomTypeData": "Should show up",
+          },
+          Object {
+            "id": 4,
+            "roomTypeData": "Should show up",
+          },
+        ],
+        "specDetailData": "Should show up 1",
+        "user": Object {
+          "id": 5,
+          "usersData": "Should show up",
+        },
+      },
+      Object {
+        "id": 13,
+        "roomTypes": Array [
+          Object {
+            "id": 2,
+            "roomTypeData": "Should show up",
+          },
+          Object {
+            "id": 4,
+            "roomTypeData": "Should show up",
+          },
+        ],
+        "specDetailData": "Should show up 2, no coms",
+      },
+    ],
+  },
+]
+`;
+
+exports[`Nested resources belongsTo.[belongsTo, belongsTo] 1`] = `
 Array [
   Object {
     "comData": "Should show up",
@@ -74,7 +127,38 @@ Array [
 ]
 `;
 
-exports[`Nested resourse belongsTo.[belongsTo, hasMany] 1`] = `
+exports[`Nested resources belongsTo.[belongsTo, hasMany, belongsTo], mixed 1`] = `
+Array [
+  Object {
+    "comData": "Should show up",
+    "id": 99,
+    "spec": Object {
+      "area": Object {
+        "areasData": "Should show up",
+        "id": 51,
+      },
+      "id": 11,
+      "specCategory": Object {
+        "id": 7,
+        "specCategoryData": "Should show up",
+      },
+      "specData": "Should show up",
+      "specDetails": Array [
+        Object {
+          "id": 1,
+          "specDetailsData": "Should show up 1",
+        },
+        Object {
+          "id": 2,
+          "specDetailsData": "Should show up 2",
+        },
+      ],
+    },
+  },
+]
+`;
+
+exports[`Nested resources belongsTo.[belongsTo, hasMany] 1`] = `
 Array [
   Object {
     "comData": "Should show up",
@@ -86,12 +170,49 @@ Array [
       },
       "id": 11,
       "specData": "Should show up",
+      "specDetails": Array [
+        Object {
+          "id": 1,
+          "specDetailsData": "Should show up 1",
+        },
+        Object {
+          "id": 2,
+          "specDetailsData": "Should show up 2",
+        },
+      ],
     },
   },
 ]
 `;
 
-exports[`Nested resourse belongsTo.belongsTo, belongsTo.belongsTo 1`] = `
+exports[`Nested resources belongsTo.[hasMany, belongsTo], switched order 1`] = `
+Array [
+  Object {
+    "comData": "Should show up",
+    "id": 99,
+    "spec": Object {
+      "area": Object {
+        "areasData": "Should show up",
+        "id": 51,
+      },
+      "id": 11,
+      "specData": "Should show up",
+      "specDetails": Array [
+        Object {
+          "id": 1,
+          "specDetailsData": "Should show up 1",
+        },
+        Object {
+          "id": 2,
+          "specDetailsData": "Should show up 2",
+        },
+      ],
+    },
+  },
+]
+`;
+
+exports[`Nested resources belongsTo.belongsTo, belongsTo.belongsTo 1`] = `
 Array [
   Object {
     "comData": "Should show up",
@@ -112,7 +233,91 @@ Array [
 ]
 `;
 
-exports[`Nested resourse includes with belongsTo.belongsTo 1`] = `
+exports[`Nested resources belongsTo.belongsTo, belongsTo.hasMany, belongsTo.belongsTo 1`] = `
+Array [
+  Object {
+    "comData": "Should show up",
+    "id": 99,
+    "spec": Object {
+      "area": Object {
+        "areasData": "Should show up",
+        "id": 51,
+      },
+      "id": 11,
+      "specCategory": Object {
+        "id": 7,
+        "specCategoryData": "Should show up",
+      },
+      "specData": "Should show up",
+      "specDetails": Array [
+        Object {
+          "id": 1,
+          "specDetailsData": "Should show up 1",
+        },
+        Object {
+          "id": 2,
+          "specDetailsData": "Should show up 2",
+        },
+      ],
+    },
+  },
+]
+`;
+
+exports[`Nested resources hasMany.[belongsTo, hasMany, hasMany], belongsTo, switched order 1`] = `
+Array [
+  Object {
+    "id": 11,
+    "specCategory": Object {
+      "id": 7,
+      "specCategoryData": "Should show up",
+    },
+    "specData": "Should show up",
+    "specDetails": Array [
+      Object {
+        "coms": Array [
+          Object {
+            "comData": "Should show up",
+            "id": 2,
+          },
+        ],
+        "id": 12,
+        "roomTypes": Array [
+          Object {
+            "id": 2,
+            "roomTypeData": "Should show up",
+          },
+          Object {
+            "id": 4,
+            "roomTypeData": "Should show up",
+          },
+        ],
+        "specDetailData": "Should show up 1",
+        "user": Object {
+          "id": 5,
+          "usersData": "Should show up",
+        },
+      },
+      Object {
+        "id": 13,
+        "roomTypes": Array [
+          Object {
+            "id": 2,
+            "roomTypeData": "Should show up",
+          },
+          Object {
+            "id": 4,
+            "roomTypeData": "Should show up",
+          },
+        ],
+        "specDetailData": "Should show up 2, no coms",
+      },
+    ],
+  },
+]
+`;
+
+exports[`Nested resources includes with belongsTo.belongsTo 1`] = `
 Array [
   Object {
     "id": 13,
@@ -129,7 +334,7 @@ Array [
 ]
 `;
 
-exports[`Nested resourse includes with hasMany.belongsTo 1`] = `
+exports[`Nested resources includes with hasMany.belongsTo 1`] = `
 Array [
   Object {
     "id": 3,
@@ -180,7 +385,7 @@ Array [
 ]
 `;
 
-exports[`Nested resourse includes with hasMany.hasMany 1`] = `
+exports[`Nested resources includes with hasMany.hasMany 1`] = `
 Array [
   Object {
     "id": 11,

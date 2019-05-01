@@ -4,7 +4,7 @@ import specResources from "../__testHelpers__/fixtrues/specsNormalized";
 import specDetailComsResources from "../__testHelpers__/fixtrues/specDetailComsNormalized";
 import {Checklist, PurchaseOrderContact, Spec, SpecDetailCom} from "../__testHelpers__/models";
 
-describe("Nested resourse", () => {
+describe("Nested resources", () => {
   test("includes with hasMany.belongsTo", () => {
     const checklists = Checklist.query(checklistResources)
       .all()
@@ -28,10 +28,26 @@ describe("Nested resourse", () => {
     expect(specs).toMatchSnapshot();
   });
 
-  test("belongsTo, hasMany.[hasMany, hasMany, belonngsTo]", () => {
+  test("belongsTo, hasMany.[hasMany, hasMany, belongsTo]", () => {
     const specs = Spec.query(specResources)
       .where({id: [11]})
       .includes(["specCategory", "specDetails.[coms, roomTypes, user]"])
+      .toObjects();
+    expect(specs).toMatchSnapshot();
+  });
+
+  test("hasMany.[belongsTo, hasMany, hasMany], belongsTo, switched order", () => {
+    const specs = Spec.query(specResources)
+      .where({id: [11]})
+      .includes(["specDetails.[user, coms, roomTypes]", "specCategory"])
+      .toObjects();
+    expect(specs).toMatchSnapshot();
+  });
+
+  test("belongsTo, hasMany.[hasMany, belongsTo, hasMany], mixed order", () => {
+    const specs = Spec.query(specResources)
+      .where({id: [11]})
+      .includes(["specCategory", "specDetails.[coms, user, roomTypes]"])
       .toObjects();
     expect(specs).toMatchSnapshot();
   });
@@ -52,10 +68,34 @@ describe("Nested resourse", () => {
     expect(specDetailComs).toMatchSnapshot();
   });
 
+  test("belongsTo.belongsTo, belongsTo.hasMany, belongsTo.belongsTo", () => {
+    const specDetailComs = SpecDetailCom.query(specDetailComsResources)
+      .where({id: [99]})
+      .includes(["spec.area", "spec.specDetails", "spec.specCategory"])
+      .toObjects();
+    expect(specDetailComs).toMatchSnapshot();
+  });
+
   test("belongsTo.[belongsTo, hasMany]", () => {
     const specDetailComs = SpecDetailCom.query(specDetailComsResources)
       .where({id: [99]})
       .includes(["spec.[area, specDetails]"])
+      .toObjects();
+    expect(specDetailComs).toMatchSnapshot();
+  });
+
+  test("belongsTo.[hasMany, belongsTo], switched order", () => {
+    const specDetailComs = SpecDetailCom.query(specDetailComsResources)
+      .where({id: [99]})
+      .includes(["spec.[specDetails, area]"])
+      .toObjects();
+    expect(specDetailComs).toMatchSnapshot();
+  });
+
+  test("belongsTo.[belongsTo, hasMany, belongsTo], mixed", () => {
+    const specDetailComs = SpecDetailCom.query(specDetailComsResources)
+      .where({id: [99]})
+      .includes(["spec.[specCategory, specDetails, area]"])
       .toObjects();
     expect(specDetailComs).toMatchSnapshot();
   });
