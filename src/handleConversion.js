@@ -188,7 +188,6 @@ function _setRelationShipKeyToValues({
             };
           }
         } else if (relationType === "belongsTo") {
-          // TODO: this fails
           nextRelationshipObjects[name] = conversion(relationClass, resources, {
             ...nextRelationshipObjects[name],
             ...nestedResources
