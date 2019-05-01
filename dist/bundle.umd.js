@@ -16848,7 +16848,6 @@
 	      query = _ref3.query,
 	      relationships = _ref3.relationships;
 	  var klass = query.klass,
-	      currentIncludes = query.currentIncludes,
 	      resources = query.resources,
 	      hasMany = query.hasMany,
 	      belongsTo = query.belongsTo;
@@ -16857,53 +16856,69 @@
 	    var id = _ref4.id,
 	        name = _ref4.name,
 	        type = _ref4.type;
-
-	    var handleRelationArgs = {
-	      resources: resources,
+	    return _buildRelationships$1(query, conversion, nextRelationshipObjects, {
 	      id: id,
-	      type: type,
-	      nextRelationshipObjects: nextRelationshipObjects,
-	      conversion: conversion,
-	      currentIncludes: currentIncludes,
-	      name: name
-	    };
-
-	    // for the case when the relation class is hasMany
-	    var relationClass = hasMany.find(function (klass) {
-	      return klass.pluralName() === type;
+	      name: name,
+	      type: type
 	    });
-	    if (relationClass) {
-	      _setRelationShipKeyToValues(_extends$5({}, handleRelationArgs, {
-	        relationType: "hasMany",
-	        relationClass: relationClass
-	      }));
-	    }
-
-	    // for the case when the relation class is belongsTo
-	    relationClass = belongsTo.find(function (klass) {
-	      return klass.pluralName() === type;
-	    });
-	    if (relationClass) {
-	      _setRelationShipKeyToValues(_extends$5({}, handleRelationArgs, {
-	        relationType: "belongsTo",
-	        relationClass: relationClass
-	      }));
-	    }
-
-	    return nextRelationshipObjects;
 	  }, {})), hasMany, belongsTo);
 	}
 
-	function _setRelationShipKeyToValues(_ref5) {
-	  var relationType = _ref5.relationType,
-	      resources = _ref5.resources,
-	      id = _ref5.id,
-	      type = _ref5.type,
-	      nextRelationshipObjects = _ref5.nextRelationshipObjects,
-	      conversion = _ref5.conversion,
-	      relationClass = _ref5.relationClass,
-	      currentIncludes = _ref5.currentIncludes,
-	      name = _ref5.name;
+	function _buildRelationships$1(query, conversion, nextRelationshipObjects, _ref5) {
+	  var id = _ref5.id,
+	      name = _ref5.name,
+	      type = _ref5.type;
+	  var klass = query.klass,
+	      currentIncludes = query.currentIncludes,
+	      resources = query.resources,
+	      hasMany = query.hasMany,
+	      belongsTo = query.belongsTo;
+
+	  var handleRelationArgs = {
+	    resources: resources,
+	    id: id,
+	    type: type,
+	    nextRelationshipObjects: nextRelationshipObjects,
+	    conversion: conversion,
+	    currentIncludes: currentIncludes,
+	    name: name
+	  };
+
+	  // for the case when the relation class is hasMany
+	  var relationClass = hasMany.find(function (klass) {
+	    return klass.pluralName() === type;
+	  });
+	  if (relationClass) {
+	    _setRelationShipKeyToValues(_extends$5({}, handleRelationArgs, {
+	      relationType: "hasMany",
+	      relationClass: relationClass
+	    }));
+	  }
+
+	  // for the case when the relation class is belongsTo
+	  relationClass = belongsTo.find(function (klass) {
+	    return klass.pluralName() === type;
+	  });
+	  if (relationClass) {
+	    _setRelationShipKeyToValues(_extends$5({}, handleRelationArgs, {
+	      relationType: "belongsTo",
+	      relationClass: relationClass
+	    }));
+	  }
+
+	  return nextRelationshipObjects;
+	}
+
+	function _setRelationShipKeyToValues(_ref6) {
+	  var relationType = _ref6.relationType,
+	      resources = _ref6.resources,
+	      id = _ref6.id,
+	      type = _ref6.type,
+	      nextRelationshipObjects = _ref6.nextRelationshipObjects,
+	      conversion = _ref6.conversion,
+	      relationClass = _ref6.relationClass,
+	      currentIncludes = _ref6.currentIncludes,
+	      name = _ref6.name;
 
 	  var directIncludesRalationships = currentIncludes.map(function (relation) {
 	    return relation.split(".")[0];
@@ -16926,11 +16941,11 @@
 	        relationModel = _buildRelationModel3[0],
 	        nestedResourceData = _buildRelationModel3[1];
 
-	    nestedResourceData.forEach(function (_ref6) {
-	      var _ref7 = _slicedToArray$2(_ref6, 3),
-	          nestedResourceName = _ref7[0],
-	          nestedResourceType = _ref7[1],
-	          nestedResourceIds = _ref7[2];
+	    nestedResourceData.forEach(function (_ref7) {
+	      var _ref8 = _slicedToArray$2(_ref7, 3),
+	          nestedResourceName = _ref8[0],
+	          nestedResourceType = _ref8[1],
+	          nestedResourceIds = _ref8[2];
 
 	      var nestedResources = _convertWithNestedResources(conversion, relationClass, resources, id, relationData, relationModel, nestedResourceName, nestedResourceType, nestedResourceIds);
 
@@ -16944,11 +16959,11 @@
 	          var _objIndex = nextRelationshipObjects[name].findIndex(function (obj) {
 	            return obj.id == nestedResources.id;
 	          });
-
 	          nextRelationshipObjects[name][_objIndex] = _extends$5({}, nextRelationshipObjects[name][_objIndex], nestedResources);
 	        }
 	      } else if (relationType === "belongsTo") {
-	        nextRelationshipObjects[name] = _extends$5({}, nextRelationshipObjects[name], nestedResources);
+	        // TODO: this fails
+	        nextRelationshipObjects[name] = conversion(relationClass, resources, _extends$5({}, nextRelationshipObjects[name], nestedResources));
 	      }
 	    });
 	  }
@@ -17020,8 +17035,8 @@
 
 	          nestedResourceType = get(nestedRelationshipData, "[0].type");
 	          if (nestedResourceType === klass.pluralName()) {
-	            nestedResourceIds = nestedRelationshipData.reduce(function (ids, _ref9) {
-	              var id = _ref9.id;
+	            nestedResourceIds = nestedRelationshipData.reduce(function (ids, _ref10) {
+	              var id = _ref10.id;
 
 	              ids.push(id);
 	              return ids;
@@ -17059,10 +17074,10 @@
 	    return [];
 	  }
 
-	  return Object.entries(relationships).reduce(function (nextRelationships, _ref10) {
-	    var _ref11 = _slicedToArray$2(_ref10, 2),
-	        name = _ref11[0],
-	        relationshipItem = _ref11[1];
+	  return Object.entries(relationships).reduce(function (nextRelationships, _ref11) {
+	    var _ref12 = _slicedToArray$2(_ref11, 2),
+	        name = _ref12[0],
+	        relationshipItem = _ref12[1];
 
 	    if (!nextRelationships || !relationshipItem || !relationshipItem.data) {
 	      return nextRelationships;
