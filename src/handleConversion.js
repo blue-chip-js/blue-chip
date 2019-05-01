@@ -169,17 +169,17 @@ function _setRelationShipKeyToValues({
             const objIndex = nextRelationshipObjects[name].findIndex(
               obj => obj.id == nestedResources.id
             );
-
             nextRelationshipObjects[name][objIndex] = {
               ...nextRelationshipObjects[name][objIndex],
               ...nestedResources
             };
           }
         } else if (relationType === "belongsTo") {
-          nextRelationshipObjects[name] = {
+          // TODO: this fails
+          nextRelationshipObjects[name] = conversion(relationClass, resources, {
             ...nextRelationshipObjects[name],
             ...nestedResources
-          };
+          });
         }
       }
     );
@@ -240,11 +240,15 @@ function _buildRelationModel(
 
   nestedResourceNames = [];
   currentIncludes
-    .filter(relation => relation.split(".")[0] == type || relation.split(".")[0] == name)
-    .forEach((includesName) => {
+    .filter(
+      relation =>
+        relation.split(".")[0] == type || relation.split(".")[0] == name
+    )
+    .forEach(includesName => {
       const splitName = includesName.split(".")[1];
       if (splitName && splitName.includes("[")) {
-        const nestedNames = splitName.replace(/[\[\]']+/g, "")
+        const nestedNames = splitName
+          .replace(/[\[\]']+/g, "")
           .split(",")
           .map(rn => rn.trim());
         nestedResourceNames = nestedResourceNames.concat(nestedNames);
@@ -285,14 +289,14 @@ function _buildRelationModel(
             if (!nestedRelationshipData) {
               nestedRelationshipData = [];
             }
-            
+
             nestedResourceType = get(nestedRelationshipData, "[0].type");
             if (nestedResourceType === klass.pluralName()) {
               nestedResourceIds = nestedRelationshipData.reduce((ids, {id}) => {
                 ids.push(id);
                 return ids;
               }, []);
-            
+
               nestedClassData.push([
                 klass,
                 nestedResourceType,
@@ -303,9 +307,13 @@ function _buildRelationModel(
             return nestedClassData;
           }, []);
 
-          if (nestedClassDataArray && nestedClassDataArray.length) {
-            [nestedClass, nestedResourceType, nestedResourceIds] = nestedClassDataArray[0];
-          }
+        if (nestedClassDataArray && nestedClassDataArray.length) {
+          [
+            nestedClass,
+            nestedResourceType,
+            nestedResourceIds
+          ] = nestedClassDataArray[0];
+        }
       }
 
       if (nestedClass) {
