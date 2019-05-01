@@ -55,56 +55,69 @@ function _handleResourceConversionWithIncludedRelations({
   query,
   relationships
 }) {
-  const {klass, currentIncludes, resources, hasMany, belongsTo} = query;
+  const {klass, resources, hasMany, belongsTo} = query;
   return conversion(
     klass,
     resources,
     {
       ...newFormattedResource,
       ..._flattenRelationships(relationships).reduce(
-        (nextRelationshipObjects, {id, name, type}) => {
-          const handleRelationArgs = {
-            resources,
+        (nextRelationshipObjects, {id, name, type}) =>
+          _buildRelationships(query, conversion, nextRelationshipObjects, {
             id,
-            type,
-            nextRelationshipObjects,
-            conversion,
-            currentIncludes,
-            name
-          };
-
-          // for the case when the relation class is hasMany
-          let relationClass = hasMany.find(klass => {
-            return klass.pluralName() === type;
-          });
-          if (relationClass) {
-            _setRelationShipKeyToValues({
-              ...handleRelationArgs,
-              relationType: "hasMany",
-              relationClass
-            });
-          }
-
-          // for the case when the relation class is belongsTo
-          relationClass = belongsTo.find(klass => {
-            return klass.pluralName() === type;
-          });
-          if (relationClass) {
-            _setRelationShipKeyToValues({
-              ...handleRelationArgs,
-              relationType: "belongsTo",
-              relationClass
-            });
-          }
-
-          return nextRelationshipObjects;
-        },
+            name,
+            type
+          }),
         {}
       )
     },
     hasMany,
     belongsTo
   );
+}
+
+function _buildRelationships(
+  query,
+  conversion,
+  nextRelationshipObjects,
+  {id, name, type}
+) {
+  const {klass, currentIncludes, resources, hasMany, belongsTo} = query;
+  const handleRelationArgs = {
+    resources,
+    id,
+    type,
+    nextRelationshipObjects,
+    conversion,
+    currentIncludes,
+    name
+  };
+
+  // for the case when the relation class is hasMany
+  let relationClass = hasMany.find(klass => {
+    return klass.pluralName() === type;
+  });
+  if (relationClass) {
+    _setRelationShipKeyToValues({
+      ...handleRelationArgs,
+      relationType: "hasMany",
+      relationClass
+    });
+  }
+
+  // for the case when the relation class is belongsTo
+  relationClass = belongsTo.find(klass => {
+    return klass.pluralName() === type;
+  });
+  if (relationClass) {
+    _setRelationShipKeyToValues({
+      ...handleRelationArgs,
+      relationType: "belongsTo",
+      relationClass
+    });
+  }
+
+  return nextRelationshipObjects;
 }
 
 function _setRelationShipKeyToValues({
