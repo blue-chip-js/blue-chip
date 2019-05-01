@@ -16962,7 +16962,6 @@
 	          nextRelationshipObjects[name][_objIndex] = _extends$5({}, nextRelationshipObjects[name][_objIndex], nestedResources);
 	        }
 	      } else if (relationType === "belongsTo") {
-	        // TODO: this fails
 	        nextRelationshipObjects[name] = conversion(relationClass, resources, _extends$5({}, nextRelationshipObjects[name], nestedResources));
 	      }
 	    });
