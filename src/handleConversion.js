@@ -250,6 +250,8 @@ function _buildRelationModel(
   }
 
   const nestedResourceData = nestedResourceNames.map(nestedResourceName => {
+    nestedResourceType = null;
+    nestedResourceIds = null;
     if (nestedResourceName) {
       // sets the nested class if it is a has many relationship
       let nestedClass = relationClass.belongsTo.filter(
@@ -268,20 +270,24 @@ function _buildRelationModel(
         }
       } else {
         // handles the hasMany cases
-        [nestedClass, nestedResourceType, nestedResourceIds] =
+        const nestedClassDataArray =
           relationClass.hasMany &&
           relationClass.hasMany.reduce((nestedClassData, klass) => {
             let nestedRelationshipData = get(
               resources,
               `${relationClass.pluralName()}.${id}.relationships.${nestedResourceName}.data`
             );
+            if (!nestedRelationshipData) {
+              nestedRelationshipData = [];
+            }
+            
             nestedResourceType = get(nestedRelationshipData, "[0].type");
-            nestedResourceIds = nestedRelationshipData.reduce((ids, {id}) => {
-              ids.push(id);
-              return ids;
-            }, []);
-
             if (nestedResourceType === klass.pluralName()) {
+              nestedResourceIds = nestedRelationshipData.reduce((ids, {id}) => {
+                ids.push(id);
+                return ids;
+              }, []);
+            
               nestedClassData.push([
                 klass,
                 nestedResourceType,
@@ -290,7 +296,11 @@ function _buildRelationModel(
             }
 
             return nestedClassData;
-          }, [])[0];
+          }, []);
+
+          if (nestedClassDataArray && nestedClassDataArray.length) {
+            [nestedClass, nestedResourceType, nestedResourceIds] = nestedClassDataArray[0];
+          }
       }
 
       if (nestedClass) {
@@ -306,7 +316,6 @@ function _buildRelationModel(
         );
       }
     }
-
     return [nestedResourceName, nestedResourceType, nestedResourceIds];
   });
 

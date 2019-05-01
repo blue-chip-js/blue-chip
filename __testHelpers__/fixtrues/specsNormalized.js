@@ -13,7 +13,7 @@ export default {
       type: "specs",
       attributes: {specData: "Should show up"},
       relationships: {
-        specDetails: {data: [{id: 12, type: "specDetails"}]},
+        specDetails: {data: [{id: 12, type: "specDetails"}, {id: 13, type: "specDetails"}]},
         specCategory: {data: {id: 7, type: "specCategories"}}
       }
     },
@@ -32,7 +32,7 @@ export default {
     12: {
       id: 12,
       type: "specDetails",
-      attributes: {specDetailData: "Should show up"},
+      attributes: {specDetailData: "Should show up 1"},
       relationships: {
         coms: {data: [{id: 2, type: "specDetailComs"}]},
         roomTypes: {
@@ -42,6 +42,20 @@ export default {
           ]
         },
         user: {data: {id: 5, type: "users"}}
+      }
+    },
+    13: {
+      id: 13,
+      type: "specDetails",
+      attributes: {specDetailData: "Should show up 2, no coms"},
+      relationships: {
+        coms: [],
+        roomTypes: {
+          data: [
+            {id: 4, type: "specDetailRoomTypes"},
+            {id: 2, type: "specDetailRoomTypes"}
+          ]
+        },
       }
     }
   },

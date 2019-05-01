@@ -28,11 +28,25 @@ Array [
             "roomTypeData": "Should show up",
           },
         ],
-        "specDetailData": "Should show up",
+        "specDetailData": "Should show up 1",
         "user": Object {
           "id": 5,
           "usersData": "Should show up",
         },
+      },
+      Object {
+        "id": 13,
+        "roomTypes": Array [
+          Object {
+            "id": 2,
+            "roomTypeData": "Should show up",
+          },
+          Object {
+            "id": 4,
+            "roomTypeData": "Should show up",
+          },
+        ],
+        "specDetailData": "Should show up 2, no coms",
       },
     ],
   },
@@ -121,7 +135,11 @@ Array [
           },
         ],
         "id": 12,
-        "specDetailData": "Should show up",
+        "specDetailData": "Should show up 1",
+      },
+      Object {
+        "id": 13,
+        "specDetailData": "Should show up 2, no coms",
       },
     ],
   },

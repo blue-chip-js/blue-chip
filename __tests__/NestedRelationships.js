@@ -34,4 +34,12 @@ describe("Nested resourse", () => {
       .toObjects();
     expect(specs).toMatchSnapshot();
   });
+/* 
+  test("belongsTo.[belongsTo, belongsTo]", () => {
+    const specs = SpecDetailCom.query(specResources)
+      .where({id: [99]})
+      .includes(["spec.[area, specCategory]"])
+      .toObjects();
+    expect(specs).toMatchSnapshot();
+  }); */
 });

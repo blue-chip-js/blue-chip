@@ -16990,6 +16990,8 @@
 	  }
 
 	  var nestedResourceData = nestedResourceNames.map(function (nestedResourceName) {
+	    nestedResourceType = null;
+	    nestedResourceIds = null;
 	    if (nestedResourceName) {
 	      // sets the nested class if it is a has many relationship
 	      var nestedClass = relationClass.belongsTo.filter(function (klass) {
@@ -17004,30 +17006,35 @@
 	          nestedResourceIds = [belongsToData.id];
 	        }
 	      } else {
-	        var _ref9 = relationClass.hasMany && relationClass.hasMany.reduce(function (nestedClassData, klass) {
+	        // handles the hasMany cases
+	        var nestedClassDataArray = relationClass.hasMany && relationClass.hasMany.reduce(function (nestedClassData, klass) {
 	          var nestedRelationshipData = get(resources, relationClass.pluralName() + "." + id + ".relationships." + nestedResourceName + ".data");
+	          if (!nestedRelationshipData) {
+	            nestedRelationshipData = [];
+	          }
+
 	          nestedResourceType = get(nestedRelationshipData, "[0].type");
-	          nestedResourceIds = nestedRelationshipData.reduce(function (ids, _ref11) {
-	            var id = _ref11.id;
-
-	            ids.push(id);
-	            return ids;
-	          }, []);
-
 	          if (nestedResourceType === klass.pluralName()) {
+	            nestedResourceIds = nestedRelationshipData.reduce(function (ids, _ref9) {
+	              var id = _ref9.id;
+
+	              ids.push(id);
+	              return ids;
+	            }, []);
+
 	            nestedClassData.push([klass, nestedResourceType, nestedResourceIds]);
 	          }
 
 	          return nestedClassData;
-	        }, [])[0];
-	        // handles the hasMany cases
+	        }, []);
 
+	        if (nestedClassDataArray && nestedClassDataArray.length) {
+	          var _nestedClassDataArray = _slicedToArray$2(nestedClassDataArray[0], 3);
 
-	        var _ref10 = _slicedToArray$2(_ref9, 3);
-
-	        nestedClass = _ref10[0];
-	        nestedResourceType = _ref10[1];
-	        nestedResourceIds = _ref10[2];
+	          nestedClass = _nestedClassDataArray[0];
+	          nestedResourceType = _nestedClassDataArray[1];
+	          nestedResourceIds = _nestedClassDataArray[2];
+	        }
 	      }
 
 	      if (nestedClass) {
@@ -17036,7 +17043,6 @@
 	        }, relationData.attributes), relationClass.hasMany, relationClass.belongsTo);
 	      }
 	    }
-
 	    return [nestedResourceName, nestedResourceType, nestedResourceIds];
 	  });
 
@@ -17048,10 +17054,10 @@
 	    return [];
 	  }
 
-	  return Object.entries(relationships).reduce(function (nextRelationships, _ref12) {
-	    var _ref13 = _slicedToArray$2(_ref12, 2),
-	        name = _ref13[0],
-	        relationshipItem = _ref13[1];
+	  return Object.entries(relationships).reduce(function (nextRelationships, _ref10) {
+	    var _ref11 = _slicedToArray$2(_ref10, 2),
+	        name = _ref11[0],
+	        relationshipItem = _ref11[1];
 
 	    if (!nextRelationships || !relationshipItem || !relationshipItem.data) {
 	      return nextRelationships;
