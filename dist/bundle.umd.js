@@ -16948,7 +16948,7 @@
 	          nextRelationshipObjects[name][_objIndex] = _extends$5({}, nextRelationshipObjects[name][_objIndex], nestedResources);
 	        }
 	      } else if (relationType === "belongsTo") {
-	        nextRelationshipObjects[name] = nestedResources;
+	        nextRelationshipObjects[name] = _extends$5({}, nextRelationshipObjects[name], nestedResources);
 	      }
 	    });
 	  }
@@ -16977,17 +16977,22 @@
 	      nestedResourceType = void 0,
 	      nestedResourceIds = void 0,
 	      nestedResourceNames = void 0;
-	  try {
-	    nestedResourceNames = currentIncludes.filter(function (relation) {
-	      return relation.split(".")[0] == type;
-	    })[0].split(".")[1].replace(/[\[\]']+/g, "").split(",").map(function (rn) {
-	      return rn.trim();
-	    });
-	  } catch (e) {
-	    nestedResourceNames = [currentIncludes.filter(function (relation) {
-	      return relation.split(".")[0] == name;
-	    })[0].split(".")[1]];
-	  }
+
+	  nestedResourceNames = [];
+	  currentIncludes.filter(function (relation) {
+	    return relation.split(".")[0] == type || relation.split(".")[0] == name;
+	  }).forEach(function (includesName) {
+	    var splitName = includesName.split(".")[1];
+	    if (splitName && splitName.includes("[")) {
+	      var nestedNames = splitName.replace(/[\[\]']+/g, "").split(",").map(function (rn) {
+	        return rn.trim();
+	      });
+	      nestedResourceNames = nestedResourceNames.concat(nestedNames);
+	    } else {
+	      // Yes, even push undefined
+	      nestedResourceNames.push(splitName);
+	    }
+	  });
 
 	  var nestedResourceData = nestedResourceNames.map(function (nestedResourceName) {
 	    nestedResourceType = null;

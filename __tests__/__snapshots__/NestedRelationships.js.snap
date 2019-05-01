@@ -53,6 +53,65 @@ Array [
 ]
 `;
 
+exports[`Nested resourse belongsTo.[belongsTo, belongsTo] 1`] = `
+Array [
+  Object {
+    "comData": "Should show up",
+    "id": 99,
+    "spec": Object {
+      "area": Object {
+        "areasData": "Should show up",
+        "id": 51,
+      },
+      "id": 11,
+      "specCategory": Object {
+        "id": 7,
+        "specCategoryData": "Should show up",
+      },
+      "specData": "Should show up",
+    },
+  },
+]
+`;
+
+exports[`Nested resourse belongsTo.[belongsTo, hasMany] 1`] = `
+Array [
+  Object {
+    "comData": "Should show up",
+    "id": 99,
+    "spec": Object {
+      "area": Object {
+        "areasData": "Should show up",
+        "id": 51,
+      },
+      "id": 11,
+      "specData": "Should show up",
+    },
+  },
+]
+`;
+
+exports[`Nested resourse belongsTo.belongsTo, belongsTo.belongsTo 1`] = `
+Array [
+  Object {
+    "comData": "Should show up",
+    "id": 99,
+    "spec": Object {
+      "area": Object {
+        "areasData": "Should show up",
+        "id": 51,
+      },
+      "id": 11,
+      "specCategory": Object {
+        "id": 7,
+        "specCategoryData": "Should show up",
+      },
+      "specData": "Should show up",
+    },
+  },
+]
+`;
+
 exports[`Nested resourse includes with belongsTo.belongsTo 1`] = `
 Array [
   Object {

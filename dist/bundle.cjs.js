@@ -307,7 +307,10 @@ function _setRelationShipKeyToValues({
             };
           }
         } else if (relationType === "belongsTo") {
-          nextRelationshipObjects[name] = nestedResources;
+          nextRelationshipObjects[name] = {
+            ...nextRelationshipObjects[name],
+            ...nestedResources
+          };
         }
       }
     );
@@ -365,20 +368,22 @@ function _buildRelationModel(
   relationData
 ) {
   let relationModel, nestedResourceType, nestedResourceIds, nestedResourceNames;
-  try {
-    nestedResourceNames = currentIncludes
-      .filter(relation => relation.split(".")[0] == type)[0]
-      .split(".")[1]
-      .replace(/[\[\]']+/g, "")
-      .split(",")
-      .map(rn => rn.trim());
-  } catch (e) {
-    nestedResourceNames = [
-      currentIncludes
-        .filter(relation => relation.split(".")[0] == name)[0]
-        .split(".")[1]
-    ];
-  }
+
+  nestedResourceNames = [];
+  currentIncludes
+    .filter(relation => relation.split(".")[0] == type || relation.split(".")[0] == name)
+    .forEach((includesName) => {
+      const splitName = includesName.split(".")[1];
+      if (splitName && splitName.includes("[")) {
+        const nestedNames = splitName.replace(/[\[\]']+/g, "")
+          .split(",")
+          .map(rn => rn.trim());
+        nestedResourceNames = nestedResourceNames.concat(nestedNames);
+      } else {
+        // Yes, even push undefined
+        nestedResourceNames.push(splitName);
+      }
+    });
 
   const nestedResourceData = nestedResourceNames.map(nestedResourceName => {
     nestedResourceType = null;
