@@ -60,7 +60,10 @@ export default class Query {
 
   whereRelated(relationship, params) {
     const {resourceName} = this;
-    const relationships = Object.values(this.currentResources)[0].relationships;
+
+    const relationships =
+      Object.values(this.currentResources)[0] &&
+      Object.values(this.currentResources)[0].relationships;
 
     relationships && relationships[relationship.singularName()]
       ? this._handleBelongsToWhereRelated(relationship, params, resourceName)
