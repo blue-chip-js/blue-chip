@@ -1,6 +1,6 @@
 {
   "name": "@blue-chip/core",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "BlueChip accepts payloads from GraphQL or JsonAPI servers, normalizes them into your store and provides an ORM like syntax for retrieving the data for use.",
   "main": "dist/bundle.cjs.js",
   "module": "dist/bundle.esm.js",

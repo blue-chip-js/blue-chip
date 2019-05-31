@@ -17191,7 +17191,8 @@
 	    value: function whereRelated(relationship, params) {
 	      var resourceName = this.resourceName;
 
-	      var relationships = Object.values(this.currentResources)[0].relationships;
+
+	      var relationships = Object.values(this.currentResources)[0] && Object.values(this.currentResources)[0].relationships;
 
 	      relationships && relationships[relationship.singularName()] ? this._handleBelongsToWhereRelated(relationship, params, resourceName) : this._handleHasManyWhereRelated(relationship, params, resourceName);
 	      return this;
