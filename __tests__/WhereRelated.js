@@ -20,7 +20,17 @@ describe("Where related tests", () => {
       .toObjects();
     expect(patients).toMatchSnapshot();
   });
-  test("Should return empty array for unintialized relationships queries", () => {
+  test("Should handle empty relationships for related resources", () => {
+    const resourcesClone = JSON.parse(JSON.stringify(resources))
+    resourcesClone.patients["667"].relationships.indication.data = null
+    const patients = Patient.query(resourcesClone)
+      .includes(["indication"])
+      .whereRelated(Indication, {id: "3"})
+      .toObjects();
+    expect(patients).toHaveLength(1);
+    expect(patients).toMatchSnapshot();
+  });
+  test("Should return empty array for uninitialized relationships queries", () => {
     const patients = Patient.query(resourcesNoRelationshipData)
       .includes(["indication"])
       .where({myPatient: true})
