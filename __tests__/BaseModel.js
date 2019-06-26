@@ -1,7 +1,7 @@
 import BaseModel from "../src/BaseModel";
 import Query from "../src/Query";
 
-import resources from "../__testHelpers__/fixtrues/checklistsAndTasksNormalized";
+import resources from "../__testHelpers__/fixtures/checklistsAndTasksNormalized";
 import {Checklist, Task} from "../__testHelpers__/models";
 
 describe("BaseModel", () => {

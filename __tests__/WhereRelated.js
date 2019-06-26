@@ -1,5 +1,5 @@
-import resources from "../__testHelpers__/fixtrues/patientsAndSettingsOfUseNormalized";
-import resourcesNoRelationshipData from "../__testHelpers__/fixtrues/patientsNoRelationshipDataNormalized";
+import resources from "../__testHelpers__/fixtures/patientsAndSettingsOfUseNormalized";
+import resourcesNoRelationshipData from "../__testHelpers__/fixtures/patientsNoRelationshipDataNormalized";
 import Patient from "../__testHelpers__/models/Patient";
 import Indication from "../__testHelpers__/models/Indication";
 

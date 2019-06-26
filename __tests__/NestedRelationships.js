@@ -1,7 +1,7 @@
-import checklistResources from "../__testHelpers__/fixtrues/checklistsAndTasksNormalized";
-import pOResources from "../__testHelpers__/fixtrues/purchaseOrdersAndOthersNormalized";
-import specResources from "../__testHelpers__/fixtrues/specsNormalized";
-import specDetailComsResources from "../__testHelpers__/fixtrues/specDetailComsNormalized";
+import checklistResources from "../__testHelpers__/fixtures/checklistsAndTasksNormalized";
+import pOResources from "../__testHelpers__/fixtures/purchaseOrdersAndOthersNormalized";
+import specResources from "../__testHelpers__/fixtures/specsNormalized";
+import specDetailComsResources from "../__testHelpers__/fixtures/specDetailComsNormalized";
 import {Checklist, PurchaseOrderContact, Spec, SpecDetailCom} from "../__testHelpers__/models";
 
 describe("Nested resources", () => {
