@@ -17239,7 +17239,7 @@
 	            resource = _ref2[1];
 
 	        var r = get$1(resource, "relationships[" + relationshipName + "]");
-	        if (r && filteredRelationIds.includes(r.data.id)) {
+	        if (r && r.data && filteredRelationIds.includes(r.data.id)) {
 	          newResources[id] = resource;
 	        }
 	        return newResources;
