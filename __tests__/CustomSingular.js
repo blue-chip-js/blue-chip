@@ -1,4 +1,4 @@
-import resources from "../__testHelpers__/fixtrues/patientsAndSettingsOfUseNormalized";
+import resources from "../__testHelpers__/fixtures/patientsAndSettingsOfUseNormalized";
 import Patient from "../__testHelpers__/models/Patient";
 
 describe("Custom singular", () => {
