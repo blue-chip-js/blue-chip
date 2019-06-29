@@ -2,7 +2,12 @@ import checklistResources from "../__testHelpers__/fixtures/checklistsAndTasksNo
 import pOResources from "../__testHelpers__/fixtures/purchaseOrdersAndOthersNormalized";
 import specResources from "../__testHelpers__/fixtures/specsNormalized";
 import specDetailComsResources from "../__testHelpers__/fixtures/specDetailComsNormalized";
-import {Checklist, PurchaseOrderContact, Spec, SpecDetailCom} from "../__testHelpers__/models";
+import {
+  Checklist,
+  PurchaseOrderContact,
+  Spec,
+  SpecDetailCom
+} from "../__testHelpers__/models";
 
 describe("Nested resources", () => {
   test("includes with hasMany.belongsTo", () => {
@@ -98,5 +103,13 @@ describe("Nested resources", () => {
       .includes(["spec.[specCategory, specDetails, area]"])
       .toObjects();
     expect(specDetailComs).toMatchSnapshot();
+  });
+
+  test("hasMany.hasMany.hasMany", () => {
+    const specs = Spec.query(specResources)
+      .where({id: [11]})
+      .includes(["specDetails.coms.tasks"])
+      .toObjects();
+    expect(specs).toMatchSnapshot();
   });
 });

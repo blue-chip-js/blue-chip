@@ -69,12 +69,14 @@ Array [
     "checklist": [Function],
     "description": "Onboarding REST 1",
     "id": 1,
+    "specDetailCom": [Function],
     "user": [Function],
   },
   Task {
     "checklist": [Function],
     "description": "Onboarding REST 2",
     "id": 2,
+    "specDetailCom": [Function],
     "user": [Function],
   },
 ]
@@ -89,6 +91,7 @@ Array [
     },
     "description": "Onboarding REST 1",
     "id": 1,
+    "specDetailCom": [Function],
     "user": [Function],
   },
   Task {
@@ -98,6 +101,7 @@ Array [
     },
     "description": "Onboarding REST 2",
     "id": 2,
+    "specDetailCom": [Function],
     "user": [Function],
   },
   Task {
@@ -107,6 +111,7 @@ Array [
     },
     "description": "Project Audit Rest 3",
     "id": 3,
+    "specDetailCom": [Function],
     "user": [Function],
   },
   Task {
@@ -116,6 +121,7 @@ Array [
     },
     "description": "Project Audit Rest 4",
     "id": 4,
+    "specDetailCom": [Function],
     "user": [Function],
   },
   Task {
@@ -125,6 +131,7 @@ Array [
     },
     "description": "QA Checklist Rest 5",
     "id": 5,
+    "specDetailCom": [Function],
     "user": [Function],
   },
   Task {
@@ -134,6 +141,7 @@ Array [
     },
     "description": "QA Checklist Rest 6",
     "id": 6,
+    "specDetailCom": [Function],
     "user": [Function],
   },
 ]
