@@ -365,8 +365,8 @@ Array [
                 "tasksData": "Should show up",
                 "user": Object {
                   "id": 5,
-                  "userData": "Should show up"
-                }
+                  "usersData": "Should show up",
+                },
               },
             ],
           },
