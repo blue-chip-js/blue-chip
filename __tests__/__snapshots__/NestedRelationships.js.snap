@@ -317,6 +317,65 @@ Array [
 ]
 `;
 
+exports[`Nested resources hasMany.[hasMany.hasMany.hasMany, belongsTo] 1`] = `
+Array [
+  Object {
+    "id": 11,
+    "specData": "Should show up",
+    "specDetails": Array [
+      Object {
+        "coms": Array [
+          Object {
+            "comData": "Should show up",
+            "id": 2,
+            "tasks": Array [
+              Object {
+                "id": 3,
+                "tasksData": "Should show up",
+                "user": Object {
+                  "id": 5,
+                  "usersData": "Should show up",
+                },
+              },
+            ],
+          },
+        ],
+        "id": 12,
+        "roomTypes": Array [
+          Object {
+            "id": 2,
+            "roomTypeData": "Should show up",
+          },
+          Object {
+            "id": 4,
+            "roomTypeData": "Should show up",
+          },
+        ],
+        "specDetailData": "Should show up 1",
+        "user": Object {
+          "id": 5,
+          "usersData": "Should show up",
+        },
+      },
+      Object {
+        "id": 13,
+        "roomTypes": Array [
+          Object {
+            "id": 2,
+            "roomTypeData": "Should show up",
+          },
+          Object {
+            "id": 4,
+            "roomTypeData": "Should show up",
+          },
+        ],
+        "specDetailData": "Should show up 2, no coms",
+      },
+    ],
+  },
+]
+`;
+
 exports[`Nested resources hasMany.hasMany.hasMany 1`] = `
 Array [
   Object {
