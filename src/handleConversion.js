@@ -290,6 +290,7 @@ function _buildRelationModel(
         singleNestedResourceName,
         doubleNestedResourceName
       ] = nestedResourceName.split(/\.(.+)/);
+
       // sets the nested class if it is a hasMany relationship
       let nestedClass = relationClass.belongsTo.filter(
         klass => singleNestedResourceName === klass.singularName()

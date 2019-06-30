@@ -112,4 +112,12 @@ describe("Nested resources", () => {
       .toObjects();
     expect(specs).toMatchSnapshot();
   });
+
+  test("hasMany.hasMany.hasMany.belongsTo", () => {
+    const specs = Spec.query(specResources)
+      .where({id: [11]})
+      .includes(["specDetails.coms.tasks.user"])
+      .toObjects();
+    expect(specs).toMatchSnapshot();
+  });
 });

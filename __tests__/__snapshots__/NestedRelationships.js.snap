@@ -348,6 +348,41 @@ Array [
 ]
 `;
 
+exports[`Nested resources hasMany.hasMany.hasMany.belongsTo 1`] = `
+Array [
+  Object {
+    "id": 11,
+    "specData": "Should show up",
+    "specDetails": Array [
+      Object {
+        "coms": Array [
+          Object {
+            "comData": "Should show up",
+            "id": 2,
+            "tasks": Array [
+              Object {
+                "id": 3,
+                "tasksData": "Should show up",
+                "user": Object {
+                  "id": 5,
+                  "userData": "Should show up"
+                }
+              },
+            ],
+          },
+        ],
+        "id": 12,
+        "specDetailData": "Should show up 1",
+      },
+      Object {
+        "id": 13,
+        "specDetailData": "Should show up 2, no coms",
+      },
+    ],
+  },
+]
+`;
+
 exports[`Nested resources includes with belongsTo.belongsTo 1`] = `
 Array [
   Object {

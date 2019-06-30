@@ -121,7 +121,10 @@ export default {
     1: {
       id: 1,
       type: "tasks",
-      attributes: {tasksData: "Should not show up"}
+      attributes: {tasksData: "Should not show up"},
+      relationships: {
+        user: {data: {id: 9, type: "users"}}
+      }
     },
     2: {
       id: 2,
@@ -131,7 +134,10 @@ export default {
     3: {
       id: 3,
       type: "tasks",
-      attributes: {tasksData: "Should show up"}
+      attributes: {tasksData: "Should show up"},
+      relationships: {
+        user: {data: {id: 5, type: "users"}}
+      }
     }
   }
 };

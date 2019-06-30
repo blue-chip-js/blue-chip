@@ -13,7 +13,9 @@ export default {
       attributes: {specData: "Should NOT show up"},
       relationships: {
         area: {data: {id: 50, type: "areas"}},
-        specDetails: {data: [{id: 3, type: "specDetails"}, {id: 4, type: "specDetails"}]},
+        specDetails: {
+          data: [{id: 3, type: "specDetails"}, {id: 4, type: "specDetails"}]
+        },
         specCategory: {data: {id: 6, type: "specCategories"}}
       }
     },
@@ -23,7 +25,9 @@ export default {
       attributes: {specData: "Should show up"},
       relationships: {
         area: {data: {id: 51, type: "areas"}},
-        specDetails: {data: [{id: 1, type: "specDetails"}, {id: 2, type: "specDetails"}]},
+        specDetails: {
+          data: [{id: 1, type: "specDetails"}, {id: 2, type: "specDetails"}]
+        },
         specCategory: {data: {id: 7, type: "specCategories"}}
       }
     }
