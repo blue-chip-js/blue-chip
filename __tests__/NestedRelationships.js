@@ -89,6 +89,14 @@ describe("Nested resources", () => {
     expect(specDetailComs).toMatchSnapshot();
   });
 
+  test("belongsTo.belongsTo.[belongsTo, belongsTo]", () => {
+    const specDetailComs = SpecDetailCom.query(specDetailComsResources)
+      .where({id: [97]})
+      .includes(["specDetail.spec.[area, specCategory]"])
+      .toObjects();
+    expect(specDetailComs).toMatchSnapshot();
+  });
+
   test("belongsTo.[hasMany, belongsTo], switched order", () => {
     const specDetailComs = SpecDetailCom.query(specDetailComsResources)
       .where({id: [99]})

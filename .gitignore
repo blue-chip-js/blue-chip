@@ -2,3 +2,4 @@ node_modules/
 .coveralls.yml
 /coverage/*
 lib/
+.idea

@@ -264,6 +264,23 @@ Array [
 ]
 `;
 
+exports[`Nested resources belongsTo.belongsTo.[belongsTo, belongsTo] 1`] = `
+Array [
+  Object {
+    "comData": "Should show up",
+    "id": 97,
+    "specDetail": Object {
+      "id": 5,
+      "spec": Object {
+        "id": 12,
+        "specData": "Should show up",
+      },
+      "specDetailsData": "Should show up",
+    },
+  },
+]
+`;
+
 exports[`Nested resources hasMany.[belongsTo, hasMany, hasMany], belongsTo, switched order 1`] = `
 Array [
   Object {

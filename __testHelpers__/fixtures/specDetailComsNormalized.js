@@ -30,6 +30,15 @@ export default {
         },
         specCategory: {data: {id: 7, type: "specCategories"}}
       }
+    },
+    12: {
+      id: 12,
+      type: "specs",
+      attributes: {specData: "Should show up"},
+      relationships: {
+        area: {data: {id: 51, type: "areas"}},
+        specCategory: {data: {id: 7, type: "specCategories"}}
+      }
     }
   },
   specDetails: {
@@ -52,6 +61,14 @@ export default {
       id: 4,
       type: "specDetails",
       attributes: {specDetailsData: "Should NOT show up 2"}
+    },
+    5: {
+      id: 5,
+      type: "specDetails",
+      attributes: {specDetailsData: "Should show up"},
+      relationships: {
+        spec: {data: {id: 12, type: "specs"}}
+      }
     }
   },
   specDetailComs: {
@@ -69,6 +86,14 @@ export default {
       attributes: {comData: "Should NOT show up"},
       relationships: {
         spec: {data: {id: 11, type: "specs"}}
+      }
+    },
+    97: {
+      id: 97,
+      type: "specDetailComs",
+      attributes: {comData: "Should show up"},
+      relationships: {
+        specDetail: {data: {id: 5, type: "specDetails"}}
       }
     }
   },
