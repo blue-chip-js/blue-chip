@@ -160,6 +160,7 @@ function _setRelationShipKeyToValues({
       name,
       relationData
     );
+
     nestedResourceData.forEach(
       ([
         nestedResourceName,
@@ -196,10 +197,27 @@ function _setRelationShipKeyToValues({
             };
           }
         } else if (relationType === "belongsTo") {
-          nextRelationshipObjects[name] = conversion(relationClass, resources, {
+          let updatedAttributes = {
             ...nextRelationshipObjects[name],
             ...nestedResources
-          });
+          };
+
+          if (
+            nextRelationshipObjects[name] &&
+            nextRelationshipObjects[name][nestedResourceName] &&
+            nestedResources[nestedResourceName]
+          ) {
+            updatedAttributes[nestedResourceName] = {
+              ...nextRelationshipObjects[name][nestedResourceName],
+              ...nestedResources[nestedResourceName]
+            };
+          }
+
+          nextRelationshipObjects[name] = conversion(
+            relationClass,
+            resources,
+            updatedAttributes
+          );
         }
       }
     );
@@ -237,7 +255,7 @@ function _convertWithNestedResources(
       .includes([doubleNestedResourceName])
       .toObjects();
   } else if (model && model.toObject) {
-    nestedResponse = model.toObject();
+    nestedResponse = model.toObject([doubleNestedResourceName]);
   }
 
   return conversion(relationClass, resources, {
@@ -268,11 +286,23 @@ function _buildRelationModel(
     })
     .forEach(includesName => {
       const splitName = includesName.split(/\.(.+)/)[1];
+
       if (splitName && splitName.includes("[")) {
-        const nestedNames = splitName
-          .replace(/[\[\]']+/g, "")
-          .split(",")
-          .map(rn => rn.trim());
+        let nestedNames;
+        if (splitName.charAt(0) !== "[") {
+          const firstSplit = splitName.split(".")[0];
+
+          nestedNames = splitName
+            .replace(/[\[\]']+/g, "")
+            .split(",")
+            .map(rn => rn.replace(/^\s/, `${firstSplit}.`).trim());
+        } else {
+          nestedNames = splitName
+            .replace(/[\[\]']+/g, "")
+            .split(",")
+            .map(rn => rn.trim());
+        }
+
         nestedResourceNames = nestedResourceNames.concat(nestedNames);
       } else {
         // Yes, even push undefined
@@ -302,6 +332,7 @@ function _buildRelationModel(
           resources,
           `${relationClass.pluralName()}.${id}.relationships.${singleNestedResourceName}.data`
         );
+
         if (belongsToData) {
           nestedResourceType = belongsToData.type;
           nestedResourceIds = [belongsToData.id];
@@ -358,6 +389,7 @@ function _buildRelationModel(
         );
       }
     }
+
     return [
       singleNestedResourceName,
       nestedResourceType,

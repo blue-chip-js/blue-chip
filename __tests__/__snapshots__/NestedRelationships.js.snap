@@ -272,7 +272,15 @@ Array [
     "specDetail": Object {
       "id": 5,
       "spec": Object {
+        "area": Object {
+          "areasData": "Should show up",
+          "id": 51,
+        },
         "id": 12,
+        "specCategory": Object {
+          "id": 7,
+          "specCategoryData": "Should show up",
+        },
         "specData": "Should show up",
       },
       "specDetailsData": "Should show up",

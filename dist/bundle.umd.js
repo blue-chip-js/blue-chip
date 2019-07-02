@@ -16966,7 +16966,13 @@
 	          nextRelationshipObjects[name][_objIndex] = _extends$5({}, nextRelationshipObjects[name][_objIndex], nestedResources);
 	        }
 	      } else if (relationType === "belongsTo") {
-	        nextRelationshipObjects[name] = conversion(relationClass, resources, _extends$5({}, nextRelationshipObjects[name], nestedResources));
+	        var updatedAttributes = _extends$5({}, nextRelationshipObjects[name], nestedResources);
+
+	        if (nextRelationshipObjects[name] && nextRelationshipObjects[name][nestedResourceName] && nestedResources[nestedResourceName]) {
+	          updatedAttributes[nestedResourceName] = _extends$5({}, nextRelationshipObjects[name][nestedResourceName], nestedResources[nestedResourceName]);
+	        }
+
+	        nextRelationshipObjects[name] = conversion(relationClass, resources, updatedAttributes);
 	      }
 	    });
 	  }
@@ -16982,7 +16988,7 @@
 	  if (query && query.toObjects) {
 	    nestedResponse = query.klass.query(resources).where({ id: nestedResourceIds }).includes([doubleNestedResourceName]).toObjects();
 	  } else if (model && model.toObject) {
-	    nestedResponse = model.toObject();
+	    nestedResponse = model.toObject([doubleNestedResourceName]);
 	  }
 
 	  return conversion(relationClass, resources, _extends$5({
@@ -17002,10 +17008,21 @@
 	    return relation.split(".")[0] == type || relation.split(".")[0] == name;
 	  }).forEach(function (includesName) {
 	    var splitName = includesName.split(/\.(.+)/)[1];
+
 	    if (splitName && splitName.includes("[")) {
-	      var nestedNames = splitName.replace(/[\[\]']+/g, "").split(",").map(function (rn) {
-	        return rn.trim();
-	      });
+	      var nestedNames = void 0;
+	      if (splitName.charAt(0) !== "[") {
+	        var firstSplit = splitName.split(".")[0];
+
+	        nestedNames = splitName.replace(/[\[\]']+/g, "").split(",").map(function (rn) {
+	          return rn.replace(/^\s/, firstSplit + ".").trim();
+	        });
+	      } else {
+	        nestedNames = splitName.replace(/[\[\]']+/g, "").split(",").map(function (rn) {
+	          return rn.trim();
+	        });
+	      }
+
 	      nestedResourceNames = nestedResourceNames.concat(nestedNames);
 	    } else {
 	      // Yes, even push undefined
@@ -17035,6 +17052,7 @@
 	      // handles the belongsTo cases
 	      if (nestedClass) {
 	        var belongsToData = get(resources, relationClass.pluralName() + "." + id + ".relationships." + singleNestedResourceName + ".data");
+
 	        if (belongsToData) {
 	          nestedResourceType = belongsToData.type;
 	          nestedResourceIds = [belongsToData.id];
@@ -17077,6 +17095,7 @@
 	        }, relationData.attributes), relationClass.hasMany, relationClass.belongsTo);
 	      }
 	    }
+
 	    return [singleNestedResourceName, nestedResourceType, nestedResourceIds, doubleNestedResourceName];
 	  });
 
@@ -17413,12 +17432,14 @@
 
 	  _createClass$2(BaseModel, [{
 	    key: "toObject",
-	    value: function toObject() {
+	    value: function toObject(relationships) {
 	      var _this2 = this;
 
 	      return Object.getOwnPropertyNames(this).reduce(function (obj, prop) {
 	        if (!isFunction$1(_this2[prop])) {
 	          obj[prop] = _this2[prop];
+	        } else if (relationships && relationships.includes(prop) && isFunction$1(_this2[prop])) {
+	          obj[prop] = _this2[prop]().toObject();
 	        }
 	        return obj;
 	      }, {});
