@@ -4,7 +4,38 @@ export default {
     specs: [11],
     areas: [51],
     specDetailComs: [99],
-    specCategories: [7]
+    specCategories: [7],
+    areaRooms: [13, 14, 15],
+    areaTypes: [2, 3],
+  },
+  areaTypes: {
+    2: {
+      id: 2,
+      type: 'areaTypes',
+      attributes: { areaTypeData: "Should show up" }
+    },
+    3: {
+      id: 3,
+      type: 'areaTypes',
+      attributes: { areaTypeData: "Should NOT show up" }
+    }
+  },
+  areaRooms: {
+    13: {
+      id: 13,
+      type: 'areaRooms',
+      attributes: { areaRoomData: "Should show up" }
+    },
+    14: {
+      id: 14,
+      type: 'areaRooms',
+      attributes: { areaRoomData: "Should show up" }
+    },
+    15: {
+      id: 15,
+      type: 'areaRooms',
+      attributes: { areaRoomData: "Should NOT show up" }
+    }
   },
   specs: {
     10: {
@@ -118,7 +149,16 @@ export default {
     51: {
       id: 51,
       type: "areas",
-      attributes: {areasData: "Should show up"}
+      attributes: {areasData: "Should show up"},
+      relationships: {
+        areaType: {data: {id: 2, type: "areaTypes"}},
+        areaRooms: {
+          data: [
+            {id: 13, type: "areaRooms"},
+            {id: 14, type: "areaRooms"},
+          ]
+        },
+      }
     }
   }
 };
