@@ -297,6 +297,14 @@ Array [
     "specDetail": Object {
       "id": 5,
       "spec": Object {
+        "area": Object {
+          "areaType": Object {
+            "areaTypeData": "Should show up",
+            "id": 2,
+          },
+          "areasData": "Should show up",
+          "id": 51,
+        },
         "id": 12,
         "specCategory": Object {
           "id": 7,
@@ -318,6 +326,20 @@ Array [
     "specDetail": Object {
       "id": 5,
       "spec": Object {
+        "area": Object {
+          "areaRooms": Array [
+            Object {
+              "areaRoomData": "Should show up",
+              "id": 13,
+            },
+            Object {
+              "areaRoomData": "Should show up",
+              "id": 14,
+            },
+          ],
+          "areasData": "Should show up",
+          "id": 51,
+        },
         "id": 12,
         "specCategory": Object {
           "id": 7,
@@ -339,6 +361,14 @@ Array [
     "specDetail": Object {
       "id": 5,
       "spec": Object {
+        "area": Object {
+          "areaType": Object {
+            "areaTypeData": "Should show up",
+            "id": 2,
+          },
+          "areasData": "Should show up",
+          "id": 51,
+        },
         "id": 12,
         "specData": "Should show up",
       },
@@ -356,6 +386,20 @@ Array [
     "specDetail": Object {
       "id": 5,
       "spec": Object {
+        "area": Object {
+          "areaRooms": Array [
+            Object {
+              "areaRoomData": "Should show up",
+              "id": 13,
+            },
+            Object {
+              "areaRoomData": "Should show up",
+              "id": 14,
+            },
+          ],
+          "areasData": "Should show up",
+          "id": 51,
+        },
         "id": 12,
         "specData": "Should show up",
       },

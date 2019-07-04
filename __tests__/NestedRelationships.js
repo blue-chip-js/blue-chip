@@ -6,7 +6,7 @@ import {
   Checklist,
   PurchaseOrderContact,
   Spec,
-  SpecDetailCom,
+  SpecDetailCom
 } from "../__testHelpers__/models";
 
 describe("Nested resources", () => {
