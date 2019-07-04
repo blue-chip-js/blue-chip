@@ -386,7 +386,11 @@ function _convertWithNestedResources(
       .includes([doubleNestedResourceName])
       .toObjects();
   } else if (model && model.toObject) {
-    nestedResponse = model.toObject([doubleNestedResourceName]);
+    nestedResponse = model.constructor
+      .query(resources)
+      .where({id: nestedResourceIds})
+      .includes([doubleNestedResourceName])
+      .toObjects()[0];
   }
 
   return conversion(relationClass, resources, {

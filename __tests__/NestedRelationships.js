@@ -153,11 +153,6 @@ describe("Nested resources", () => {
     expect(specs).toMatchSnapshot();
   });
 
-  // TODO
-  // test("hasMany.hasMany.belongsTo", () => {
-  // test("hasMany.belongsTo.hasMany", () => {
-  // test("hasMany.belongsTo.belongsTo", () => {
-
   test("hasMany.hasMany.hasMany.belongsTo", () => {
     const specs = Spec.query(specResources)
       .where({id: [11]})
@@ -165,12 +160,6 @@ describe("Nested resources", () => {
       .toObjects();
     expect(specs).toMatchSnapshot();
   });
-
-  //TODO
-  // test("belongsTo.belongsTo.belongsTo", () => {
-  // test("belongsTo.belongsTo.hasMany", () => {
-  // test("belongsTo.hasMany.belongsTo", () => {
-  // test("belongsTo.hasMany.hasMany", () => {
 
   test("hasMany.[hasMany.hasMany.hasMany, belongsTo]", () => {
     const specs = Spec.query(specResources)
