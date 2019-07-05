@@ -161,7 +161,7 @@ describe("Nested resources", () => {
     expect(specs).toMatchSnapshot();
   });
 
-  test("hasMany.[hasMany.hasMany.hasMany, belongsTo]", () => {
+  test("hasMany.[hasMany.hasMany.hasMany, hasMany, belongsTo]", () => {
     const specs = Spec.query(specResources)
       .where({id: [11]})
       .includes(["specDetails.[coms.tasks.user, roomTypes, user]"])

@@ -462,7 +462,7 @@ Array [
 ]
 `;
 
-exports[`Nested resources hasMany.[hasMany.hasMany.hasMany, belongsTo] 1`] = `
+exports[`Nested resources hasMany.[hasMany.hasMany.hasMany, hasMany, belongsTo] 1`] = `
 Array [
   Object {
     "id": 11,
