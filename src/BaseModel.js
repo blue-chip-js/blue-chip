@@ -57,10 +57,16 @@ export default class BaseModel {
     }
   }
 
-  toObject() {
+  toObject(relationships) {
     return Object.getOwnPropertyNames(this).reduce((obj, prop) => {
       if (!isFunction(this[prop])) {
         obj[prop] = this[prop];
+      } else if (
+        relationships &&
+        relationships.includes(prop) &&
+        isFunction(this[prop])
+      ) {
+        obj[prop] = this[prop]().toObject();
       }
       return obj;
     }, {});

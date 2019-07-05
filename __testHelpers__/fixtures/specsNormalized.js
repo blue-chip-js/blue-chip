@@ -13,7 +13,9 @@ export default {
       type: "specs",
       attributes: {specData: "Should show up"},
       relationships: {
-        specDetails: {data: [{id: 12, type: "specDetails"}, {id: 13, type: "specDetails"}]},
+        specDetails: {
+          data: [{id: 12, type: "specDetails"}, {id: 13, type: "specDetails"}]
+        },
         specCategory: {data: {id: 7, type: "specCategories"}}
       }
     },
@@ -55,7 +57,7 @@ export default {
             {id: 4, type: "specDetailRoomTypes"},
             {id: 2, type: "specDetailRoomTypes"}
           ]
-        },
+        }
       }
     }
   },
@@ -63,7 +65,10 @@ export default {
     2: {
       id: 2,
       type: "specDetailComs",
-      attributes: {comData: "Should show up"}
+      attributes: {comData: "Should show up"},
+      relationships: {
+        tasks: {data: [{id: 3, type: "tasks"}]}
+      }
     },
     3: {
       id: 3,
@@ -110,6 +115,29 @@ export default {
       id: 3,
       type: "users",
       attributes: {usersData: "Should not show up"}
+    }
+  },
+  tasks: {
+    1: {
+      id: 1,
+      type: "tasks",
+      attributes: {tasksData: "Should not show up"},
+      relationships: {
+        user: {data: {id: 9, type: "users"}}
+      }
+    },
+    2: {
+      id: 2,
+      type: "tasks",
+      attributes: {tasksData: "Should not show up"}
+    },
+    3: {
+      id: 3,
+      type: "tasks",
+      attributes: {tasksData: "Should show up"},
+      relationships: {
+        user: {data: {id: 5, type: "users"}}
+      }
     }
   }
 };

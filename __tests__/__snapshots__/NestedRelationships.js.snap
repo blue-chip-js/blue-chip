@@ -264,6 +264,151 @@ Array [
 ]
 `;
 
+exports[`Nested resources belongsTo.belongsTo.[belongsTo, belongsTo] 1`] = `
+Array [
+  Object {
+    "comData": "Should show up",
+    "id": 97,
+    "specDetail": Object {
+      "id": 5,
+      "spec": Object {
+        "area": Object {
+          "areasData": "Should show up",
+          "id": 51,
+        },
+        "id": 12,
+        "specCategory": Object {
+          "id": 7,
+          "specCategoryData": "Should show up",
+        },
+        "specData": "Should show up",
+      },
+      "specDetailsData": "Should show up",
+    },
+  },
+]
+`;
+
+exports[`Nested resources belongsTo.belongsTo.[belongsTo.belongsTo, belongsTo] 1`] = `
+Array [
+  Object {
+    "comData": "Should show up",
+    "id": 97,
+    "specDetail": Object {
+      "id": 5,
+      "spec": Object {
+        "area": Object {
+          "areaType": Object {
+            "areaTypeData": "Should show up",
+            "id": 2,
+          },
+          "areasData": "Should show up",
+          "id": 51,
+        },
+        "id": 12,
+        "specCategory": Object {
+          "id": 7,
+          "specCategoryData": "Should show up",
+        },
+        "specData": "Should show up",
+      },
+      "specDetailsData": "Should show up",
+    },
+  },
+]
+`;
+
+exports[`Nested resources belongsTo.belongsTo.[belongsTo.hasMany, belongsTo] 1`] = `
+Array [
+  Object {
+    "comData": "Should show up",
+    "id": 97,
+    "specDetail": Object {
+      "id": 5,
+      "spec": Object {
+        "area": Object {
+          "areaRooms": Array [
+            Object {
+              "areaRoomData": "Should show up",
+              "id": 13,
+            },
+            Object {
+              "areaRoomData": "Should show up",
+              "id": 14,
+            },
+          ],
+          "areasData": "Should show up",
+          "id": 51,
+        },
+        "id": 12,
+        "specCategory": Object {
+          "id": 7,
+          "specCategoryData": "Should show up",
+        },
+        "specData": "Should show up",
+      },
+      "specDetailsData": "Should show up",
+    },
+  },
+]
+`;
+
+exports[`Nested resources belongsTo.belongsTo.belongsTo.belongsTo 1`] = `
+Array [
+  Object {
+    "comData": "Should show up",
+    "id": 97,
+    "specDetail": Object {
+      "id": 5,
+      "spec": Object {
+        "area": Object {
+          "areaType": Object {
+            "areaTypeData": "Should show up",
+            "id": 2,
+          },
+          "areasData": "Should show up",
+          "id": 51,
+        },
+        "id": 12,
+        "specData": "Should show up",
+      },
+      "specDetailsData": "Should show up",
+    },
+  },
+]
+`;
+
+exports[`Nested resources belongsTo.belongsTo.belongsTo.hasMany 1`] = `
+Array [
+  Object {
+    "comData": "Should show up",
+    "id": 97,
+    "specDetail": Object {
+      "id": 5,
+      "spec": Object {
+        "area": Object {
+          "areaRooms": Array [
+            Object {
+              "areaRoomData": "Should show up",
+              "id": 13,
+            },
+            Object {
+              "areaRoomData": "Should show up",
+              "id": 14,
+            },
+          ],
+          "areasData": "Should show up",
+          "id": 51,
+        },
+        "id": 12,
+        "specData": "Should show up",
+      },
+      "specDetailsData": "Should show up",
+    },
+  },
+]
+`;
+
 exports[`Nested resources hasMany.[belongsTo, hasMany, hasMany], belongsTo, switched order 1`] = `
 Array [
   Object {
@@ -310,6 +455,131 @@ Array [
             "roomTypeData": "Should show up",
           },
         ],
+        "specDetailData": "Should show up 2, no coms",
+      },
+    ],
+  },
+]
+`;
+
+exports[`Nested resources hasMany.[hasMany.hasMany.hasMany, hasMany, belongsTo] 1`] = `
+Array [
+  Object {
+    "id": 11,
+    "specData": "Should show up",
+    "specDetails": Array [
+      Object {
+        "coms": Array [
+          Object {
+            "comData": "Should show up",
+            "id": 2,
+            "tasks": Array [
+              Object {
+                "id": 3,
+                "tasksData": "Should show up",
+                "user": Object {
+                  "id": 5,
+                  "usersData": "Should show up",
+                },
+              },
+            ],
+          },
+        ],
+        "id": 12,
+        "roomTypes": Array [
+          Object {
+            "id": 2,
+            "roomTypeData": "Should show up",
+          },
+          Object {
+            "id": 4,
+            "roomTypeData": "Should show up",
+          },
+        ],
+        "specDetailData": "Should show up 1",
+        "user": Object {
+          "id": 5,
+          "usersData": "Should show up",
+        },
+      },
+      Object {
+        "id": 13,
+        "roomTypes": Array [
+          Object {
+            "id": 2,
+            "roomTypeData": "Should show up",
+          },
+          Object {
+            "id": 4,
+            "roomTypeData": "Should show up",
+          },
+        ],
+        "specDetailData": "Should show up 2, no coms",
+      },
+    ],
+  },
+]
+`;
+
+exports[`Nested resources hasMany.hasMany.hasMany 1`] = `
+Array [
+  Object {
+    "id": 11,
+    "specData": "Should show up",
+    "specDetails": Array [
+      Object {
+        "coms": Array [
+          Object {
+            "comData": "Should show up",
+            "id": 2,
+            "tasks": Array [
+              Object {
+                "id": 3,
+                "tasksData": "Should show up",
+              },
+            ],
+          },
+        ],
+        "id": 12,
+        "specDetailData": "Should show up 1",
+      },
+      Object {
+        "id": 13,
+        "specDetailData": "Should show up 2, no coms",
+      },
+    ],
+  },
+]
+`;
+
+exports[`Nested resources hasMany.hasMany.hasMany.belongsTo 1`] = `
+Array [
+  Object {
+    "id": 11,
+    "specData": "Should show up",
+    "specDetails": Array [
+      Object {
+        "coms": Array [
+          Object {
+            "comData": "Should show up",
+            "id": 2,
+            "tasks": Array [
+              Object {
+                "id": 3,
+                "tasksData": "Should show up",
+                "user": Object {
+                  "id": 5,
+                  "usersData": "Should show up",
+                },
+              },
+            ],
+          },
+        ],
+        "id": 12,
+        "specDetailData": "Should show up 1",
+      },
+      Object {
+        "id": 13,
         "specDetailData": "Should show up 2, no coms",
       },
     ],
