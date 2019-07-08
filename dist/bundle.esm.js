@@ -123,6 +123,9 @@ function isFunction(functionToCheck) {
   );
 }
 
+const flatten = arr =>
+  arr.reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
+
 var get = require("lodash.get");
 
 function handleConversion(query, conversionType) {
@@ -256,9 +259,9 @@ function _setRelationShipKeyToValues({
   currentIncludes,
   name
 }) {
-  const directIncludesRalationships = currentIncludes
-    .map(relation => relation && relation.split("."))
-    .flat();
+  const directIncludesRalationships = flatten(
+    currentIncludes.map(relation => relation && relation.split("."))
+  );
 
   if (!directIncludesRalationships.includes(name))
     return nextRelationshipObjects;
