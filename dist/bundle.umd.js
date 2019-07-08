@@ -16775,6 +16775,12 @@
 	  return functionToCheck && {}.toString.call(functionToCheck) === "[object Function]";
 	}
 
+	var flatten = function flatten(arr) {
+	  return arr.reduce(function (a, b) {
+	    return a.concat(Array.isArray(b) ? flatten(b) : b);
+	  }, []);
+	};
+
 	var _slicedToArray$2 = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 	var _extends$5 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -16920,9 +16926,9 @@
 	      currentIncludes = _ref6.currentIncludes,
 	      name = _ref6.name;
 
-	  var directIncludesRalationships = currentIncludes.map(function (relation) {
+	  var directIncludesRalationships = flatten(currentIncludes.map(function (relation) {
 	    return relation && relation.split(".");
-	  }).flat();
+	  }));
 
 	  if (!directIncludesRalationships.includes(name)) return nextRelationshipObjects;
 

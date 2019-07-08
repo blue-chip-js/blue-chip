@@ -1,4 +1,5 @@
 var get = require("lodash.get");
+import {flatten} from "./utils";
 
 export default function handleConversion(query, conversionType) {
   if (!query.currentResources) return [];
@@ -131,9 +132,9 @@ function _setRelationShipKeyToValues({
   currentIncludes,
   name
 }) {
-  const directIncludesRalationships = currentIncludes
-    .map(relation => relation && relation.split("."))
-    .flat();
+  const directIncludesRalationships = flatten(
+    currentIncludes.map(relation => relation && relation.split("."))
+  );
 
   if (!directIncludesRalationships.includes(name))
     return nextRelationshipObjects;
