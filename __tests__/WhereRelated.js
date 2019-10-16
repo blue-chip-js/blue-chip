@@ -1,6 +1,8 @@
 import resources from "../__testHelpers__/fixtures/patientsAndSettingsOfUseNormalized";
 import resourcesNoRelationshipData from "../__testHelpers__/fixtures/patientsNoRelationshipDataNormalized";
+import specDetailNoComs from "../__testHelpers__/fixtures/specDetailNoComs";
 import Patient from "../__testHelpers__/models/Patient";
+import Spec from "../__testHelpers__/models/Spec";
 import Indication from "../__testHelpers__/models/Indication";
 
 describe("Where related tests", () => {
@@ -37,5 +39,12 @@ describe("Where related tests", () => {
       .whereRelated(Indication, {id: "1"})
       .toObjects();
     expect(patients).toMatchSnapshot();
+  });
+  test("Should return all the available relationships", () => {
+    const specs = Spec.query(specDetailNoComs)
+      .includes(["specDetails.[specDetailComs.spec, roomTypes]"])
+      .where({id: ["220"]})
+      .toObjects();
+    expect(specs).toMatchSnapshot();
   });
 });
