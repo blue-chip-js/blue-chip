@@ -637,6 +637,7 @@ class Query {
 
   whereRelated(relationship, params) {
     const {resourceName} = this;
+    if(!this.currentResources) return this;
 
     const relationships =
       Object.values(this.currentResources)[0] &&
