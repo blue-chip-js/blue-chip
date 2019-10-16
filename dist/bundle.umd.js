@@ -17231,6 +17231,7 @@
 	    value: function whereRelated(relationship, params) {
 	      var resourceName = this.resourceName;
 
+	      if (!this.currentResources) return this;
 
 	      var relationships = Object.values(this.currentResources)[0] && Object.values(this.currentResources)[0].relationships;
 
