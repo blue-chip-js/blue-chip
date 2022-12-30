@@ -37,7 +37,7 @@
     "coveralls": "^3.0.2",
     "jest": "^23.1.0",
     "merge": ">=1.2.1",
-    "release-it": "^12.3.0",
+    "release-it": "^15.6.0",
     "rollup": "^0.62.0",
     "rollup-plugin-babel": "^3.0.7",
     "rollup-plugin-commonjs": "^9.1.3",
