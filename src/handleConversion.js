@@ -20,7 +20,7 @@ function _reduceCurrentResources(query, reducerType) {
         attributes,
         relationships,
         conversion,
-        query
+        query,
       })
     );
 }
@@ -33,20 +33,20 @@ function _convertResource({id, attributes, relationships, conversion, query}) {
     resources,
     {
       id,
-      ...attributes
+      ...attributes,
     },
     hasMany,
     belongsTo
   );
 
-  if (!currentIncludes.length) return newFormattedResource;
+  if (currentIncludes && !currentIncludes.length) return newFormattedResource;
 
   return _handleResourceConversionWithIncludedRelations({
     newFormattedResource,
     conversion,
     query,
     resources,
-    relationships
+    relationships,
   });
 }
 
@@ -54,7 +54,7 @@ function _handleResourceConversionWithIncludedRelations({
   newFormattedResource,
   conversion,
   query,
-  relationships
+  relationships,
 }) {
   const {klass, resources, hasMany, belongsTo} = query;
   return conversion(
@@ -67,10 +67,10 @@ function _handleResourceConversionWithIncludedRelations({
           _buildRelationships(query, conversion, nextRelationshipObjects, {
             id,
             name,
-            type
+            type,
           }),
         {}
-      )
+      ),
     },
     hasMany,
     belongsTo
@@ -91,30 +91,30 @@ function _buildRelationships(
     nextRelationshipObjects,
     conversion,
     currentIncludes,
-    name
+    name,
   };
 
   // for the case when the relation class is hasMany
-  let relationClass = hasMany.find(klass => {
+  let relationClass = hasMany.find((klass) => {
     return klass.pluralName() === type;
   });
   if (relationClass) {
     _setRelationShipKeyToValues({
       ...handleRelationArgs,
       relationType: "hasMany",
-      relationClass
+      relationClass,
     });
   }
 
   // for the case when the relation class is belongsTo
-  relationClass = belongsTo.find(klass => {
+  relationClass = belongsTo.find((klass) => {
     return klass.pluralName() === type;
   });
   if (relationClass) {
     _setRelationShipKeyToValues({
       ...handleRelationArgs,
       relationType: "belongsTo",
-      relationClass
+      relationClass,
     });
   }
 
@@ -130,14 +130,23 @@ function _setRelationShipKeyToValues({
   conversion,
   relationClass,
   currentIncludes,
-  name
+  name,
 }) {
-  const directIncludesRalationships = flatten(
-    currentIncludes.map(relation => relation && relation.split("."))
-  );
+  if (currentIncludes) {
+    const directIncludesRalationships = flatten(
+      currentIncludes.map((relation) => {
+        const splitRelation = relation.split(".");
+        return splitRelation.length > 1
+          ? splitRelation[splitRelation.length - 2] +
+              "." +
+              splitRelation[splitRelation.length - 1]
+          : splitRelation[splitRelation.length - 1];
+      })
+    );
 
-  if (!directIncludesRalationships.includes(name))
-    return nextRelationshipObjects;
+    if (!directIncludesRalationships.includes(name))
+      return nextRelationshipObjects;
+  }
 
   if (!(name in nextRelationshipObjects)) {
     if (relationType === "hasMany") {
@@ -167,7 +176,7 @@ function _setRelationShipKeyToValues({
         nestedResourceName,
         nestedResourceType,
         nestedResourceIds,
-        doubleNestedResourceName
+        doubleNestedResourceName,
       ]) => {
         const nestedResources = _convertWithNestedResources(
           conversion,
@@ -184,23 +193,23 @@ function _setRelationShipKeyToValues({
 
         if (relationType === "hasMany") {
           const objIndex = nextRelationshipObjects[name].findIndex(
-            obj => obj.id == nestedResources.id
+            (obj) => obj.id == nestedResources.id
           );
           if (objIndex < 0) {
             nextRelationshipObjects[name].push(nestedResources);
           } else {
             const objIndex = nextRelationshipObjects[name].findIndex(
-              obj => obj.id == nestedResources.id
+              (obj) => obj.id == nestedResources.id
             );
             nextRelationshipObjects[name][objIndex] = {
               ...nextRelationshipObjects[name][objIndex],
-              ...nestedResources
+              ...nestedResources,
             };
           }
         } else if (relationType === "belongsTo") {
           let updatedAttributes = {
             ...nextRelationshipObjects[name],
-            ...nestedResources
+            ...nestedResources,
           };
 
           if (
@@ -210,7 +219,7 @@ function _setRelationShipKeyToValues({
           ) {
             updatedAttributes[nestedResourceName] = {
               ...nextRelationshipObjects[name][nestedResourceName],
-              ...nestedResources[nestedResourceName]
+              ...nestedResources[nestedResourceName],
             };
           }
 
@@ -267,8 +276,8 @@ function _convertWithNestedResources(
     id,
     ...relationData.attributes,
     ...(nestedResponse && {
-      [nestedResourceName]: nestedResponse
-    })
+      [nestedResourceName]: nestedResponse,
+    }),
   });
 }
 
@@ -285,50 +294,50 @@ function _buildRelationModel(
 
   nestedResourceNames = [];
 
-  currentIncludes
-    .filter(relation => {
-      return relation.split(".")[0] == type || relation.split(".")[0] == name;
-    })
-    .forEach(includesName => {
-      const splitName = includesName.split(/\.(.+)/)[1];
+  if (currentIncludes) {
+    currentIncludes
+      .filter((relation) => {
+        return relation.split(".")[0] == type || relation.split(".")[0] == name;
+      })
+      .forEach((includesName) => {
+        const splitName = includesName.split(/\.(.+)/)[1];
 
-      if (splitName && splitName.includes("[")) {
-        let nestedNames;
-        if (splitName.charAt(0) !== "[") {
-          const firstSplit = splitName.split(".")[0];
+        if (splitName && splitName.includes("[")) {
+          let nestedNames;
+          if (splitName.charAt(0) !== "[") {
+            const firstSplit = splitName.split(".")[0];
 
-          nestedNames = splitName
-            .replace(/[\[\]']+/g, "")
-            .split(",")
-            .map(rn => rn.replace(/^\s/, `${firstSplit}.`).trim());
+            nestedNames = splitName
+              .replace(/[\[\]']+/g, "")
+              .split(",")
+              .map((rn) => rn.replace(/^\s/, `${firstSplit}.`).trim());
+          } else {
+            nestedNames = splitName
+              .replace(/[\[\]']+/g, "")
+              .split(",")
+              .map((rn) => rn.trim());
+          }
+
+          nestedResourceNames = nestedResourceNames.concat(nestedNames);
         } else {
-          nestedNames = splitName
-            .replace(/[\[\]']+/g, "")
-            .split(",")
-            .map(rn => rn.trim());
+          // Yes, even push undefined
+          nestedResourceNames.push(splitName);
         }
+      });
+  }
 
-        nestedResourceNames = nestedResourceNames.concat(nestedNames);
-      } else {
-        // Yes, even push undefined
-        nestedResourceNames.push(splitName);
-      }
-    });
-
-  const nestedResourceData = nestedResourceNames.map(nestedResourceName => {
+  const nestedResourceData = nestedResourceNames.map((nestedResourceName) => {
     nestedResourceType = null;
     nestedResourceIds = null;
     let singleNestedResourceName, doubleNestedResourceName;
 
     if (nestedResourceName) {
-      [
-        singleNestedResourceName,
-        doubleNestedResourceName
-      ] = nestedResourceName.split(/\.(.+)/);
+      [singleNestedResourceName, doubleNestedResourceName] =
+        nestedResourceName.split(/\.(.+)/);
 
       // sets the nested class if it is a hasMany relationship
       let nestedClass = relationClass.belongsTo.filter(
-        klass => singleNestedResourceName === klass.singularName()
+        (klass) => singleNestedResourceName === klass.singularName()
       )[0];
 
       // handles the belongsTo cases
@@ -365,7 +374,7 @@ function _buildRelationModel(
               nestedClassData.push([
                 klass,
                 nestedResourceType,
-                nestedResourceIds
+                nestedResourceIds,
               ]);
             }
 
@@ -373,11 +382,8 @@ function _buildRelationModel(
           }, []);
 
         if (nestedClassDataArray && nestedClassDataArray.length) {
-          [
-            nestedClass,
-            nestedResourceType,
-            nestedResourceIds
-          ] = nestedClassDataArray[0];
+          [nestedClass, nestedResourceType, nestedResourceIds] =
+            nestedClassDataArray[0];
         }
       }
 
@@ -387,7 +393,7 @@ function _buildRelationModel(
           resources,
           {
             id,
-            ...relationData.attributes
+            ...relationData.attributes,
           },
           relationClass.hasMany,
           relationClass.belongsTo
@@ -399,7 +405,7 @@ function _buildRelationModel(
       singleNestedResourceName,
       nestedResourceType,
       nestedResourceIds,
-      doubleNestedResourceName
+      doubleNestedResourceName,
     ];
   });
 
@@ -418,9 +424,9 @@ function _flattenRelationships(relationships) {
       }
 
       if (Array.isArray(relationshipItem.data)) {
-        const dataArray = relationshipItem.data.map(item => ({
+        const dataArray = relationshipItem.data.map((item) => ({
           ...item,
-          name
+          name,
         }));
         return [...nextRelationships, ...dataArray];
       }

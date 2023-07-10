@@ -20,7 +20,7 @@ export default class Query {
       klass,
       _convertToModel,
       hasMany,
-      belongsTo
+      belongsTo,
     } = this;
 
     if (!(resources[resourceName] && resources[resourceName][id])) return;
@@ -60,7 +60,7 @@ export default class Query {
 
   whereRelated(relationship, params) {
     const {resourceName} = this;
-    if(!this.currentResources) return this;
+    if (!this.currentResources) return this;
 
     const relationships =
       Object.values(this.currentResources)[0] &&
@@ -72,8 +72,23 @@ export default class Query {
     return this;
   }
 
+  _expandRelationshipTypes(relationshipTypes) {
+    return relationshipTypes.reduce((acc, rt) => {
+      if (this._isEmpty) return;
+      const splitRt = rt.split(".");
+      let currentPath = "";
+      splitRt.forEach((pathSegment, index) => {
+        currentPath += (index === 0 ? "" : ".") + pathSegment;
+        if (!acc.includes(currentPath)) {
+          acc.push(currentPath);
+        }
+      });
+      return acc;
+    }, []);
+  }
+
   includes(relationshipTypes) {
-    this.currentIncludes = relationshipTypes;
+    this.currentIncludes = this._expandRelationshipTypes(relationshipTypes);
     return this;
   }
 
@@ -109,7 +124,7 @@ export default class Query {
       .where({id: relationIds})
       .where(params)
       .toObjects()
-      .map(r => r.id);
+      .map((r) => r.id);
 
     this.currentResources = Object.entries(this.currentResources).reduce(
       (newResources, [id, resource]) => {

@@ -6,7 +6,7 @@ import {
   Checklist,
   PurchaseOrderContact,
   Spec,
-  SpecDetailCom
+  SpecDetailCom,
 } from "../__testHelpers__/models";
 
 describe("Nested resources", () => {
@@ -23,6 +23,24 @@ describe("Nested resources", () => {
       .includes(["vendorContact.contact"])
       .toObjects();
     expect(purchaseOrderContacts).toMatchSnapshot();
+  });
+
+  test("belongsTo.belongsTo.belongsTo.belongsTo.belongsTo", () => {
+    const specDetailComs = SpecDetailCom.query(specDetailComsResources)
+      .where({id: [97]})
+      .includes(["specDetail.spec.area.areaType.someNestedResource"])
+      .toObjects();
+    expect(specDetailComs).toMatchSnapshot();
+  });
+
+  test("belongsTo.belongsTo.belongsTo.belongsTo.belongsTo.belongsTo", () => {
+    const specDetailComs = SpecDetailCom.query(specDetailComsResources)
+      .where({id: [97]})
+      .includes([
+        "specDetail.spec.area.areaType.someNestedResource.anotherNestedResource",
+      ])
+      .toObjects();
+    expect(specDetailComs).toMatchSnapshot();
   });
 
   test("includes with hasMany.hasMany", () => {
